@@ -11,7 +11,7 @@ class MoonshineGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       m.directory 'config/moonshine'
-      m.template  'server.rb',        "config/moonshine/#{server_name}_moonshine_server.rb"
+      m.template  'moonshine.rb',        "config/moonshine/#{server_name}_moonshine_server.rb"
     end
   end
 
