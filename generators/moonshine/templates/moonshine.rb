@@ -1,4 +1,4 @@
-class <%= klass_name %> < Moonshine::Manifest::Rails
+class Moonshine::Manifest::Rails::<%= klass_name %> < Moonshine::Manifest::Rails
   ruby(:debian)
   gems('rails')
   db(:mysql)
