@@ -1,11 +1,9 @@
 class Moonshine::Manifest::Rails::<%= klass_name %> < Moonshine::Manifest::Rails
-  ruby(:debian)
-  gems('rails')
-  db(:mysql)
-  web(:apache2)
-  rails(:passenger)
-  deploy('/srv/rails')
+  #packages(%w(vim curl))
 
   #service('memcached', %w(memcache libmemcached))
-  #puppet.exec 'foo', :command => "echo 'normal puppet stuff' > /tmp/test"
+
+  #puppet.exec 'foo',
+  #  :command => "curl -o some_url > /tmp/test"
+  #  :require => package(:curl)
 end
