@@ -4,8 +4,9 @@ class MoonshineGenerator < Rails::Generator::Base
   attr_reader :file_name, :klass_name
 
   def initialize(runtime_args, runtime_options = {})
-    puts banner and exit(1) unless runtime_args.shift
-    @file_name = runtime_args.shift.downcase.underscore
+    name = runtime_args.shift
+    puts banner and exit(1) unless name
+    @file_name = name.downcase.underscore
     @klass_name = @file_name.classify
     super
   end
