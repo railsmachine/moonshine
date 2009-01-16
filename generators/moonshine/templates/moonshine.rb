@@ -1,4 +1,4 @@
-class Moonshine::Manifest::Rails::<%= klass_name %> < Moonshine::Manifest::Rails
+class <%= klass_name %> < Moonshine::Manifest::Rails
   #packages(%w(vim curl))
 
   #service('memcached', %w(memcache libmemcached))
