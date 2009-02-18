@@ -2,7 +2,6 @@ require 'yaml'
 namespace :moonshine do
   desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine.'
   task :bootstrap do
-    sudo "apt-get install -q -y git-core"
     put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
     sudo 'chown root:root /tmp/bootstrap.sh'
     sudo 'chmod 700 /tmp/bootstrap.sh'

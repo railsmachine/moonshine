@@ -4,7 +4,7 @@ echo "***Bootstrappin' the system!***"
 apt-get update
 
 echo "Installing build packages"
-apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget
+apt-get install -q -y git-core build-essential zlib1g-dev libssl-dev libreadline5-dev wget
 
 if [ `which ruby` ]; then
  echo "Ruby already installed."
