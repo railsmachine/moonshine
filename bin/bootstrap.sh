@@ -45,16 +45,15 @@ else
   echo "Cleaning up REE download"
   rm -rf $REE*
   popd
+
+  echo "Installing Rake"
+  gem install rake --no-rdoc --no-ri
 fi
 
 if [ `which moonshine` ]; then
  echo "Moonshine already installed."
 else
   echo "Installing Moonshine"
-  gem install puppet --no-rdoc --no-ri
-  gem install facter --version 1.5.2 --no-rdoc --no-ri
-  # do this until facter 1.5.4 is released and fixes ubuntu bug
-  gem uninstall facter --version 1.5.3
   gem install shadow_puppet shadow_facter --no-rdoc --no-ri
   #gem install moonshine --no-rdoc --no-ri
   echo "Install Moonshine Manually!"

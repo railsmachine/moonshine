@@ -1,4 +1,5 @@
 require 'yaml'
+set :branch, fetch(:branch, 'master')
 namespace :moonshine do
   desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine.'
   task :bootstrap do
