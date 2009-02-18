@@ -1,25 +1,38 @@
+require 'yaml'
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :moonshine do
-    desc <<-DESC
-    Bootstrap a barebones Ubuntu system with Git, Ruby, Gems, and Moonshine.
-    DESC
+    desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine.'
     task :bootstrap do
       sudo "apt-get install -q -y git-core"
-      put(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh'),"/tmp/bootstrap.sh")
+      put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
       sudo 'chown root:root /tmp/bootstrap.sh'
       sudo 'chmod 700 /tmp/bootstrap.sh'
       sudo '/tmp/bootstrap.sh'
       sudo 'rm /tmp/bootstrap.sh'
-      #TODO add application to moonshine
+    end
+
+    desc 'Initialize and configure Moonshine for this application'
+    task :configure do
+      sudo 'moonshine init'
+      config = {
+        :name => application,
+        :uri => repository,
+        :branch => branch,
+        :manifest_glob => 'app/manifests/*.rb',
+        :user => user
+      }
+      put(YAML.dump(config),"/tmp/#{application}_moonshine.conf")
+      sudo "mv /tmp/#{application}_moonshine.conf /etc/moonshine/#{application}.conf"
+      sudo "chown root:root /etc/moonshine/#{application}.conf"
+      sudo "chmod 700 /etc/moonshine/#{application}.conf"
     end
 
     before 'deploy:setup' do
       bootstrap
+      configure
     end
 
-    desc <<-DESC
-    Apply the Moonshine manifest
-    DESC
+    desc 'Apply the Moonshine manifest'
     task :apply do
       sudo "moonshine #{application}"
     end
