@@ -29,7 +29,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     before 'deploy:setup' do
       bootstrap
-      configure
+      # configure
     end
 
     desc 'Apply the Moonshine manifest'
