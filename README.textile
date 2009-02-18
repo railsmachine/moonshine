@@ -1,0 +1,37 @@
+h1. Instructions
+
+* -@ruby script/plugin install git://github.com/railsmachine/moonshine_rails.git@-
+** @git submodule add git@git.railsmachine.com:moonshine_rails vendor/plugin/moonshine_rails@
+* @ruby script/generate moonshine@
+* Edit the configuration file at @config/moonshine.yml@ *NOTE*: this config isn't loaded into anything yet. coming soon
+* Edit the manifest generated for your application at @app/manifests/application_manifest.rb@
+* Obtain access to a bare-bones installation of Ubuntu 8.10
+* @capify@ your application
+* Edit @config/deploy.rb@ for your application:
+
+<code>
+  <pre>
+    set :application, "yourapp"
+    set :repository,  "git@git.yourserver.com:yourapp.git"
+    role :app, "yourdomain.com"
+    role :web, "yourdomain.com"
+    role :db,  "yourdomain.com", :primary => true
+    set :user, 'youruser' #a user with sudo access
+    set :scm, :git
+    set :git_shallow_clone, 1
+    set :git_enable_submodules, 1
+    ssh_options[:paranoid] = false
+    ssh_options[:forward_agent] = true
+    default_run_options[:pty] = true
+  </pre>
+</code>
+
+* -@cap deploy:setup@-
+** @cap moonshine:bootstrap@
+** ssh to server
+** git clone git@git.railsmachine.com:moonshine
+** cd moonshine
+** rake install
+** @cap moonshine:configure@
+** @cap moonshine:apply@
+* @cap deploy@
