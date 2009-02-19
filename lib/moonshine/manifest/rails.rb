@@ -1,5 +1,4 @@
-require 'shadow_puppet'
-class Moonshine::Manifest::Rails < ShadowPuppet::Manifest
+class Moonshine::Manifest::Rails < Moonshine::Manifest
   recipe :test
   def test
     exec 'test', :command => 'true'

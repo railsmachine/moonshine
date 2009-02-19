@@ -1,5 +1,5 @@
+require 'shadow_puppet'
 module Moonshine
-  module Manifest
-  end
 end
+require "#{File.dirname(__FILE__)}/moonshine/manifest.rb"
 require "#{File.dirname(__FILE__)}/moonshine/manifest/rails.rb"
