@@ -1,17 +1,6 @@
-class Moonshine::Manifest::Rails < Moonshine::Manifest
-  requires [
-    :user,
-    :ruby,
-    :rubygems,
-    :db,
-    :web,
-    :rails,
-    :deploy
-  ]
-  provides :user, 'rails'
-  provides :ruby, 'enterprise'
-  provides :rubygems, 'enterprise'
-  provides :db, 'mysql'
-  provides :rails, 'passenger'
-  provides :deploy, 'git'
+class Moonshine::Manifest::Rails < ShadowPuppet::Manifest
+  recpie :test
+  def test
+    exec 'test', :command => 'true'
+  end
 end
