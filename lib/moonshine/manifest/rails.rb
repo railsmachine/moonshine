@@ -1,5 +1,5 @@
 class Moonshine::Manifest::Rails < ShadowPuppet::Manifest
-  recpie :test
+  recipe :test
   def test
     exec 'test', :command => 'true'
   end
