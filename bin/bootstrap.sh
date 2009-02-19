@@ -50,11 +50,5 @@ else
   gem install rake --no-rdoc --no-ri
 fi
 
-if [ `which moonshine` ]; then
- echo "Moonshine already installed."
-else
-  echo "Installing Moonshine"
-  gem install shadow_puppet shadow_facter --no-rdoc --no-ri
-  #gem install moonshine --no-rdoc --no-ri
-  echo "Install Moonshine Manually!"
-fi
+echo "Installing Shadow Puppet"
+gem install shadow_puppet shadow_facter --no-rdoc --no-ri
