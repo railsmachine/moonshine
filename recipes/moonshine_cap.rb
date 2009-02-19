@@ -10,30 +10,13 @@ namespace :moonshine do
     sudo 'rm /tmp/bootstrap.sh'
   end
 
-  desc 'Initialize and configure Moonshine for this application'
-  task :configure do
-    sudo 'moonshine init'
-    config = {
-      :name => application,
-      :uri => repository,
-      :branch => branch,
-      :manifest_glob => 'app/manifests/*.rb',
-      :user => user
-    }
-    put(YAML.dump(config),"/tmp/#{application}_moonshine.conf")
-    sudo "mv /tmp/#{application}_moonshine.conf /etc/moonshine/#{application}.conf"
-    sudo "chown root:root /etc/moonshine/#{application}.conf"
-    sudo "chmod 700 /etc/moonshine/#{application}.conf"
-  end
-
   before 'deploy:setup' do
     bootstrap
-    # configure
   end
 
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
-    sudo "moonshine #{application}"
+    sudo "shadow_puppet #{latest_release}/app/manifests/application_manifest.rb"
   end
 
   after 'deploy:update_code' do
