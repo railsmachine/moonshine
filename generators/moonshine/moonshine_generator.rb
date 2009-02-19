@@ -6,7 +6,7 @@ class MoonshineGenerator < Rails::Generator::Base
   def initialize(runtime_args, runtime_options = {})
     name = runtime_args.shift || 'application'
     @file_name = name.downcase.underscore + "_manifest"
-    @klass_name = @file_name.classify + "Manifest"
+    @klass_name = @file_name.classify
     super
   end
 
