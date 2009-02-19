@@ -2,4 +2,4 @@ module Moonshine
   module Manifest
   end
 end
-require "#{File.dirname(__FILE__)}/mainfest/rails.rb"
+require "#{File.dirname(__FILE__)}/moonshine/mainfest/rails.rb"
