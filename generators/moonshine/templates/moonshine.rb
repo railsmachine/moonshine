@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../../vendor/plugins/moonshine_rails/lib/moonshine/manifest/rails.rb"
+require "#{File.dirname(__FILE__)}/../../vendor/plugins/moonshine_rails/lib/moonshine_rails.rb"
 class <%= klass_name %> < Moonshine::Manifest::Rails
   # By default, configuration is automatically loaded from <tt>config/moonshine.yml</tt>
   # If necessary, you may provide extra configuration directly to this class.
