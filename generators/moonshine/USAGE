@@ -1,0 +1,8 @@
+Description:
+    Generate a sample moonshine manifest for your Rails Application
+
+Example:
+    ./script/generate moonshine
+
+    This will create:
+        app/manifests/application_manifest.rb
