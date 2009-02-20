@@ -1,4 +1,4 @@
 :application: your_app_name
 :user: rails
-:deploy_to: /srv/your_app_name
+:deploy_to: /svr/your_app_name
 :domain: yourapp.com
