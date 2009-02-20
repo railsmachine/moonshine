@@ -1,7 +1,7 @@
 h1. Instructions
 
 * -@ruby script/plugin install git://github.com/railsmachine/moonshine_rails.git@-
-** @git submodule add git@git.railsmachine.com:moonshine_rails vendor/plugin/moonshine_rails@
+** @git submodule add git@git.railsmachine.com:moonshine_rails vendor/plugins/moonshine_rails@
 * @ruby script/generate moonshine@
 * Edit the configuration file at @config/moonshine.yml@ *NOTE*: this config isn't loaded into anything yet. coming soon
 * Edit the manifest generated for your application at @app/manifests/application_manifest.rb@
