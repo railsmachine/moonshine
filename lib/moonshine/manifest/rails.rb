@@ -9,7 +9,6 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   recipe :apache_server
   recipe :passenger_gem, :passenger_apache_module
   recipe :mysql_database
-  recipe :application_packages
   recipe :passenger_site
   recipe :mysql_user
 
