@@ -1,6 +1,17 @@
 class Moonshine::Manifest::Rails < Moonshine::Manifest
+  include MySQLRecipes
+  include PassengerRecipes
+  include ApacheRecipes
+
   recipe :gems_from_environment
   recipe :directories
+  recipe :mysql_server, :mysql_gem
+  recipe :apache_server
+  recipe :passenger_gem, :passenger_apache_module
+  recipe :mysql_database
+  recipe :application_packages
+  recipe :passenger_site
+  recipe :mysql_user
 
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
