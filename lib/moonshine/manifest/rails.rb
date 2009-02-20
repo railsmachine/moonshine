@@ -1,5 +1,6 @@
 class Moonshine::Manifest::Rails < Moonshine::Manifest
   recipe :gems_from_environment
+  recipe :directories
 
   #database config
   configure(:database => YAML.load_file(File.join(ENV['RAILS_ROOT'], 'config', 'database.yml')))
@@ -41,5 +42,24 @@ load '#{ENV['RAILS_ROOT']}/config/deploy'
       :ensure   => :installed,
       :version  => (RAILS_GEM_VERSION rescue nil)
     })
+  end
+
+  #Essentially replicates the deploy:setup command from capistrano. Includes
+  #shared_children and app_symlinks arrays from capistrano.
+  def directories
+    dirs = [
+      "/srv",
+      "/srv/#{configuration[:capistrano].application}",
+      "/srv/#{configuration[:capistrano].application}/shared",
+      "/srv/#{configuration[:capistrano].application}/releases"
+    ]
+    dirs += configuration[:capistrano].shared_children.map { |d| "/srv/#{configuration[:capistrano].application}/shared/#{d}" }
+    if configuration[:capistrano].respond_to?(:app_symlinks)
+      dirs += ["/srv/#{configuration[:capistrano].application}/shared/public"]
+      dirs += configuration[:capistrano].app_symlinks.map { |d| "/srv/#{configuration[:capistrano].application}/shared/public/#{d}" }
+    end
+    dirs.each do |dir|
+      file dir, :ensure => :directory, :owner => configuration[:capistrano].user, :group => configuration[:capistrano].user
+    end
   end
 end
