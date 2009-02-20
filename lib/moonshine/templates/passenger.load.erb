@@ -1,1 +1,1 @@
-LoadModule passenger_module <%= "#{Gem.dir}/gems/passenger-#{Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to}" %>/ext/apache2/mod_passenger.so
+LoadModule passenger_module <%= path %>/ext/apache2/mod_passenger.so

@@ -5,7 +5,13 @@ module PassengerRecipes
   end
 
   def passenger_apache_module
-    path = "#{Gem.dir}/gems/passenger-#{Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to}"
+    version = begin
+      Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
+    rescue
+      `gem install passenger --no-ri --no-rdoc`
+      Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
+    end
+    path = "#{Gem.dir}/gems/passenger-#{version}"
 
     # Install Apache2 developer library
     package "apache2-threaded-dev", :ensure => :installed
