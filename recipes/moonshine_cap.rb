@@ -11,7 +11,8 @@ namespace :moonshine do
     # copy moonshine_setup_manifest.rb to the server
     put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
     begin
-      config = {:user => user, :application => application, :deploy_to => deploy_to}
+      config = YAML.load_file(File.join(Dir.pwd, 'config', 'moonshine.yml'))
+      config = config.merge({:user => user, :application => application, :deploy_to => deploy_to})
       put(YAML.dump(config),"/tmp/moonshine.yml")
     rescue
       puts "Please run 'ruby script/generate moonshine' and configure config/moonshine.yml first"
