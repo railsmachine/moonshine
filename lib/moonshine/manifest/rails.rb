@@ -3,14 +3,14 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   recipe :directories
 
   #database config
-  configure(:database => YAML.load_file(File.join(ENV['RAILS_ROOT'], 'config', 'database.yml')))
+  configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
 
   #capistrano
   cap = Capistrano::Configuration.new
   cap.load(:string => """
 load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-Dir['#{ENV['RAILS_ROOT']}/vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
-load '#{ENV['RAILS_ROOT']}/config/deploy'
+Dir['#{working_directory}/vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
+load '#{working_directory}/config/deploy'
 """)
   configure(:capistrano => cap)
 
@@ -18,14 +18,14 @@ load '#{ENV['RAILS_ROOT']}/config/deploy'
     #rails configuration
     $rails_gem_installer = true
     begin
-      require(File.join(ENV['RAILS_ROOT'], 'config', 'environment'))
+      require(File.join(self.class.working_directory, 'config', 'environment'))
     rescue Exception
       if defined?(RAILS_GEM_VERSION)
         #we can't parse the environment. as a last ditch effort, shell out and
         #try to install rails
         `gem install rails --version #{RAILS_GEM_VERSION}`
       end
-      require(File.join(ENV['RAILS_ROOT'], 'config', 'environment'))
+      require(File.join(self.class.working_directory, 'config', 'environment'))
     end
     configure(:rails => ::Rails.configuration)
 

@@ -24,7 +24,7 @@ namespace :moonshine do
 
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
-    sudo "shadow_puppet #{latest_release}/app/manifests/application_manifest.rb"
+    sudo "cd #{latest_release} && shadow_puppet app/manifests/application_manifest.rb"
   end
 
   after 'deploy:update_code' do
