@@ -20,6 +20,7 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
     package 'shadow_facter', :provider => :gem, :ensure => '0.1.2'
     package 'capistrano', :provider => :gem, :ensure => '2.5.4'
     package 'rails', :provider => :gem, :ensure => :latest
+    package 'passenger', :provider => :gem, :ensure => :latest
   end
 
   #Essentially replicates the deploy:setup command from capistrano, but sets

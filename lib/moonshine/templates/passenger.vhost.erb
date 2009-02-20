@@ -1,0 +1,4 @@
+<VirtualHost *:80>
+    ServerName <%= configuration[:capistrano].domain rescue (configuration[:domain] || `hostname -f`) %>
+    DocumentRoot <%= configuration[:capistrano].deploy_to + "/current/public" %>
+</VirtualHost>
