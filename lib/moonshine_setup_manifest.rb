@@ -12,6 +12,8 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
 
   recipe :gems, :directories
 
+  #TODO: replicate bin/bootstrap.sh here for 100% idempotency
+
   # Installs the gem dependencies of the Moonshine::Manifest::Rails
   def gems
     package 'shadow_puppet', :provider => :gem, :ensure => '0.1.6'
@@ -23,7 +25,7 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
   #Essentially replicates the deploy:setup command from capistrano, but sets
   #up permissions correctly
   def directories
-    deploy_to_array = configuration[:deploy_to].split('/').split('/')
+    deploy_to_array = configuration[:deploy_to].split('/')
     deploy_to_array.each_with_index do |dir, index|
       next if index == 0 || index >= (deploy_to_array.size-1)
       file '/'+deploy_to_array[1..index].join('/'), :ensure => :directory

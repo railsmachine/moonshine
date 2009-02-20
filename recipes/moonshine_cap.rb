@@ -5,8 +5,7 @@ namespace :moonshine do
   task :bootstrap do
     #copy the bootstrap script to the server to install Ruby, RubyGems, ShadowPuppet
     put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
-    sudo 'chown root:root /tmp/bootstrap.sh'
-    sudo 'chmod 700 /tmp/bootstrap.sh'
+    sudo 'chmod a+x /tmp/bootstrap.sh'
     sudo '/tmp/bootstrap.sh'
     sudo 'rm /tmp/bootstrap.sh'
     # copy moonshine_setup_manifest.rb to the server
