@@ -33,14 +33,12 @@ load '#{ENV['RAILS_ROOT']}/config/deploy'
       package(gem_dependency.name, {
         :provider => :gem,
         :source   => gem_dependency.source,
-        :ensure   => :latest,
-        :version  => gem_dependency.requirement ? gem_dependency.requirement.to_s : nil
+        :ensure  => gem_dependency.requirement ? gem_dependency.requirement.to_s : :latest
       })
     end
     package('rails', {
       :provider => :gem,
-      :ensure   => :installed,
-      :version  => (RAILS_GEM_VERSION rescue nil)
+      :ensure  => (RAILS_GEM_VERSION rescue :latest)
     })
   end
 

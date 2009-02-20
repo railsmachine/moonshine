@@ -21,7 +21,6 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal '2.2.2', RAILS_GEM_VERSION
     Moonshine::Manifest::Rails.configuration['rails'].gems.each do |gem_dependency|
       assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem_dependency.name]
-      assert_equal gem_dependency.requirement.to_s, gem_resource.params[:version].value
       assert_equal gem_dependency.source, gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
     end
