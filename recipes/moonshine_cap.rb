@@ -1,17 +1,26 @@
 require 'yaml'
 set :branch, fetch(:branch, 'master')
 namespace :moonshine do
-  desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine.'
+  desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine dependencies.'
   task :bootstrap do
+    #copy the bootstrap script to the server to install Ruby, RubyGems, ShadowPuppet
     put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
     sudo 'chown root:root /tmp/bootstrap.sh'
     sudo 'chmod 700 /tmp/bootstrap.sh'
     sudo '/tmp/bootstrap.sh'
     sudo 'rm /tmp/bootstrap.sh'
-  end
-
-  before 'deploy:setup' do
-    bootstrap
+    # copy moonshine_setup_manifest.rb to the server
+    put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
+    begin
+      config = {:user => user, :application => application, :deploy_to => deploy_to}
+      put(YAML.dump(config),"/tmp/moonshine.yml")
+    rescue
+      puts "Please run 'ruby script/generate moonshine' and configure config/moonshine.yml first"
+      exit(0)
+    end
+    sudo "shadow_puppet /tmp/moonshine_setup_manifest.rb"
+    sudo 'rm /tmp/moonshine_setup_manifest.rb'
+    sudo 'rm /tmp/moonshine.yml'
   end
 
   desc 'Apply the Moonshine manifest for this application'
@@ -33,5 +42,21 @@ namespace :deploy do
   [:start, :stop].each do |t|
     desc "#{t} task is a no-op with Passenger"
     task t, :roles => :app do ; end
+  end
+
+  desc <<-DESC
+    Prepares one or more servers for deployment. Before you can use any \
+    of the Capistrano deployment tasks with your project, you will need to \
+    make sure all of your servers have been prepared with `cap deploy:setup'. When \
+    you add a new server to your cluster, you can easily run the setup task \
+    on just that server by specifying the HOSTS environment variable:
+ 
+      $ cap HOSTS=new.server.com deploy:setup
+ 
+    It is safe to run this task on servers that have already been set up; it \
+    will not destroy any deployed revisions or data.
+  DESC
+  task :setup, :except => { :no_release => true } do
+    moonshine.bootstrap
   end
 end

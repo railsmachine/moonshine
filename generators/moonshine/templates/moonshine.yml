@@ -1,5 +1,1 @@
-name: yourappname
-apache:
-  server_name: yourappname.com
-mysql:
-  password: sekret
+prefix: /srv
