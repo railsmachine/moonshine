@@ -51,4 +51,4 @@ else
 fi
 
 echo "Installing Shadow Puppet"
-gem install shadow_puppet shadow_facter --no-rdoc --no-ri
+gem install shadow_puppet --no-rdoc --no-ri
