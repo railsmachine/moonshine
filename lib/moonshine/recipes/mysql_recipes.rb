@@ -26,8 +26,10 @@ EOF
   def mysql_database
     exec "create_database", { :command => "/usr/bin/mysql -u root -e 'create database #{mysql_config_from_environment[:database]};'",
                              :unless => "mysql -u root -p -e 'show create database #{mysql_config_from_environment[:database]};'",
-                             :require => [package("mysql-server")]}
+                             :require => [package("mysql-server")],
+                             :notify => exec('boostrap_database')}
   end
+
 
   def mysql_config_from_environment
     @db_config ||= configuration['database'][(ENV['RAILS_ENV'] || 'production')]
