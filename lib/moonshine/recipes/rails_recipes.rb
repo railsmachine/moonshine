@@ -3,8 +3,9 @@ module RailsRecipes
     exec "boostrap_database", { :command => 'rake db:schema:load',
                              :cwd => self.class.working_directory,
                              :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
-                             :refreshonly => true,
+                             :unless => "mysql -u root -p #{mysql_config_from_environment[:database]} -e 'select * from schema_migrations;'",
                              :require => [
+                                package('mysql'),
                                 package("mysql-server"),
                                 exec('create_user')
                                ]}
@@ -15,6 +16,7 @@ module RailsRecipes
                              :cwd => self.class.working_directory,
                              :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
                              :require => [
+                               package("mysql"),
                                package("mysql-server"),
                                exec('create_user')
                               ]}
