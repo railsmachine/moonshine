@@ -18,7 +18,8 @@ module RailsRecipes
                              :require => [
                                package("mysql"),
                                package("mysql-server"),
-                               exec('create_user')
+                               exec('create_user'),
+                               exec('bootstrap_database')
                               ]}
   end
 end
