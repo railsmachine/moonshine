@@ -10,7 +10,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   cap.load(:string => """
 load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 Dir['#{working_directory}/vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
-load '#{working_directory}/config/deploy'
+load '#{working_directory}/config/deploy.rb'
 """)
   configure(:capistrano => cap)
 
