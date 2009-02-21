@@ -1,6 +1,11 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+begin
+  require 'rubygems'
+  require 'hanna/rdoctask'
+rescue LoadError
+  require 'rake/rdoctask'
+end
 
 desc 'Default: run unit tests.'
 task :default => :test
@@ -20,4 +25,5 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.main = "README.rdoc"
 end
