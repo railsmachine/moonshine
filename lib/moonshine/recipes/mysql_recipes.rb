@@ -1,30 +1,22 @@
 module Moonshine::Recipes::MySQLRecipes
 
   def mysql_load_schema
-    rake("db:schema:load", {
-      :require => [
-         package('mysql'),
-         package("mysql-server"),
-         exec('create_user')
-        ],
-      :unless => "mysql -u root -p #{mysql_config_from_environment[:database]} -e 'select * from schema_migrations;'"
+    rake('db:schema:load', {
+      :require => exec('mysql_user'),
+      :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;")
     })
   end
 
   def mysql_migrations
-    rake("db:migrate",
-      :require => [
-         package("mysql"),
-         package("mysql-server"),
-         exec('create_user'),
-         exec('bootstrap_database')
-        ]
-    )
+    rake 'db:migrate', :require => exec('rake db:schema:load')
   end
 
   def mysql_server
-    package "mysql-server", :ensure => :installed
-    service "mysql", :require => package("mysql-server")
+    package 'mysql-server', :ensure => :installed
+    service 'mysql', :ensure => :running, :require => [
+      package('mysql-server'),
+      package('mysql')
+    ]
   end
 
   def mysql_gem
@@ -33,26 +25,29 @@ module Moonshine::Recipes::MySQLRecipes
   end
 
   def mysql_user
-    sql =<<EOF
+    grant =<<EOF
 GRANT ALL PRIVILEGES 
 ON #{mysql_config_from_environment[:database]}.*
 TO #{mysql_config_from_environment[:username]}@localhost 
 IDENTIFIED BY '#{mysql_config_from_environment[:password]}';
 EOF
     # ok, this could compare the shown grants for the user to what it expects.
-    exec "create_user", { :command => "/usr/bin/mysql -u root -e \"#{sql}\"",
-                             :unless => "mysql -u root -p -e 'show grants for #{mysql_config_from_environment[:username]}@localhost;'",
-                             :require => [exec("create_database")]}
+    exec "mysql_user", { :command => mysql_query(grant),
+                             :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
+                             :require => [exec('mysql_database')] }
   end
 
   def mysql_database
-    exec "create_database", { :command => "/usr/bin/mysql -u root -e 'create database #{mysql_config_from_environment[:database]};'",
-                             :unless => "mysql -u root -p -e 'show create database #{mysql_config_from_environment[:database]};'",
-                             :require => [package("mysql-server")],
-                             :notify => exec('boostrap_database')}
+    exec "mysql_database", { :command => mysql_query("create database #{mysql_config_from_environment[:database]};"),
+                             :unless => mysql_query("show create database #{mysql_config_from_environment[:database]};"),
+                             :require => [service('mysql')] }
   end
 
 private
+
+  def mysql_query(sql)
+    "/usr/bin/mysql -u root -p -e \"#{sql}\""
+  end
 
   def mysql_config_from_environment
     @db_config ||= configuration['database'][(ENV['RAILS_ENV'] || 'production')]
