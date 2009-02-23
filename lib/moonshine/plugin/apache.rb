@@ -1,4 +1,4 @@
-module Moonshine::Recipes::ApacheRecipes
+module Moonshine::Plugin::Apache
 
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
@@ -6,3 +6,6 @@ module Moonshine::Recipes::ApacheRecipes
   end
 
 end
+
+include Moonshine::Plugin::Apache
+recipe :apache_server

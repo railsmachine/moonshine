@@ -1,4 +1,4 @@
-module Moonshine::Recipes::RailsRecipes
+module Moonshine::Plugin::Rails
 
   def rails_gems
     rails_configuration
@@ -70,3 +70,6 @@ private
   end
 
 end
+
+include Moonshine::Plugin::Rails
+recipe :rails_gems, :rails_directories

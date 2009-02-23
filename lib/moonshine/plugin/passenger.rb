@@ -1,4 +1,4 @@
-module Moonshine::Recipes::PassengerRecipes
+module Moonshine::Plugin::Passenger
 
   def passenger_gem
     package "passenger", :ensure => :latest, :provider => :gem
@@ -60,6 +60,8 @@ private
     end
     "#{Gem.dir}/gems/passenger-#{version}"
   end
-  
 
 end
+
+include Moonshine::Plugin::Passenger
+recipe :passenger_gem, :passenger_apache_module, :passenger_site

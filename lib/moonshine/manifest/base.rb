@@ -1,8 +1,33 @@
-class Moonshine::Manifest < ShadowPuppet::Manifest
-  def self.path_to_config
-    File.join(working_directory, 'config', 'moonshine.yml')
-  end
-
+# This is the base Moonshine Manifest class, which provides a simple system
+# for loading moonshine recpies from plugins, a template helper, and parses
+# several configuration files:
+#
+#   config/moonshine.yml
+#
+# The contents of <tt>config/moonshine.yml</tt> are expected to serialize into
+# a hash, and are loaded into the <tt>configuration</tt> object.
+#
+#   config/database.yml
+#
+# The contents of your database config are parsed and are available at
+# <tt>configuration[:database]</tt>. If you are keeping your database.yml
+# out of source control, that means you'll want to ensure that the shared copy
+# has been symlinked to <tt>config/database.yml</tt> before the manifests are
+# applied:
+#
+#   before 'moonshine:apply', 'db:symlink'
+#
+#   config/deploy.rb
+#
+# The the capistrano configuration object described by <tt>config/deploy.rb</tt>
+# is available <tt>configuration[:capistrano]</tt>
+#
+# == Extending
+#
+# If you'd like to create another 'default rails stack' using other tools that
+# what Moonshine::Manifest::Rails uses, subclass this and go nuts.
+class Moonshine::Manifest::Base < ShadowPuppet::Manifest
+  # The working directory of the Rails application this manifests describes.
   def self.working_directory
     @working_directory ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
   end
@@ -23,7 +48,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     if name.is_a?(Symbol)
       path = File.join(working_directory, 'vendor', 'plugins', 'name', 'moonshine', 'init.rb')
     else
-      path = File.join(working_directory, name)
+      path = name
     end
     Kernel.eval(File.read(path), binding, path)
     true
@@ -48,7 +73,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   #config/moonshine.yml
-  configure(YAML.load_file(self.path_to_config))
+  configure(YAML.load_file(File.join(working_directory, 'config', 'moonshine.yml')))
 
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))

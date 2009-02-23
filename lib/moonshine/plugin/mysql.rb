@@ -1,4 +1,4 @@
-module Moonshine::Recipes::MySQLRecipes
+module Moonshine::Plugin::Mysql
 
   def mysql_load_schema
     rake('db:schema:load', {
@@ -53,3 +53,6 @@ private
     @db_config ||= configuration['database'][(ENV['RAILS_ENV'] || 'production')]
   end
 end
+
+include Moonshine::Plugin::Mysql
+recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_load_schema, :mysql_migrations

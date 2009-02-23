@@ -1,15 +1,15 @@
-require File.dirname(__FILE__) + '/../test_helper.rb'
+require File.dirname(__FILE__) + '/../../test_helper.rb'
 
 module Moonshine::Iptables
 end
 
-class Moonshine::ManifestTest < Test::Unit::TestCase
+class Moonshine::Manifest::BaseTest < Test::Unit::TestCase
   def test_loads_configuration
-    assert Moonshine::Manifest.configuration.keys.include?('application')
+    assert Moonshine::Manifest::Base.configuration.keys.include?('application')
   end
 
   def test_provides_template_helper
-    @manifest = Moonshine::Manifest.new
+    @manifest = Moonshine::Manifest::Base.new
     config = '<%= configuration[:application] %>'
     @manifest.expects(:configuration).returns(:application => 'bar')
     path = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))
@@ -20,7 +20,7 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
   end
 
   def test_app_templates_override_moonshine_templates
-    @manifest = Moonshine::Manifest.new
+    @manifest = Moonshine::Manifest::Base.new
     config = '<%= configuration[:application] %>'
     @manifest.expects(:configuration).returns(:application => 'bar')
     path = File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))
@@ -42,19 +42,19 @@ end
 include EvalTest
 recipe :foo
 """)
-    assert Moonshine::Manifest.plugin(:iptables)
-    assert Moonshine::Manifest.configuration[:eval]
-    @manifest = Moonshine::Manifest.new
+    assert Moonshine::Manifest::Base.plugin(:iptables)
+    assert Moonshine::Manifest::Base.configuration[:eval]
+    @manifest = Moonshine::Manifest::Base.new
     assert @manifest.respond_to?(:foo)
     assert @manifest.class.recipes.map(&:first).include?(:foo)
   end
 
   def test_loads_database_config
-    assert_not_nil Moonshine::Manifest.configuration['database']['production']['encoding']
+    assert_not_nil Moonshine::Manifest::Base.configuration['database']['production']['encoding']
   end
 
   def test_loads_capistrano_config
-    assert_not_nil Moonshine::Manifest.configuration['capistrano'].scm
+    assert_not_nil Moonshine::Manifest::Base.configuration['capistrano'].scm
   end
 
 end
