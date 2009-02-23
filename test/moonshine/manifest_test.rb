@@ -12,17 +12,21 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     @manifest = Moonshine::Manifest.new
     config = '<%= configuration[:application] %>'
     @manifest.expects(:configuration).returns(:application => 'bar')
-    File.expects(:read).with(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))).returns(config)
-    assert_equal 'bar', @manifest.template('passenger.conf.erb')
+    path = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))
+    File.expects(:exist?).with(File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(false)
+    File.expects(:exist?).with(path).returns(true)
+    File.expects(:read).with(path).returns(config)
+    assert_equal 'bar', @manifest.template(path)
   end
 
   def test_app_templates_override_moonshine_templates
     @manifest = Moonshine::Manifest.new
     config = '<%= configuration[:application] %>'
     @manifest.expects(:configuration).returns(:application => 'bar')
-    File.expects(:exist?).with(File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(true)
-    File.expects(:read).with(File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(config)
-    assert_equal 'bar', @manifest.template('passenger.conf.erb')
+    path = File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))
+    File.expects(:exist?).with(path).returns(true)
+    File.expects(:read).with(path).returns(config)
+    assert_equal 'bar', @manifest.template(path)
   end
 
   def test_loads_plugins

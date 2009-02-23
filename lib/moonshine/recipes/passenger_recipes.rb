@@ -15,13 +15,13 @@ module Moonshine::Recipes::PassengerRecipes
                              :require => [package("passenger"), package("apache2-mpm-worker"), package("apache2-threaded-dev")] }
 
     file '/etc/apache2/mods-available/passenger.load', { :ensure => :present,
-                      :content => template('passenger.load.erb'),
+                      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.load.erb')),
                       :require => [exec("build_passenger")],
                       :notify => service("apache2"),
                       :alias => "passenger_load" }
 
     file '/etc/apache2/mods-available/passenger.conf', { :ensure => :present,
-                      :content => template('passenger.conf.erb'),
+                      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.conf.erb')),
                       :require => [exec("build_passenger")],
                       :notify => service("apache2"),
                       :alias => "passenger_conf" }
@@ -33,7 +33,7 @@ module Moonshine::Recipes::PassengerRecipes
 
   def passenger_site
     file "/etc/apache2/sites-available/#{configuration[:application]}", { :ensure => :present,
-                      :content => template('passenger.vhost.erb'),
+                      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.vhost.erb')),
                       :notify => service("apache2"),
                       :alias => "passenger_vhost",
                       :require => exec("enable_passenger") }

@@ -29,14 +29,20 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     true
    end
 
-  #TODO support templates in working_directory/vendor/plugins/**templates
-  def template(template, b = nil)
+  # Render the ERB template located at <tt>pathname</tt>. If a template exists
+  # with the same basename at RAILS_ROOT/app/manifests/, it is used instead.
+  # This is useful to override templates provided by plugins to customize
+  # application configuration files.
+  def template(pathname, b = nil)
     b ||= self.send(:binding)
     template_contents = nil
-    if File.exist?(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', template)))
-      template_contents = File.read(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', template)))
+    basename = pathname.index('/') ? pathname.split('/').last : pathname
+    if File.exist?(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', basename)))
+      template_contents = File.read(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', basename)))
+    elsif File.exist?(File.expand_path(pathname))
+      template_contents = File.read(File.expand_path(pathname))
     else
-      template_contents = File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'moonshine', 'templates', template)))
+      raise LoadError, "Can't find template #{pathname}"
     end
     ERB.new(template_contents).result(b)
   end
