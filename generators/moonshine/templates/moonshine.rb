@@ -16,6 +16,10 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
   #   }
   # })
 
+  # Require and include the Moonshine::Nginx module from
+  # vendor/plugins/moonshine_nginx/lib/moonshine/nginx.rb
+  # plugin 'nginx'
+
   # add your gems and other good stuff here
   def application_packages
     # package 'some_awesome_gem', :ensure => :installed, :provider => :gem, :require => package('some_awesome_native_package')
