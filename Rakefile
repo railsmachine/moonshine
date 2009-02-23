@@ -7,6 +7,10 @@ rescue LoadError
   require 'rake/rdoctask'
 end
 
+task :rcov do
+  system "rcov --exclude /Library/Ruby/ --exclude ~/ -Itest `find test/ | grep _test`"
+end
+
 desc 'Default: run unit tests.'
 task :default => :test
 
