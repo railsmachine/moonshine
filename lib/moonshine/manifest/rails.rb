@@ -57,23 +57,23 @@ load '#{working_directory}/config/deploy.rb'
   #Essentially replicates the deploy:setup command from capistrano. Includes
   #shared_children and app_symlinks arrays from capistrano.
   def directories
-    deploy_to_array = configuration[:capistrano].deploy_to.split('/').split('/')
+    deploy_to_array = configuration[:deploy_to].split('/').split('/')
     deploy_to_array.each_with_index do |dir, index|
       next if index == 0 || index >= (deploy_to_array.size-1)
       file '/'+deploy_to_array[1..index].join('/'), :ensure => :directory
     end
     dirs = [
-      "#{configuration[:capistrano].deploy_to}",
-      "#{configuration[:capistrano].deploy_to}/shared",
-      "#{configuration[:capistrano].deploy_to}/releases"
+      "#{configuration[:deploy_to]}",
+      "#{configuration[:deploy_to]}/shared",
+      "#{configuration[:deploy_to]}/releases"
     ]
-    dirs += configuration[:capistrano].shared_children.map { |d| "#{configuration[:capistrano].deploy_to}/shared/#{d}" }
+    dirs += configuration[:capistrano].shared_children.map { |d| "#{configuration[:deploy_to]}/shared/#{d}" }
     if configuration[:capistrano].respond_to?(:app_symlinks)
-      dirs += ["#{configuration[:capistrano].deploy_to}/shared/public"]
-      dirs += configuration[:capistrano].app_symlinks.map { |d| "#{configuration[:capistrano].deploy_to}/shared/public/#{d}" }
+      dirs += ["#{configuration[:deploy_to]}/shared/public"]
+      dirs += configuration[:capistrano].app_symlinks.map { |d| "#{configuration[:deploy_to]}/shared/public/#{d}" }
     end
     dirs.each do |dir|
-      file dir, :ensure => :directory, :owner => configuration[:capistrano].user, :group => configuration[:capistrano].user
+      file dir, :ensure => :directory, :owner => configuration[:user], :group => configuration[:user]
     end
   end
 end

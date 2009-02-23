@@ -28,11 +28,17 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_creates_directories
     assert @manifest.class.recipes.map(&:first).include?(:directories)
+    config = {
+      :application => 'foo',
+      :capistrano => @manifest.configuration['capistrano'],
+      :user => 'foo',
+      :deploy_to => '/srv/foo'
+    }
+    @manifest.expects(:configuration).at_least_once.returns(config)
     @manifest.directories
-    cap_config = @manifest.configuration['capistrano']
-    assert_not_nil shared_dir = @manifest.puppet_resources[Puppet::Type::File]["#{cap_config.deploy_to}/shared"]
+    assert_not_nil shared_dir = @manifest.puppet_resources[Puppet::Type::File]["/srv/foo/shared"]
     assert_equal :directory, shared_dir.params[:ensure].value
-    assert_equal cap_config.user, shared_dir.params[:owner].value
-    assert_equal cap_config.user, shared_dir.params[:group].value
+    assert_equal 'foo', shared_dir.params[:owner].value
+    assert_equal 'foo', shared_dir.params[:group].value
   end
 end

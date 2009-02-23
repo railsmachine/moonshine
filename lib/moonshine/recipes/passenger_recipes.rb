@@ -49,7 +49,7 @@ module PassengerRecipes
 
   def passenger_site
     # TODO: ShadowPuppet needs template helper
-    conf_file = "/etc/apache2/sites-available/#{configuration[:capistrano].application}"
+    conf_file = "/etc/apache2/sites-available/#{configuration[:application]}"
     conf_template = File.join(File.dirname(__FILE__), "/../templates", "passenger.vhost.erb")
     conf_template_contents = File.read(conf_template)
     conf_content = ERB.new(conf_template_contents).result(binding)
@@ -64,8 +64,8 @@ module PassengerRecipes
                              :require => [file("passenger_vhost")],
                              :notify => service("apache2") }
 
-    exec "passenger_enable_site", { :command => "/usr/sbin/a2ensite #{configuration[:capistrano].application}",
-                             :unless => "ls /etc/apache2/sites-enabled/#{configuration[:capistrano].application}",
+    exec "passenger_enable_site", { :command => "/usr/sbin/a2ensite #{configuration[:application]}",
+                             :unless => "ls /etc/apache2/sites-enabled/#{configuration[:application]}",
                              :require => [file("passenger_vhost")],
                              :notify => service("apache2") }
   end

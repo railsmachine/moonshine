@@ -1,6 +1,20 @@
-require 'yaml'
 set :branch, fetch(:branch, 'master')
+
+#load the moonshine configuration into
+require 'yaml'
+begin
+  hash = YAML.load_file(File.join((ENV['RAILS_ROOT'] || Dir.pwd), 'config', 'moonshine.yml'))
+  hash.each do |key, value|
+    set(key.to_sym, value)
+  end
+rescue Exception
+  puts "To use Capistrano with Moonshine, please run 'ruby script/generate moonshine',"
+  puts "edit config/moonshine.yml, then re-run capistrano."
+  exit(1)
+end
+
 namespace :moonshine do
+
   desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine dependencies.'
   task :bootstrap do
     #copy the bootstrap script to the server to install Ruby, RubyGems, ShadowPuppet
@@ -12,7 +26,6 @@ namespace :moonshine do
     put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
     begin
       config = YAML.load_file(File.join(Dir.pwd, 'config', 'moonshine.yml'))
-      config = config.merge({:user => user, :application => application, :deploy_to => deploy_to})
       put(YAML.dump(config),"/tmp/moonshine.yml")
     rescue
       puts "Please run 'ruby script/generate moonshine' and configure config/moonshine.yml first"
