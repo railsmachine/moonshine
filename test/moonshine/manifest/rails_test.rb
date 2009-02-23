@@ -1,34 +1,18 @@
 require File.dirname(__FILE__) + '/../../test_helper.rb'
 
-module Moonshine::Iptables
-end
-
 class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def setup
     @manifest = Moonshine::Manifest::Rails.new
   end
 
-  def test_loads_plugins
-    Kernel.expects(:require).with(File.expand_path(File.join(Moonshine::Manifest.working_directory, 'vendor', 'plugins', 'moonshine_iptables', 'lib', 'moonshine', 'iptables.rb'))).returns(true)
-    Module.expects(:include).with(Moonshine::Iptables)
-    begin
-      assert Moonshine::Manifest::Rails.plugin('iptables')
-    rescue MissingSourceFile
-    end
-  end
-
-  def test_loads_database_config
-    assert_not_nil Moonshine::Manifest::Rails.configuration['database']['production']['encoding']
-  end
-
-  def test_loads_capistrano_config
-    assert_not_nil Moonshine::Manifest::Rails.configuration['capistrano'].scm
+  def test_is_executable
+    assert @manifest.executable?
   end
 
   def test_loads_gems_from_environment
-    assert @manifest.class.recipes.map(&:first).include?(:gems_from_environment)
-    @manifest.gems_from_environment
+    assert @manifest.class.recipes.map(&:first).include?(:rails_gems)
+    @manifest.rails_gems
     assert_not_nil Moonshine::Manifest::Rails.configuration['rails'].gems
     assert_not_nil RAILS_GEM_VERSION
     Moonshine::Manifest::Rails.configuration['rails'].gems.each do |gem_dependency|
@@ -39,7 +23,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_creates_directories
-    assert @manifest.class.recipes.map(&:first).include?(:directories)
+    assert @manifest.class.recipes.map(&:first).include?(:rails_directories)
     config = {
       :application => 'foo',
       :capistrano => @manifest.configuration['capistrano'],
@@ -47,10 +31,19 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :deploy_to => '/srv/foo'
     }
     @manifest.expects(:configuration).at_least_once.returns(config)
-    @manifest.directories
+    @manifest.rails_directories
     assert_not_nil shared_dir = @manifest.puppet_resources[Puppet::Type::File]["/srv/foo/shared"]
     assert_equal :directory, shared_dir.params[:ensure].value
     assert_equal 'foo', shared_dir.params[:owner].value
     assert_equal 'foo', shared_dir.params[:group].value
   end
+
+  def test_installs_apache
+    assert @manifest.class.recipes.map(&:first).include?(:apache_server)
+    @manifest.apache_server
+    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Service]["apache2"]
+    assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
+  end
+  
+
 end

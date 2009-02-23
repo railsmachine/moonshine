@@ -1,4 +1,26 @@
-module MySQLRecipes
+module Moonshine::Recipes::MySQLRecipes
+
+  def mysql_load_schema
+    rake("db:schema:load", {
+      :require => [
+         package('mysql'),
+         package("mysql-server"),
+         exec('create_user')
+        ],
+      :unless => "mysql -u root -p #{mysql_config_from_environment[:database]} -e 'select * from schema_migrations;'"
+    })
+  end
+
+  def mysql_migrations
+    rake("db:migrate",
+      :require => [
+         package("mysql"),
+         package("mysql-server"),
+         exec('create_user'),
+         exec('bootstrap_database')
+        ]
+    )
+  end
 
   def mysql_server
     package "mysql-server", :ensure => :installed
@@ -30,6 +52,7 @@ EOF
                              :notify => exec('boostrap_database')}
   end
 
+private
 
   def mysql_config_from_environment
     @db_config ||= configuration['database'][(ENV['RAILS_ENV'] || 'production')]
