@@ -1,1 +1,1 @@
-== Moonshine Rails
+== Moonshine
