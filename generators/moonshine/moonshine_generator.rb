@@ -13,6 +13,7 @@ class MoonshineGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       m.directory 'app/manifests'
+      m.directory 'app/manifests/templates'
       m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
       m.directory 'config'
       m.template  'moonshine.yml', "config/moonshine.yml"

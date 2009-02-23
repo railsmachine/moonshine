@@ -16,6 +16,15 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     assert_equal 'bar', @manifest.template('passenger.conf.erb')
   end
 
+  def test_app_templates_override_moonshine_templates
+    @manifest = Moonshine::Manifest.new
+    config = '<%= configuration[:application] %>'
+    @manifest.expects(:configuration).returns(:application => 'bar')
+    File.expects(:exist?).with(File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(true)
+    File.expects(:read).with(File.expand_path(File.join(@manifest.class.working_directory, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(config)
+    assert_equal 'bar', @manifest.template('passenger.conf.erb')
+  end
+
   def test_loads_plugins
     Kernel.expects(:require).with(File.expand_path(File.join(Moonshine::Manifest.working_directory, 'vendor', 'plugins', 'moonshine_iptables', 'lib', 'moonshine', 'iptables.rb'))).returns(true)
     Module.expects(:include).with(Moonshine::Iptables)

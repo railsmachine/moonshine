@@ -19,6 +19,7 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
   def test_generates_correct_files
     assert @new_files.include?(config_path)
     assert @new_files.include?(manifest_path)
+    assert @new_files.include?(templates_path)
   end
 
   def test_generates_valid_config_file
@@ -38,7 +39,10 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
     def config_path
       './test/rails_root/config/moonshine.yml'
     end
-    
+
+    def templates_path
+      './test/rails_root/app/manifests/templates'
+    end
 
     def fake_rails_root
       File.join(File.dirname(__FILE__), 'rails_root')
