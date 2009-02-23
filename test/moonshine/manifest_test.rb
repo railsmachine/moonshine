@@ -12,7 +12,7 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     @manifest = Moonshine::Manifest.new
     config = '<%= configuration[:application] %>'
     @manifest.expects(:configuration).returns(:application => 'bar')
-    File.expects(:read).with(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'templates', 'passenger.conf.erb'))).returns(config)
+    File.expects(:read).with(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))).returns(config)
     assert_equal 'bar', @manifest.template('passenger.conf.erb')
   end
 

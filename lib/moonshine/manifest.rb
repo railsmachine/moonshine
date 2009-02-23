@@ -18,7 +18,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #TODO support templates in working_directory/vendor/plugins/**templates
   def template(template, b = nil)
     b ||= self.send(:binding)
-    template_contents = File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'templates', template)))
+    template_contents = File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'moonshine', 'templates', template)))
     ERB.new(template_contents).result(b)
   end
 
