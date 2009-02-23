@@ -10,7 +10,7 @@ end
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test the moonshine_rails plugin.'
+desc 'Test the moonshine plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
@@ -18,10 +18,10 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
-desc 'Generate documentation for the moonshine_rails plugin.'
+desc 'Generate documentation for the moonshine plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Moonshine Rails'
+  rdoc.title    = 'Moonshine'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
