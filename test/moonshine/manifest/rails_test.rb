@@ -45,6 +45,22 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
   end
 
+  def test_installs_passenger_gem
+    assert @manifest.class.recipes.map(&:first).include?(:passenger_gem)
+    @manifest.passenger_gem
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["passenger"]
+  end
+
+  def test_installs_passenger_module
+    assert @manifest.class.recipes.map(&:first).include?(:passenger_apache_module)
+    @manifest.passenger_apache_module
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['apache2-threaded-dev']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]['/etc/apache2/mods-available/passenger.load']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]['/etc/apache2/mods-available/passenger.conf']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod passenger' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/ruby -S rake clean apache2' }
+  end
+
   def test_configures_passenger_vhost
     assert @manifest.class.recipes.map(&:first).include?(:passenger_site)
     @manifest.passenger_site
