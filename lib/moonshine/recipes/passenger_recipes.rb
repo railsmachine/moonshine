@@ -14,13 +14,13 @@ module Moonshine::Recipes::PassengerRecipes
                              :creates => "#{passenger_gem_path}/ext/apache2/mod_passenger.so",
                              :require => [package("passenger"), package("apache2-mpm-worker"), package("apache2-threaded-dev")] }
 
-    file load_file, { :ensure => :present,
+    file '/etc/apache2/mods-available/passenger.load', { :ensure => :present,
                       :content => template('passenger.load.erb'),
                       :require => [exec("build_passenger")],
                       :notify => service("apache2"),
                       :alias => "passenger_load" }
 
-    file conf_file, { :ensure => :present,
+    file '/etc/apache2/mods-available/passenger.conf', { :ensure => :present,
                       :content => template('passenger.conf.erb'),
                       :require => [exec("build_passenger")],
                       :notify => service("apache2"),
@@ -32,7 +32,7 @@ module Moonshine::Recipes::PassengerRecipes
   end
 
   def passenger_site
-    file conf_file, { :ensure => :present,
+    file "/etc/apache2/sites-available/#{configuration[:application]}", { :ensure => :present,
                       :content => template('passenger.vhost.erb'),
                       :notify => service("apache2"),
                       :alias => "passenger_vhost",

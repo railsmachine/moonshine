@@ -44,6 +44,13 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Service]["apache2"]
     assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
   end
-  
+
+  def test_configures_passenger_vhost
+    assert @manifest.class.recipes.map(&:first).include?(:passenger_site)
+    @manifest.passenger_site
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite default' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configuration[:application]}" }
+  end
 
 end
