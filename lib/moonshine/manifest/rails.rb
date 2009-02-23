@@ -14,6 +14,16 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   recipe :mysql_user, :bootstrap_database
   recipe :migrations
 
+  def self.plugin(name)
+    begin
+      name = name.to_s.underscore
+      Kernel.require File.join(working_directory, 'vendor', 'plugins', "moonshine_#{name}", 'lib', 'moonshine', "#{name}.rb")
+      Module.include "moonshine/#{name}".camelize.constantize
+    else
+      true
+    end
+   end
+
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
 

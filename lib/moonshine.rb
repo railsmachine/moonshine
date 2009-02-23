@@ -1,5 +1,7 @@
 require 'shadow_puppet'
 require 'capistrano'
+require 'erb'
+require 'active_support/inflector'
 module Moonshine
 end
 require "#{File.dirname(__FILE__)}/moonshine/manifest.rb"

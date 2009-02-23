@@ -1,9 +1,21 @@
 require File.dirname(__FILE__) + '/../../test_helper.rb'
 
+module Moonshine::Iptables
+end
+
 class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def setup
     @manifest = Moonshine::Manifest::Rails.new
+  end
+
+  def test_loads_plugins
+    Kernel.expects(:require).with(File.expand_path(File.join(Moonshine::Manifest.working_directory, 'vendor', 'plugins', 'moonshine_iptables', 'lib', 'moonshine', 'iptables.rb'))).returns(true)
+    Module.expects(:include).with(Moonshine::Iptables)
+    begin
+      assert Moonshine::Manifest::Rails.plugin('iptables')
+    rescue MissingSourceFile
+    end
   end
 
   def test_loads_database_config
