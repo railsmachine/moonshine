@@ -7,18 +7,18 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_loads_database_config
-    assert_equal 'utf8', Moonshine::Manifest::Rails.configuration['database']['production']['encoding']
+    assert_not_nil Moonshine::Manifest::Rails.configuration['database']['production']['encoding']
   end
 
   def test_loads_capistrano_config
-    assert_equal :git, Moonshine::Manifest::Rails.configuration['capistrano'].scm
+    assert_not_nil Moonshine::Manifest::Rails.configuration['capistrano'].scm
   end
 
   def test_loads_gems_from_environment
     assert @manifest.class.recipes.map(&:first).include?(:gems_from_environment)
     @manifest.gems_from_environment
     assert_not_nil Moonshine::Manifest::Rails.configuration['rails'].gems
-    assert_equal '2.2.2', RAILS_GEM_VERSION
+    assert_not_nil RAILS_GEM_VERSION
     Moonshine::Manifest::Rails.configuration['rails'].gems.each do |gem_dependency|
       assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem_dependency.name]
       assert_equal gem_dependency.source, gem_resource.params[:source].value
