@@ -7,10 +7,25 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     @working_directory ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
   end
 
-  def self.plugin(name)
-    name = name.to_s.underscore
-    Kernel.require File.join(working_directory, 'vendor', 'plugins', "moonshine_#{name}", 'lib', 'moonshine', "#{name}.rb")
-    Module.include "moonshine/#{name}".camelize.constantize
+  # Load a Moonshine Plugin
+  #
+  #   class MyManifest < Moonshine::Manifest
+  #
+  #     # Evals vendor/plugins/moonshine_my_app/moonshine.init.rb
+  #     plugin :moonshine_my_app
+  #
+  #     # Evals lib/my_recipe.rb
+  #     plugin 'lib/my_recipe.rb'
+  #
+  #     ...
+  #   end
+  def self.plugin(name = nil)
+    if name.is_a?(Symbol)
+      path = File.join(working_directory, 'vendor', 'plugins', 'name', 'moonshine', 'init.rb')
+    else
+      path = File.join(working_directory, name)
+    end
+    Kernel.eval(File.read(path), binding, path)
     true
    end
 

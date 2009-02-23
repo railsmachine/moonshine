@@ -26,12 +26,23 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
   end
 
   def test_loads_plugins
-    Kernel.expects(:require).with(File.expand_path(File.join(Moonshine::Manifest.working_directory, 'vendor', 'plugins', 'moonshine_iptables', 'lib', 'moonshine', 'iptables.rb'))).returns(true)
-    Module.expects(:include).with(Moonshine::Iptables)
-    begin
-      assert Moonshine::Manifest.plugin('iptables')
-    rescue MissingSourceFile
-    end
+    File.expects(:read).returns("""
+configure(:eval => true)
+
+module EvalTest
+  def foo
+
+  end
+end
+
+include EvalTest
+recipe :foo
+""")
+    assert Moonshine::Manifest.plugin(:iptables)
+    assert Moonshine::Manifest.configuration[:eval]
+    @manifest = Moonshine::Manifest.new
+    assert @manifest.respond_to?(:foo)
+    assert @manifest.class.recipes.map(&:first).include?(:foo)
   end
 
   def test_loads_database_config
