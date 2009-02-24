@@ -18,7 +18,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil RAILS_GEM_VERSION
     Moonshine::Manifest::Rails.configuration['rails'].gems.each do |gem_dependency|
       assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem_dependency.name]
-      assert gem_resource.params[:ensure].value.is_a?(Symbol) || gem_resource.params[:ensure].value == "'#{gem_dependency.requirement.to_s}'"
+      assert gem_resource.params[:ensure].value.is_a?(Symbol) || gem_resource.params[:ensure].value == "\"#{gem_dependency.requirement.to_s}\""
       assert_equal gem_dependency.source, gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
     end

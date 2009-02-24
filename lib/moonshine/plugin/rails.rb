@@ -8,7 +8,7 @@ module Moonshine::Plugin::Rails
         :provider => :gem,
         :source   => gem_dependency.source,
         :before   => exec('rails_gems'),
-        :ensure   => gem_dependency.requirement ? "'#{gem_dependency.requirement.to_s}'" : :latest
+        :ensure   => gem_dependency.requirement ? "\"#{gem_dependency.requirement.to_s}\"" : :latest
       })
     end
     package('rails', {
