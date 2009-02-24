@@ -30,6 +30,7 @@ GRANT ALL PRIVILEGES
 ON #{mysql_config_from_environment[:database]}.*
 TO #{mysql_config_from_environment[:username]}@localhost 
 IDENTIFIED BY '#{mysql_config_from_environment[:password]}';
+FLUSH PRIVILEGES;
 EOF
     # ok, this could compare the shown grants for the user to what it expects.
     exec "mysql_user", { :command => mysql_query(grant),
