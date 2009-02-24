@@ -4,12 +4,19 @@ module Moonshine::Plugin::Rails
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
     configuration['rails'].gems.each do |gem_dependency|
-      package(gem_dependency.name, {
+      hash = {
         :provider => :gem,
         :source   => gem_dependency.source,
-        :before   => exec('rails_gems'),
-        :ensure   => gem_dependency.requirement ? "\"#{gem_dependency.requirement.to_s}\"" : :latest
-      })
+        :before   => exec('rails_gems')
+      }
+      if gem_dependency.loaded?
+        #it's already loaded, let's just specify that we want it installed
+        hash.merge!(:ensure => :installed)
+      else
+        #otherwise, add the version
+        hash.merge!(:ensure => gem_dependency.requirement.to_s)
+      end
+      package(gem_dependency.name, hash)
     end
     package('rails', {
       :provider => :gem,
