@@ -2,6 +2,13 @@
     ServerName <%= configuration[:domain] || `hostname -f` %>
     DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
 
+    <Directory <%= configuration[:deploy_to] + "/current/public" %>>
+      Options FollowSymLinks
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+    </Directory>
+
     ##
     ## The following options are Rails specific options. They may occur
     ## here in your VirtualHost entry or in the global configuration.
