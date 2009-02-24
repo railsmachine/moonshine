@@ -1,8 +1,6 @@
 module Moonshine::Plugin::Rails
 
   def rails_gems
-    rails_configuration
-
     configuration['rails'].gems.each do |gem_dependency|
       package(gem_dependency.name, {
         :provider => :gem,
@@ -39,19 +37,6 @@ module Moonshine::Plugin::Rails
     end
   end
 
-private
-
-  # Creates exec('rake #name') that runs in the working_directory of the rails
-  # app, with RAILS_ENV properly set
-  def rake(name, options = {})
-    exec("rake #{name}", {
-      :command => "rake #{name}",
-      :cwd => self.class.working_directory,
-      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}"
-    }.merge(options)
-  )
-  end
-
   def rails_configuration
     return configuration[:rails] if configuration[:rails]
     $rails_gem_installer = true
@@ -69,7 +54,20 @@ private
     configuration[:rails]
   end
 
+private
+
+  # Creates exec('rake #name') that runs in the working_directory of the rails
+  # app, with RAILS_ENV properly set
+  def rake(name, options = {})
+    exec("rake #{name}", {
+      :command => "rake #{name}",
+      :cwd => self.class.working_directory,
+      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}"
+    }.merge(options)
+  )
+  end
+
 end
 
 include Moonshine::Plugin::Rails
-recipe :rails_gems, :rails_directories
+recipe :rails_configuration, :rails_gems, :rails_directories

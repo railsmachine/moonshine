@@ -6,15 +6,12 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
   # <tt>config/moonshine.yml</tt>. This could be used, for example, to store
   # passwords and/or private keys outside of your SCM, or to query a web
   # service for configuration data.
-  # configure({
-  #   :name     => 'yourappname',
-  #   :apache   => {
-  #     :server_name => 'yourappname.com'
-  #   },
-  #   :mysql => {
-  #     :password => 'secret'
-  #   }
-  # })
+  configure({
+    :passenger   => {
+      :max_pool_size => 3,
+      :use_global_queue => true
+    }
+  })
 
   # Require and include the Moonshine::Nginx module from
   # vendor/plugins/moonshine_nginx/lib/moonshine/nginx.rb

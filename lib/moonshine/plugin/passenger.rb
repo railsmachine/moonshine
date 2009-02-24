@@ -9,9 +9,9 @@ module Moonshine::Plugin::Passenger
     package "apache2-threaded-dev", :ensure => :installed
 
     # Build Passenger from source
-    exec "build_passenger", {:cwd => passenger_gem_path,
+    exec "build_passenger", {:cwd => configuration[:passenger][:path],
                              :command => '/usr/bin/ruby -S rake clean apache2',
-                             :creates => "#{passenger_gem_path}/ext/apache2/mod_passenger.so",
+                             :creates => "#{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so",
                              :require => [package("passenger"), package("apache2-mpm-worker"), package("apache2-threaded-dev")] }
 
     file '/etc/apache2/mods-available/passenger.load', { :ensure => :present,
@@ -49,19 +49,31 @@ module Moonshine::Plugin::Passenger
                              :notify => service("apache2") }
   end
 
-private
-
-  def passenger_gem_path
+  def passenger_configure_gem_path
+    return configuration[:passenger][:path] if configuration[:passenger] && configuration[:passenger][:path]
     version = begin
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     rescue
       `gem install passenger --no-ri --no-rdoc`
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     end
-    "#{Gem.dir}/gems/passenger-#{version}"
+    configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{version}" })
+    configuration[:passenger][:path]
+  end
+
+private
+
+  def passenger_config_boolean(key)
+    if key.nil?
+      nil
+    elsif key == 'Off' || (!!key) == false
+      'Off'
+    else
+      'On'
+    end
   end
 
 end
 
 include Moonshine::Plugin::Passenger
-recipe :passenger_gem, :passenger_apache_module, :passenger_site
+recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site

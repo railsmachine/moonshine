@@ -12,6 +12,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_loads_gems_from_environment
     assert @manifest.class.recipes.map(&:first).include?(:rails_gems)
+    @manifest.rails_configuration
     @manifest.rails_gems
     assert_not_nil Moonshine::Manifest::Rails.configuration['rails'].gems
     assert_not_nil RAILS_GEM_VERSION
@@ -47,12 +48,14 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_installs_passenger_gem
     assert @manifest.class.recipes.map(&:first).include?(:passenger_gem)
+    @manifest.passenger_configure_gem_path
     @manifest.passenger_gem
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["passenger"]
   end
 
   def test_installs_passenger_module
     assert @manifest.class.recipes.map(&:first).include?(:passenger_apache_module)
+    @manifest.passenger_configure_gem_path
     @manifest.passenger_apache_module
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['apache2-threaded-dev']
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]['/etc/apache2/mods-available/passenger.load']
@@ -63,10 +66,20 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_configures_passenger_vhost
     assert @manifest.class.recipes.map(&:first).include?(:passenger_site)
+    @manifest.passenger_configure_gem_path
     @manifest.passenger_site
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
+    assert_match /RailsAllowModRewrite Off/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite default' }
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configuration[:application]}" }
+  end
+
+  def test_passenger_vhost_configuration
+    assert @manifest.class.recipes.map(&:first).include?(:passenger_site)
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:passenger => { :allow_mod_rewrite => true })
+    @manifest.passenger_site
+    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
 
 end
