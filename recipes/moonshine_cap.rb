@@ -15,7 +15,10 @@ end
 
 namespace :moonshine do
 
-  desc 'Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine dependencies.'
+  desc <<-DESC
+  Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine
+  dependencies. Called by deploy:setup.
+  DESC
   task :bootstrap do
     #copy the bootstrap script to the server to install Ruby, RubyGems, ShadowPuppet
     put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
@@ -38,11 +41,27 @@ namespace :moonshine do
 
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
-    sudo "RAILS_ROOT=#{latest_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
+    sudo "RAILS_ROOT=#{current_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
   after 'deploy:update_code' do
+    symlink_db_config
     apply
+  end
+
+  desc <<-DESC
+  Uploads your config/database.yml to the application's shared directory for
+  later symlinking (if necessary). Called by deploy:setup
+  DESC
+  task :shared_db_config do
+    if File.exist?('config/database.yml')
+      put(File.read('config/database.yml'),"#{shared_path}/database.yml")
+    end
+  end
+
+  desc "Ensure that database.yml is in place"
+  task :symlink_db_config do
+    run "ls #{current_release}/config/database.yml || ln -nfs #{shared_path}/database.yml #{current_release}/config/database.yml"
   end
 
 end
@@ -71,5 +90,6 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
+    moonshine.shared_db_config
   end
 end
