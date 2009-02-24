@@ -2,7 +2,10 @@ module Moonshine::Plugin::Mysql
 
   def mysql_load_schema
     rake('db:schema:load', {
-      :require => exec('mysql_user'),
+      :require => [
+        exec('mysql_user'),
+        exec('rails_gems')
+      ],
       :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;")
     })
   end

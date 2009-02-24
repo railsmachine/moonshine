@@ -1,11 +1,14 @@
 module Moonshine::Plugin::Rails
 
   def rails_gems
+    #stub for dependencies
+    exec 'rails_gems', :command => 'true'
     configuration['rails'].gems.each do |gem_dependency|
       package(gem_dependency.name, {
         :provider => :gem,
         :source   => gem_dependency.source,
-        :ensure  => gem_dependency.requirement ? gem_dependency.requirement.to_s : :latest
+        :before   => exec('rails_gems'),
+        :ensure   => gem_dependency.requirement ? gem_dependency.requirement.to_s : :latest
       })
     end
     package('rails', {
