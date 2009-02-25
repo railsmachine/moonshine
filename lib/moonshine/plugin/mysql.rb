@@ -6,7 +6,17 @@ module Moonshine::Plugin::Mysql
         exec('mysql_user'),
         exec('rails_gems')
       ],
+      :notify => exec('rake db:fixtures:load'),
       :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;")
+    })
+  end
+
+  def mysql_bootstrap
+    rake('db:fixtures:load', {
+     :require => exec('rake db:schema:load'),
+     :onlyif => 'test -d db/bootstrap',
+     :refreshonly => true,
+     :environment => [ "RAILS_ENV=production", "FIXTURES_PATH=db/bootstrap/" ]
     })
   end
 
