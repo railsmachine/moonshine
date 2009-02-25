@@ -12,6 +12,8 @@ module Moonshine::Plugin::Rails
       if gem_dependency.loaded?
         #it's already loaded, let's just specify that we want it installed
         hash.merge!(:ensure => :installed)
+      elsif gem_dependency.requirement.to_s.blank?
+        hash.merge!(:ensure => :installed)
       else
         #otherwise, add the version
         hash.merge!(:ensure => gem_dependency.requirement.to_s)
