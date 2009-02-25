@@ -52,7 +52,7 @@ module Moonshine::Plugin::Rails
     $rails_gem_installer = true
     begin
       require(File.join(self.class.working_directory, 'config', 'environment'))
-    rescue Exception
+    rescue SystemExit
       if defined?(RAILS_GEM_VERSION)
         #we can't parse the environment. as a last ditch effort, shell out and
         #try to install rails
