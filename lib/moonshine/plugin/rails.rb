@@ -6,11 +6,13 @@ module Moonshine::Plugin::Rails
     configuration['rails'].gems.each do |gem_dependency|
       hash = {
         :provider => :gem,
-        :source   => gem_dependency.source,
         :before   => exec('rails_gems')
       }
+      hash.merge!(:source => gem_dependency.source) if gem_dependency.source
       if gem_dependency.loaded?
         #it's already loaded, let's just specify that we want it installed
+        hash.merge!(:ensure => :installed)
+      elsif gem_dependency.requirement.to_s.blank?
         hash.merge!(:ensure => :installed)
       else
         #otherwise, add the version
@@ -52,7 +54,7 @@ module Moonshine::Plugin::Rails
     $rails_gem_installer = true
     begin
       require(File.join(self.class.working_directory, 'config', 'environment'))
-    rescue Exception
+    rescue SystemExit
       if defined?(RAILS_GEM_VERSION)
         #we can't parse the environment. as a last ditch effort, shell out and
         #try to install rails

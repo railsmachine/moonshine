@@ -79,7 +79,7 @@ namespace :moonshine do
   namespace :symlink do
     desc "Ensure that database.yml is in place"
     task :db_config do
-      run "ls #{current_release}/config/database.yml || ln -nfs #{shared_path}/database.yml #{current_release}/config/database.yml"
+      run "ls #{current_release}/config/database.yml 2> /dev/null || ln -nfs #{shared_path}/database.yml #{current_release}/config/database.yml"
     end
 
     desc <<-DESC

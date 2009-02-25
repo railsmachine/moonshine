@@ -69,4 +69,4 @@ private
 end
 
 include Moonshine::Plugin::Mysql
-recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_load_schema, :mysql_migrations
+recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_load_schema, :mysql_bootstrap, :mysql_migrations

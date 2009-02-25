@@ -16,9 +16,9 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
 
   # Installs the gem dependencies of the Moonshine::Manifest::Rails
   def gems
-    package 'shadow_puppet', :provider => :gem, :ensure => '0.1.7'
-    package 'shadow_facter', :provider => :gem, :ensure => '0.1.2'
-    package 'capistrano', :provider => :gem, :ensure => '2.5.4'
+    package 'shadow_puppet', :provider => :gem, :ensure => :latest
+    package 'shadow_facter', :provider => :gem, :ensure => :latest
+    package 'capistrano', :provider => :gem, :ensure => :latest
     package 'rails', :provider => :gem, :ensure => :latest
     package 'passenger', :provider => :gem, :ensure => :latest
   end
