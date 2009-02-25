@@ -6,9 +6,9 @@ module Moonshine::Plugin::Rails
     configuration['rails'].gems.each do |gem_dependency|
       hash = {
         :provider => :gem,
-        :source   => gem_dependency.source,
         :before   => exec('rails_gems')
       }
+      hash.merge!(:source => gem_dependency.source) if gem_dependency.source
       if gem_dependency.loaded?
         #it's already loaded, let's just specify that we want it installed
         hash.merge!(:ensure => :installed)
