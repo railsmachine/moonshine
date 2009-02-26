@@ -1,12 +1,12 @@
 namespace :db do
-  namespace :fixtures do 
+  namespace :fixtures do
     desc "Create fixtures in db/bootstrap. Specify tables with FIXTURES=x,y otherwise all will be created."
     task :dump => :environment do
       sql = "SELECT * FROM %s"
       skip_tables = [ "schema_info", "sessions", "schema_migrations" ]
       ActiveRecord::Base.establish_connection
       tables = ENV['FIXTURES'] ? ENV['FIXTURES'].split(/,/) : ActiveRecord::Base.connection.tables - skip_tables
-      
+
       tables.each do |table_name|
         i = "0000"
         File.open("#{RAILS_ROOT}/db/bootstrap/#{table_name}.yml", 'w') do |file|
@@ -17,7 +17,7 @@ namespace :db do
           }.to_yaml
         end
       end
-      
-    end  
+
+    end
   end
 end
