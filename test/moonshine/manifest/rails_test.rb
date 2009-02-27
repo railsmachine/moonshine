@@ -26,7 +26,6 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert @manifest.class.recipes.map(&:first).include?(:rails_directories)
     config = {
       :application => 'foo',
-      :capistrano => @manifest.configuration['capistrano'],
       :user => 'foo',
       :deploy_to => '/srv/foo'
     }
