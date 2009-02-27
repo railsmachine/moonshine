@@ -10,12 +10,7 @@
 #   config/database.yml
 #
 # The contents of your database config are parsed and are available at
-# <tt>configuration[:database]</tt>. If you are keeping your database.yml
-# out of source control, that means you'll want to ensure that the shared copy
-# has been symlinked to <tt>config/database.yml</tt> before the manifests are
-# applied:
-#
-#   before 'moonshine:apply', 'db:symlink'
+# <tt>configuration[:database]</tt>.
 #
 # == Extending
 #
