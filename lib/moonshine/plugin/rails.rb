@@ -22,7 +22,7 @@ module Moonshine::Plugin::Rails
       :onlyif => 'test -d db/bootstrap',
       :refreshonly => true,
       :require => exec('rake db:migrate'),
-      :environment => [ "RAILS_ENV=production" ],
+      :environment => [ "RAILS_ENV=production" ]
 
     rake 'moonshine:app:bootstrap',
       :refreshonly => true,
@@ -36,7 +36,7 @@ module Moonshine::Plugin::Rails
 
   def rails_rake_environment
     package 'rake', :provider => :gem, :ensure => :installed
-    exec 'rake environment'
+    exec 'rake environment',
       :cwd => self.class.working_directory,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => [
