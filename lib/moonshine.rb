@@ -1,5 +1,4 @@
 require 'shadow_puppet'
-require 'capistrano'
 require 'erb'
 require 'active_support/inflector'
 module Moonshine  #:nodoc:

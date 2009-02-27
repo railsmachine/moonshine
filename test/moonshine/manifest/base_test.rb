@@ -53,8 +53,4 @@ recipe :foo
     assert_not_nil Moonshine::Manifest::Base.configuration['database']['production']['encoding']
   end
 
-  def test_loads_capistrano_config
-    assert_not_nil Moonshine::Manifest::Base.configuration['capistrano'].scm
-  end
-
 end

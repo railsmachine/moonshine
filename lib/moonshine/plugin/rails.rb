@@ -66,8 +66,7 @@ module Moonshine::Plugin::Rails
     end
   end
 
-  #Essentially replicates the deploy:setup command from capistrano. Includes
-  #shared_children and app_symlinks arrays from capistrano.
+  #Essentially replicates the deploy:setup command from capistrano
   def rails_directories
     deploy_to_array = configuration[:deploy_to].split('/').split('/')
     deploy_to_array.each_with_index do |dir, index|
@@ -79,10 +78,10 @@ module Moonshine::Plugin::Rails
       "#{configuration[:deploy_to]}/shared",
       "#{configuration[:deploy_to]}/releases"
     ]
-    dirs += configuration[:capistrano].shared_children.map { |d| "#{configuration[:deploy_to]}/shared/#{d}" }
-    if configuration[:capistrano].respond_to?(:app_symlinks)
+    dirs += configuration[:shared_children].map { |d| "#{configuration[:deploy_to]}/shared/#{d}" } if configuration[:shared_children]
+    if configuration[:app_symlinks]
       dirs += ["#{configuration[:deploy_to]}/shared/public"]
-      dirs += configuration[:capistrano].app_symlinks.map { |d| "#{configuration[:deploy_to]}/shared/public/#{d}" }
+      dirs += configuration[:app_symlinks].map { |d| "#{configuration[:deploy_to]}/shared/public/#{d}" }
     end
     dirs.each do |dir|
       file dir, :ensure => :directory, :owner => configuration[:user], :group => configuration[:user]

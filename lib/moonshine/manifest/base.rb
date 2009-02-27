@@ -17,11 +17,6 @@
 #
 #   before 'moonshine:apply', 'db:symlink'
 #
-#   config/deploy.rb
-#
-# The the capistrano configuration object described by <tt>config/deploy.rb</tt>
-# is available <tt>configuration[:capistrano]</tt>
-#
 # == Extending
 #
 # If you'd like to create another 'default rails stack' using other tools that
@@ -77,14 +72,5 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
 
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
-
-  #capistrano
-  cap = Capistrano::Configuration.new
-  cap.load(:string => """
-load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-Dir['#{working_directory}/vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
-load '#{working_directory}/config/deploy.rb'
-""")
-  configure(:capistrano => cap)
 
 end

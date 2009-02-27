@@ -3,3 +3,9 @@
 :deploy_to: /srv/your_app_name
 :domain: yourapp.com
 :repository: git@github.com:username/your_app_name.git
+:app_symlinks:
+:shared_children:
+- system
+- logs
+- pids
+- config
