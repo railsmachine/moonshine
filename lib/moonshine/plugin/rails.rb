@@ -48,9 +48,8 @@ module Moonshine::Plugin::Rails
         :before   => exec('rails_gems')
       }
       hash.merge!(:source => gem[:source]) if gem[:source]
-      real_gems = Gem.source_index.installed_source_index
       exact_dep = gem[:version] ? Gem::Dependency.new(gem[:name], gem[:version]) : Gem::Dependency.new(gem[:name], '>0')
-      matches = real_gems.search(exact_dep)
+      matches = Gem.source_index.search(exact_dep)
       installed_spec = matches.first
       if installed_spec
         #it's already loaded, let's just specify that we want it installed
