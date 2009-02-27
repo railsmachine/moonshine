@@ -30,6 +30,10 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
     assert_match /class ApplicationManifest < Moonshine::Manifest::Rails/, File.read(manifest_path)
   end
 
+  def test_generates_gem_dependencies
+    assert_not_nil YAML.load_file(config_path)[:gems]
+  end
+
   private
 
     def manifest_path
