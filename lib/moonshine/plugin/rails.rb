@@ -15,23 +15,19 @@ module Moonshine::Plugin::Rails
 
     rake 'db:schema:load',
       :refreshonly => true,
-      :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;"),
+      :onlyif => 'test -f db/schema.rb',
       :before => exec('rake db:migrate')
 
     rake 'moonshine:db:bootstrap',
-      :require => exec('rake db:schema:load'),
       :onlyif => 'test -d db/bootstrap',
       :refreshonly => true,
-      :require => exec('rake db:schema:load'),
+      :require => exec('rake db:migrate'),
       :environment => [ "RAILS_ENV=production" ],
-      :before => exec('rake db:migrate')
 
     rake 'moonshine:app:bootstrap',
-      :require => exec('rake db:schema:load'),
       :refreshonly => true,
       :require => exec('rake moonshine:db:bootstrap'),
-      :environment => [ "RAILS_ENV=production" ],
-      :before => exec('rake db:migrate')
+      :environment => [ "RAILS_ENV=production" ]
   end
 
   def rails_migrations
