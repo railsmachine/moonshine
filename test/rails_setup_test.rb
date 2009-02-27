@@ -28,6 +28,7 @@ class MoonshineSetupManifestTest < Test::Unit::TestCase
     assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["shadow_puppet"].params[:provider].value
     assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["shadow_facter"].params[:provider].value
     assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["capistrano"].params[:provider].value
+    assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["capistrano-ext"].params[:provider].value
   end
 
   def test_creates_directories
