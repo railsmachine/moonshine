@@ -19,6 +19,7 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
     package 'shadow_puppet', :provider => :gem, :ensure => :latest
     package 'shadow_facter', :provider => :gem, :ensure => :latest
     package 'capistrano', :provider => :gem, :ensure => :latest
+    package 'capistrano-ext', :provider => :gem, :ensure => :latest
     package 'rails', :provider => :gem, :ensure => :latest
     package 'passenger', :provider => :gem, :ensure => :latest
   end
