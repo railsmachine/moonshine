@@ -14,7 +14,6 @@ module Moonshine::Plugin::Rails
 
     rake 'db:schema:load',
       :refreshonly => true,
-      :notify => exec('rails_bootstrap'),
       :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;"),
       :before => exec('rake db:migrate')
 
