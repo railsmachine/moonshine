@@ -10,15 +10,14 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert @manifest.executable?
   end
 
-  def test_loads_gems_from_environment
+  def test_loads_gems_from_config_hash
     assert @manifest.class.recipes.map(&:first).include?(:rails_gems)
-    @manifest.rails_configuration
+    @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://gems.github.com/' } ])
     @manifest.rails_gems
-    assert_not_nil Moonshine::Manifest::Rails.configuration['rails'].gems
-    assert_not_nil RAILS_GEM_VERSION
-    Moonshine::Manifest::Rails.configuration['rails'].gems.each do |gem_dependency|
-      assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem_dependency.name]
-      assert_equal gem_dependency.source, gem_resource.params[:source].value
+    assert_not_nil Moonshine::Manifest::Rails.configuration[:gems]
+    Moonshine::Manifest::Rails.configuration[:gems].each do |gem|
+      assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem[:name]]
+      assert_equal gem[:source], gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
     end
   end
