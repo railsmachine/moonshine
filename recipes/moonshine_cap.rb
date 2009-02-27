@@ -47,54 +47,40 @@ namespace :moonshine do
 
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
-    case fetch(:moonshine_config, 'from_repo')
-    when 'local'
-      upload.moonshine_config
-      symlink.moonshine_config
-    end
     sudo "RAILS_ROOT=#{current_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
   after 'deploy:update_code' do
-    symlink.db_config
+    local_config.upload
+    local_config.symlink
     apply
   end
 
-  namespace :upload do
+  namespace :local_config do
+    
     desc <<-DESC
-    Uploads your config/moonshine.yml to the application's shared directory for
-    later symlinking (if necessary). Called if moonshine_config=local
+    Uploads local configuration files to the application's shared directory for
+    later symlinking (if necessary). Called if local_config is set.
     DESC
-    task :moonshine_config do
-      if File.exist?('config/moonshine.yml')
-        put(File.read('config/moonshine.yml'),"#{shared_path}/moonshine.yml")
+    task :upload do
+      fetch(:local_config,[]).each do |file|
+        filename = File.split(file).last
+        if File.exist?( file )
+          put(File.read( file ),"#{shared_path}/#{filename}")
+        end
       end
     end
-
+    
     desc <<-DESC
-    Uploads your config/database.yml to the application's shared directory for
-    later symlinking (if necessary). Called by deploy:setup
+    Symlinks uploaded local configurations into the release directory.
     DESC
-    task :db_config do
-      if File.exist?('config/database.yml')
-        put(File.read('config/database.yml'),"#{shared_path}/database.yml")
+    task :symlink do
+      fetch(:local_config,[]).each do |file|
+        filename = File.split(file).last
+        run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{filename} #{current_release}/#{file}"
       end
     end
-  end
-
-  namespace :symlink do
-    desc "Ensure that database.yml is in place"
-    task :db_config do
-      run "ls #{current_release}/config/database.yml 2> /dev/null || ln -nfs #{shared_path}/database.yml #{current_release}/config/database.yml"
-    end
-
-    desc <<-DESC
-    Symlinks just-uploaded shared/moonshine.yml into the release directory.
-    Called if moonshine_config=local.
-    DESC
-    task :moonshine_config do
-      run "ls #{shared_path}/moonshine.yml && ln -nfs #{shared_path}/moonshine.yml #{current_release}/config/moonshine.yml"
-    end
+    
   end
 
 end
@@ -123,6 +109,5 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
-    moonshine.upload.db_config
   end
 end
