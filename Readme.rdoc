@@ -1,1 +1,56 @@
 == Moonshine
+
+=== What is Moonshine?
+
+Moonshine is Rails deployment and configuration management done right.
+
+=== Deploying Your Rails Application with Moonshine in 15 minutes
+
+Moonshine includes ShadowPuppet manifests to automatically deploy your Rails
+application to any server running Ubuntu 8.04 or greater. (Want to see your
+favorite platform supported? Fork Moonshine on GitHub!)
+
+* Make sure all required gems are declared using <tt>config.gem</tt> calls in
+  <tt>config/environment.rb</tt>.
+* <tt>ruby script/plugin install git://github.com/railsmachine/moonshine.git</tt>
+* <tt>ruby script/generate moonshine</tt>
+* Edit the configuration file at <tt>config/moonshine.yml</tt> with your
+  apps's details. Note that your application's gem dependencies have been
+  loaded automatically.
+* Edit the manifest generated for your application at
+  <tt>app/manifests/application_manifest.rb</tt> to declare other packages,
+  services, or files your application depends on (Postfix and it's
+  configuration files, for example).
+* <tt>capify</tt> your application
+* Your <tt>config/deploy.rb</tt> can be super barebones, as Moonshine loads
+  the contents of <tt>config/moonshine.yml</tt> in as Cap variables and sets
+  some sane defaults. Here's what I use:
+   
+   server "myubuntuserver.com", :app, :web, :db, :primary => true
+   
+
+* <tt>git add . && git commit -am "added moonshine" && git push</tt>
+
+Once Moonshine is in place, to bootstrap your Ubuntu server with Ruby
+Enterprise Edition, run <tt>cap deploy:setup</tt>
+
+To install all needed dependencies for your application and deploy it for the
+first time, run <tt>cap deploy</tt>. The initial deploy will take awhile, as
+things such as MySQL, etc, are being installed. It's worth the wait though,
+because what you end up with is an extremely maintainable server that you'll
+never need to SSH into again!
+
+== Ongoing Configuration Management with Moonshine
+
+One of the greatest beneifts of using Moonshine to deploy your Rails
+application is that your server configuration becomes versioned and deployed
+alongside your application.
+
+=== Adding a Gem
+
+If you add a feature to your application that requires a new gem - paperclip,
+for example. Once you added the <tt>config.gem</tt> call to <tt>config/environment.rb</tt>,
+run <tt>rake moonshine:gems</tt> to dump your gems to <tt>config/moonshine.yml</tt>.
+Commit these changes along with the change to your application requiring
+paperclip, then run <tt>cap deploy</tt>. During your deploy, Moonshine will
+install the paperclip gem and all system requirements for you!
