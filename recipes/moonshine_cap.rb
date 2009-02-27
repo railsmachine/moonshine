@@ -6,8 +6,6 @@ ssh_options[:paranoid] = false
 ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
 
-set :local_config, fetch(:local_config,[])
-
 #load the moonshine configuration into
 require 'yaml'
 begin
@@ -65,7 +63,7 @@ namespace :moonshine do
     later symlinking (if necessary). Called if local_config is set.
     DESC
     task :upload do
-      local_config.each do |file|
+      fetch(:local_config,[]).each do |file|
         filename = File.split(file).last
         if File.exist?( file )
           put(File.read( file ),"#{shared_path}/#{filename}")
@@ -77,7 +75,7 @@ namespace :moonshine do
     Symlinks uploaded local configurations into the release directory.
     DESC
     task :symlink do
-      local_config.each do |file|
+      fetch(:local_config,[]).each do |file|
         filename = File.split(file).last
         run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{filename} #{current_release}/#{file}"
       end
