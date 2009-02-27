@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:recipes/moonshine_cap.rb
 set :branch, 'master'
 set :scm, :git
 set :git_shallow_clone, 1
@@ -6,6 +7,9 @@ ssh_options[:paranoid] = false
 ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
 
+=======
+set :branch, fetch(:branch, 'master')
+>>>>>>> Stashed changes:recipes/moonshine_cap.rb
 set :local_config, fetch(:local_config,[])
 
 #load the moonshine configuration into
