@@ -56,7 +56,7 @@ module Moonshine::Plugin::Rails
         hash.merge!(:ensure => :installed)
       elsif gem[:version]
         #if it's not installed and version specified, we require that version
-        hash.merge!(:ensure => gem_dependency.requirement.to_s)
+        hash.merge!(:ensure => gem[:version])
       else
         #otherwise we don't care
         hash.merge!(:ensure => :installed)
