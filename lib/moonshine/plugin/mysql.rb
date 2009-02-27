@@ -1,29 +1,5 @@
 module Moonshine::Plugin::Mysql
 
-  def mysql_load_schema
-    rake('db:schema:load', {
-      :require => [
-        exec('mysql_user'),
-        exec('rails_gems')
-      ],
-      :notify => exec('rake db:bootstrap'),
-      :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;")
-    })
-  end
-
-  def mysql_bootstrap
-    rake('db:bootstrap', {
-     :require => exec('rake db:schema:load'),
-     :onlyif => 'test -d db/bootstrap',
-     :refreshonly => true,
-     :environment => [ "RAILS_ENV=production" ]
-    })
-  end
-
-  def mysql_migrations
-    rake 'db:migrate', :require => exec('rake db:schema:load')
-  end
-
   def mysql_server
     package 'mysql-server', :ensure => :installed
     service 'mysql', :ensure => :running, :require => [
@@ -48,7 +24,8 @@ EOF
     # ok, this could compare the shown grants for the user to what it expects.
     exec "mysql_user", { :command => mysql_query(grant),
                              :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
-                             :require => [exec('mysql_database')] }
+                             :require => [exec('mysql_database')],
+                             :notify => exec('rails_bootstrap') }
   end
 
   def mysql_database
@@ -69,4 +46,4 @@ private
 end
 
 include Moonshine::Plugin::Mysql
-recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_load_schema, :mysql_bootstrap, :mysql_migrations
+recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user

@@ -1,29 +1,70 @@
 module Moonshine::Plugin::Rails
 
+  def rails_bootstrap
+    #stub for dependencies
+    exec 'rails_bootstrap',
+      :command => 'true',
+      :refreshonly => true,
+      :notify => [
+        exec('rake db:schema:load'),
+        exec('rake moonshine:db:bootstrap'),
+        exec('rake moonshine:app:bootstrap'),
+      ],
+      :before => exec('rake db:migrate')
+
+    rake 'db:schema:load',
+      :refreshonly => true,
+      :notify => exec('rails_bootstrap'),
+      :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;"),
+      :before => exec('rake db:migrate')
+
+    rake 'moonshine:db:bootstrap',
+      :require => exec('rake db:schema:load'),
+      :onlyif => 'test -d db/bootstrap',
+      :refreshonly => true,
+      :require => exec('rake db:schema:load'),
+      :environment => [ "RAILS_ENV=production" ],
+      :before => exec('rake db:migrate')
+
+    rake 'moonshine:app:bootstrap',
+      :require => exec('rake db:schema:load'),
+      :refreshonly => true,
+      :require => exec('rake moonshine:db:bootstrap'),
+      :environment => [ "RAILS_ENV=production" ],
+      :before => exec('rake db:migrate')
+  end
+
+  def rails_migrations
+    rake 'db:migrate'
+  end
+
   def rails_gems
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
-    configuration['rails'].gems.each do |gem_dependency|
+    return unless configuration[:gems]
+    configuration[:gems].each do |gem|
       hash = {
         :provider => :gem,
         :before   => exec('rails_gems')
       }
-      hash.merge!(:source => gem_dependency.source) if gem_dependency.source
-      if gem_dependency.loaded?
+      hash.merge!(:source => gem[:source]) if gem[:source]
+      real_gems = Gem.source_index.installed_source_index
+      exact_dep = gem[:version] ? Gem::Dependency.new(gem[:name], gem[:version]) : Gem::Dependency.new(gem[:name], '>0')
+      matches = real_gems.search(exact_dep)
+      installed_spec = matches.first
+      if installed_spec
         #it's already loaded, let's just specify that we want it installed
         hash.merge!(:ensure => :installed)
-      elsif gem_dependency.requirement.to_s.blank?
-        hash.merge!(:ensure => :installed)
-      else
-        #otherwise, add the version
+      elsif gem[:version]
+        #if it's not installed and version specified, we require that version
         hash.merge!(:ensure => gem_dependency.requirement.to_s)
+      else
+        #otherwise we don't care
+        hash.merge!(:ensure => :installed)
       end
-      package(gem_dependency.name, hash)
+      #finally create the dependency
+      package(gem[:name], hash)
     end
-    package('rails', {
-      :provider => :gem,
-      :ensure  => (RAILS_GEM_VERSION rescue :latest)
-    })
   end
 
   #Essentially replicates the deploy:setup command from capistrano. Includes
@@ -49,23 +90,6 @@ module Moonshine::Plugin::Rails
     end
   end
 
-  def rails_configuration
-    return configuration[:rails] if configuration[:rails]
-    $rails_gem_installer = true
-    begin
-      require(File.join(self.class.working_directory, 'config', 'environment'))
-    rescue SystemExit
-      if defined?(RAILS_GEM_VERSION)
-        #we can't parse the environment. as a last ditch effort, shell out and
-        #try to install rails
-        `gem install rails --version #{RAILS_GEM_VERSION}`
-      end
-      require(File.join(self.class.working_directory, 'config', 'environment'))
-    end
-    configure(:rails => ::Rails.configuration)
-    configuration[:rails]
-  end
-
 private
 
   # Creates exec('rake #name') that runs in the working_directory of the rails
@@ -82,4 +106,4 @@ private
 end
 
 include Moonshine::Plugin::Rails
-recipe :rails_configuration, :rails_gems, :rails_directories
+recipe :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
