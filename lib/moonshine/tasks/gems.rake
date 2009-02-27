@@ -7,6 +7,11 @@ namespace :moonshine do
       hash.merge!(:version => gem.requirement.to_s) if gem.requirement
       hash
     end
+    if (RAILS_GEM_VERSION rescue false)
+      gem_array << {:name => 'rails', :version => RAILS_GEM_VERSION }
+    else
+      gem_array << {:name => 'rails'}
+    end
     config_path = File.join(Dir.pwd, 'config', 'moonshine.yml')
     current_config = YAML.load_file(config_path)
     current_config.merge!(:gems => gem_array)
