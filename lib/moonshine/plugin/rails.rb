@@ -10,6 +10,7 @@ module Moonshine::Plugin::Rails
         exec('rake moonshine:db:bootstrap'),
         exec('rake moonshine:app:bootstrap'),
       ],
+      :require => exec('rails_gems'),
       :before => exec('rake db:migrate')
 
     rake 'db:schema:load',
@@ -34,7 +35,7 @@ module Moonshine::Plugin::Rails
   end
 
   def rails_migrations
-    rake 'db:migrate'
+    rake 'db:migrate', :require => exec('rails_gems')
   end
 
   def rails_gems
@@ -95,7 +96,8 @@ private
     exec("rake #{name}", {
       :command => "rake #{name}",
       :cwd => self.class.working_directory,
-      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}"
+      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
+      :require => exec('rails_gems')
     }.merge(options)
   )
   end
