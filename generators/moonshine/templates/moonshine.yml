@@ -9,4 +9,3 @@
 - logs
 - pids
 - config
-:gems: <%= gems.to_yaml %>
