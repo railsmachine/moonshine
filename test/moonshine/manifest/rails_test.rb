@@ -80,4 +80,10 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
 
+  def test_installs_postfix
+    assert @manifest.class.recipes.map(&:first).include?(:mail_postfix)
+    @manifest.mail_postfix
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postfix"]
+  end
+
 end
