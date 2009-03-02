@@ -86,4 +86,39 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postfix"]
   end
 
+  def test_installs_ntp
+    assert @manifest.class.recipes.map(&:first).include?(:time_ntp)
+    @manifest.time_ntp
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["ntp"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["ntp"]
+  end
+
+  def test_sets_default_time_zone
+    assert @manifest.class.recipes.map(&:first).include?(:time_zone)
+    @manifest.time_zone
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/UTC', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+  end
+
+  def test_sets_default_time_zone
+    assert @manifest.class.recipes.map(&:first).include?(:time_zone)
+    @manifest.configure(:time_zone => nil)
+    @manifest.time_zone
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
+    assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/UTC', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+  end
+
+  def test_sets_configured_time_zone
+    assert @manifest.class.recipes.map(&:first).include?(:time_zone)
+    @manifest.configure(:time_zone => 'America/New_York')
+    @manifest.time_zone
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
+    assert_equal "America/New_York\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/America/New_York', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+  end
+
 end
