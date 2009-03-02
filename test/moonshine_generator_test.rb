@@ -20,6 +20,7 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
     assert @new_files.include?(config_path)
     assert @new_files.include?(manifest_path)
     assert @new_files.include?(templates_path)
+    assert @new_files.include?(gems_path)
   end
 
   def test_generates_valid_config_file
@@ -31,13 +32,17 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
   end
 
   def test_generates_gem_dependencies
-    assert_not_nil YAML.load_file(config_path)[:gems]
+    assert_not_nil YAML.load_file(gems_path).first
   end
 
   private
 
     def manifest_path
       './test/rails_root/app/manifests/application_manifest.rb'
+    end
+
+    def gems_path
+      './test/rails_root/config/gems.yml'
     end
 
     def config_path
