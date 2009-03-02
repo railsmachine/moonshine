@@ -68,4 +68,6 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
 
+  #gems
+  configure(:gems => (YAML.load_file(File.join(working_directory, 'config', 'gems.yml')) rescue nil))
 end
