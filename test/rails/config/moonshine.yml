@@ -1,6 +1,0 @@
---- 
-:application: test_rails_app
-:deploy_to: /srv/test_rails_app
-:domain: ubuntu-vmware.localdomain
-:user: ubuntu
-:repository: git://127.0.0.1/test_rails_app
