@@ -36,7 +36,7 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   #   end
   def self.plugin(name = nil)
     if name.is_a?(Symbol)
-      path = File.join(working_directory, 'vendor', 'plugins', name, 'moonshine', 'init.rb')
+      path = File.join(working_directory, 'vendor', 'plugins', name.to_s, 'moonshine', 'init.rb')
     else
       path = name
     end
