@@ -6,28 +6,15 @@ module Moonshine::Plugin::Rails
       :command => 'true',
       :refreshonly => true,
       :notify => [
-        exec('rake db:schema:load'),
-        exec('rake moonshine:db:bootstrap'),
-        exec('rake moonshine:app:bootstrap'),
+        exec('rake moonshine:bootstrap')
       ],
       :require => exec('rake environment'),
       :before => exec('rake db:migrate')
 
-    rake 'db:schema:load',
+    rake 'moonshine:bootstrap',
       :refreshonly => true,
-      :onlyif => 'test -f db/schema.rb',
-      :before => exec('rake db:migrate')
+      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}"
 
-    rake 'moonshine:db:bootstrap',
-      :onlyif => 'test -d db/bootstrap',
-      :refreshonly => true,
-      :require => exec('rake db:migrate'),
-      :environment => [ "RAILS_ENV=production" ]
-
-    rake 'moonshine:app:bootstrap',
-      :refreshonly => true,
-      :require => exec('rake moonshine:db:bootstrap'),
-      :environment => [ "RAILS_ENV=production" ]
   end
 
   def rails_migrations
