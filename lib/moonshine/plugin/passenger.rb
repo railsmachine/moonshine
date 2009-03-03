@@ -57,7 +57,8 @@ module Moonshine::Plugin::Passenger
       `gem install passenger --no-ri --no-rdoc`
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     end
-    configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{version}" })
+    old_config = configuration[:passenger] || {}
+    configure(:passenger => old_config.merge(:path => "#{Gem.dir}/gems/passenger-#{version}"))
     configuration[:passenger][:path]
   end
 
