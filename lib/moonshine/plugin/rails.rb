@@ -83,7 +83,7 @@ private
       :command => "rake #{name}",
       :cwd => self.class.working_directory,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
-      :require => exec('rake environment')
+      :require => exec('rake tasks')
     }.merge(options)
   )
   end
