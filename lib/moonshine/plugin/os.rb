@@ -1,5 +1,5 @@
 module Moonshine::Plugin::Os
-  def cron
+  def crontab
     service "cron", :requires => package("cron"), :ensure => :running
     package "cron", :ensure => :installed
     file "/etc/crontab",
@@ -30,4 +30,4 @@ module Moonshine::Plugin::Os
 end
 
 include Moonshine::Plugin::Os
-recipe :ntp, :time_zone, :postfix, :cron
+recipe :ntp, :time_zone, :postfix, :crontab

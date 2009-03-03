@@ -94,13 +94,13 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_installs_cron
-    assert @manifest.class.recipes.map(&:first).include?(:cron)
+    assert @manifest.class.recipes.map(&:first).include?(:crontab)
     @manifest.configure(:crontab => <<-HERE
 * * * * * My Awesome Job
 * * * * * Another Awesome Job
 HERE
 )
-    @manifest.cron
+    @manifest.crontab
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["cron"]
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["cron"]
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"]
