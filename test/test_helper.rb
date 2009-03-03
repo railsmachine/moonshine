@@ -1,6 +1,7 @@
 ENV['RAILS_ENV'] = 'test'
-ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
+ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/rails'
+require 'rubygems'
 require 'test/unit'
-require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config/environment.rb'))
-require 'moonshine'
 require 'mocha'
+require 'multi_rails_init'
+require 'moonshine'

@@ -7,6 +7,13 @@ rescue LoadError
   require 'rake/rdoctask'
 end
 
+begin
+  require "load_multi_rails_rake_tasks"
+rescue LoadError
+  puts "sudo gem install relevance-multi_rails -s http://gems.github.com/"
+  exit(1)
+end
+
 task :rcov do
   system "rcov --exclude /Library/Ruby/ --exclude ~/ -Itest `find test/ | grep _test`"
 end
