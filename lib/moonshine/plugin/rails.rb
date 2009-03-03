@@ -112,4 +112,3 @@ private
 end
 
 include Moonshine::Plugin::Rails
-recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations

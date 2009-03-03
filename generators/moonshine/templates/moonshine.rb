@@ -13,16 +13,18 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
     }
   })
 
-  # Require and include the Moonshine::Nginx module from
-  # vendor/plugins/moonshine_nginx/lib/moonshine/nginx.rb
-  # plugin 'nginx'
+  #These recipes are included in in Moonshine::Manifest::Rails
+  recipe :apache_server
+  recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
+  recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user
+  recipe :ntp, :time_zone, :postfix, :cron_packages
+  recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
 
-  # add your gems and other good stuff here
+  # add your application's custom requirements here
   def application_packages
     # package 'some_awesome_gem', :ensure => :installed, :provider => :gem, :require => package('some_awesome_native_package')
     # package 'some_awesome_native_package', :ensure => :installed
   end
-  # Uncomment the following line to declare the 'application_packages' method
-  # as a recipe
-  # recipe :application_packages
+  # The following line delcares the 'application_packages' method as a recipe
+  recipe :application_packages
 end

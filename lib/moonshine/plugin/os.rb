@@ -26,4 +26,3 @@ module Moonshine::Plugin::Os
 end
 
 include Moonshine::Plugin::Os
-recipe :ntp, :time_zone, :postfix, :cron_packages

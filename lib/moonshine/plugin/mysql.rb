@@ -51,4 +51,3 @@ private
 end
 
 include Moonshine::Plugin::Mysql
-recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user

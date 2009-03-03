@@ -8,4 +8,3 @@ module Moonshine::Plugin::Apache
 end
 
 include Moonshine::Plugin::Apache
-recipe :apache_server

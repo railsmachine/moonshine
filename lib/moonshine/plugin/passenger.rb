@@ -76,4 +76,3 @@ private
 end
 
 include Moonshine::Plugin::Passenger
-recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
