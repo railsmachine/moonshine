@@ -11,11 +11,13 @@ class MoonshineGenerator < Rails::Generator::Base
   end
 
   def gems
-    gem_array = Rails.configuration.gems.map do |gem|
-      hash = { :name => gem.name }
-      hash.merge!(:source => gem.source) if gem.source
-      hash.merge!(:version => gem.requirement.to_s) if gem.requirement
-      hash
+    gem_array = returning Array.new do |hash|
+      Rails.configuration.gems.map do |gem|
+        hash = { :name => gem.name }
+        hash.merge!(:source => gem.source) if gem.source
+        hash.merge!(:version => gem.requirement.to_s) if gem.requirement
+        hash
+      end if Rails.respond_to?( 'configuration' )
     end
     if (RAILS_GEM_VERSION rescue false)
       gem_array << {:name => 'rails', :version => RAILS_GEM_VERSION }
