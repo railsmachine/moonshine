@@ -47,6 +47,9 @@ namespace :moonshine do
 
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
+    on_rollback do
+      run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
+    end
     sudo "RAILS_ROOT=#{current_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
@@ -97,6 +100,12 @@ namespace :moonshine do
     set :moonshine_apply, false
     deploy.update_code
     app.console
+  end
+
+  task :update_and_bootstrap do
+    set :moonshine_apply, false
+    deploy.update_code
+    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace moonshine:bootstrap"
   end
 
   task :update_and_rake do
