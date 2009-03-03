@@ -2,7 +2,7 @@ module Moonshine::Plugin::Apache
 
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
-    service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/http/init.d/restart'
+    service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart'
     a2enmod('rewrite')
   end
 
