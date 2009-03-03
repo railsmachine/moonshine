@@ -43,7 +43,6 @@ EOF
     file '/etc/mysql/debian-start',
       :ensure => :present,
       :content => "#!/bin/bash\nexit 0",
-      :onlyif => 'test -d /etc/mysql',
       :mode => 755,
       :owner => 'root'
   end
