@@ -22,13 +22,13 @@ IDENTIFIED BY '#{mysql_config_from_environment[:password]}';
 FLUSH PRIVILEGES;
 EOF
 
+  requires = [exec('mysql_database')]
+  requires << exec('rake environment') unless configuration[:mysql] && configuration[:mysql][:create_user_before_rake]
+
     exec "mysql_user",
       :command => mysql_query(grant),
       :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
-      :require => [
-        exec('mysql_database'),
-        exec('rake environment')
-      ],
+      :require => requires,
       :notify => exec('rails_bootstrap')
   end
 
