@@ -31,10 +31,10 @@ namespace :moonshine do
   so!
   DOC
   task :bootstrap do
-    Rake::Task["db:schema:load"] if File.exist?("#{Rails.root}/db/schema.rb")
+    Rake::Task["db:schema:load"] if File.exist?("#{Dir.pwd}/db/schema.rb")
     Rake::Task["environment"]
-    Rake::Task["db:migrate"] if File.exist?("#{Rails.root}/db/migrate")
-    Rake::Task["moonshine:db:bootstrap"] if File.exist?("#{Rails.root}/db/bootstrap")
+    Rake::Task["db:migrate"] if File.exist?("#{Dir.pwd}/db/migrate")
+    Rake::Task["moonshine:db:bootstrap"] if File.exist?("#{Dir.pwd}/db/bootstrap")
     Rake::Task["moonshine:app:bootstrap"]
   end
 end
