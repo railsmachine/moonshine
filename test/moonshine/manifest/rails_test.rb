@@ -41,6 +41,11 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
   end
 
+  def test_enables_mod_rewrite
+    @manifest.apache_server
+    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Exec]["a2enmod rewrite"]
+  end
+
   def test_installs_passenger_gem
     @manifest.passenger_configure_gem_path
     @manifest.passenger_gem

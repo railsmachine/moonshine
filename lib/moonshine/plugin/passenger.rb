@@ -26,27 +26,19 @@ module Moonshine::Plugin::Passenger
                       :notify => service("apache2"),
                       :alias => "passenger_conf" }
 
-    exec "enable_passenger", { :command => '/usr/sbin/a2enmod passenger',
-                               :unless => 'ls /etc/apache2/mods-enabled/passenger.*',
-                               :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]}
+    a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]
   end
 
   def passenger_site
-    file "/etc/apache2/sites-available/#{configuration[:application]}", { :ensure => :present,
-                      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.vhost.erb')),
-                      :notify => service("apache2"),
-                      :alias => "passenger_vhost",
-                      :require => exec("enable_passenger") }
+    file "/etc/apache2/sites-available/#{configuration[:application]}",
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.vhost.erb')),
+      :notify => service("apache2"),
+      :alias => "passenger_vhost",
+      :require => exec("enable_passenger") 
 
-    exec "passenger_disable_default_site", { :command => "/usr/sbin/a2dissite default",
-                             :onlyif => "ls /etc/apache2/sites-enabled/*default",
-                             :require => [file("passenger_vhost")],
-                             :notify => service("apache2") }
-
-    exec "passenger_enable_site", { :command => "/usr/sbin/a2ensite #{configuration[:application]}",
-                             :unless => "ls /etc/apache2/sites-enabled/#{configuration[:application]}",
-                             :require => [file("passenger_vhost")],
-                             :notify => service("apache2") }
+    a2dissite 'default', :require => file("passenger_vhost")
+    a2ensite configuration[:application], :require => file("passenger_vhost")
   end
 
   def passenger_configure_gem_path
