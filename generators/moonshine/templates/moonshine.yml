@@ -6,6 +6,6 @@
 :app_symlinks:
 :shared_children:
 - system
-- logs
+- log
 - pids
 - config
