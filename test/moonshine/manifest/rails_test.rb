@@ -94,18 +94,10 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_installs_cron
-    assert @manifest.class.recipes.map(&:first).include?(:crontab)
-    @manifest.configure(:crontab => <<-HERE
-* * * * * My Awesome Job
-* * * * * Another Awesome Job
-HERE
-)
-    @manifest.crontab
+    assert @manifest.class.recipes.map(&:first).include?(:cron_packages)
+    @manifest.cron_packages
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["cron"]
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["cron"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"]
-    assert_match /Awesome Job/, @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"].params[:content].value
-    assert_match /Another Awesome Job/, @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"].params[:content].value
   end
 
   def test_sets_default_time_zone

@@ -1,11 +1,7 @@
 module Moonshine::Plugin::Os
-  def crontab
+  def cron_packages
     service "cron", :requires => package("cron"), :ensure => :running
     package "cron", :ensure => :installed
-    file "/etc/crontab",
-      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'crontab.erb')),
-      :ensure => :present,
-      :mode => 644
   end
 
   def postfix
@@ -30,4 +26,4 @@ module Moonshine::Plugin::Os
 end
 
 include Moonshine::Plugin::Os
-recipe :ntp, :time_zone, :postfix, :crontab
+recipe :ntp, :time_zone, :postfix, :cron_packages
