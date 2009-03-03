@@ -35,7 +35,7 @@ module Moonshine::Plugin::Passenger
       :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.vhost.erb')),
       :notify => service("apache2"),
       :alias => "passenger_vhost",
-      :require => exec("enable_passenger") 
+      :require => exec("a2enmod passenger")
 
     a2dissite 'default', :require => file("passenger_vhost")
     a2ensite configuration[:application], :require => file("passenger_vhost")
