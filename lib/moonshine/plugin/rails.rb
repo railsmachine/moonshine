@@ -1,20 +1,11 @@
 module Moonshine::Plugin::Rails
 
   def rails_bootstrap
-    #stub for dependencies
-    exec 'rails_bootstrap',
-      :command => 'true',
-      :refreshonly => true,
-      :notify => [
-        exec('rake moonshine:bootstrap')
-      ],
-      :require => exec('rake environment'),
-      :before => exec('rake db:migrate')
-
     rake 'moonshine:bootstrap',
+      :alias => 'rails_bootstrap',
       :refreshonly => true,
-      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}"
-
+      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
+      :before => exec('rake db:migrate')
   end
 
   def rails_migrations
@@ -23,7 +14,8 @@ module Moonshine::Plugin::Rails
 
   def rails_rake_environment
     package 'rake', :provider => :gem, :ensure => :installed
-    exec 'rake environment',
+    exec 'rake tasks',
+      :command => 'rake -T > /dev/null',
       :cwd => self.class.working_directory,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => [

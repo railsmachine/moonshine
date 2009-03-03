@@ -26,7 +26,7 @@ EOF
       :command => mysql_query(grant),
       :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
       :require => exec('mysql_database'),
-      :before => exec('rake environment'),
+      :before => exec('rake tasks'),
       :notify => exec('rails_bootstrap')
   end
 

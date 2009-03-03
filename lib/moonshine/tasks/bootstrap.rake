@@ -30,8 +30,9 @@ namespace :moonshine do
   environment' with an empty database. Please ensure your application can do
   so!
   DOC
-  task :bootstrap => :environment do
+  task :bootstrap do
     Rake::Task["db:schema:load"] if File.exist?("#{Rails.root}/db/schema.rb")
+    Rake::Task["environment"]
     Rake::Task["db:migrate"] if File.exist?("#{Rails.root}/db/migrate")
     Rake::Task["moonshine:db:bootstrap"] if File.exist?("#{Rails.root}/db/bootstrap")
     Rake::Task["moonshine:app:bootstrap"]
