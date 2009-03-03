@@ -81,16 +81,31 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_installs_postfix
-    assert @manifest.class.recipes.map(&:first).include?(:mail_postfix)
-    @manifest.mail_postfix
+    assert @manifest.class.recipes.map(&:first).include?(:postfix)
+    @manifest.postfix
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postfix"]
   end
 
   def test_installs_ntp
-    assert @manifest.class.recipes.map(&:first).include?(:time_ntp)
-    @manifest.time_ntp
+    assert @manifest.class.recipes.map(&:first).include?(:ntp)
+    @manifest.ntp
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["ntp"]
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["ntp"]
+  end
+
+  def test_installs_cron
+    assert @manifest.class.recipes.map(&:first).include?(:cron)
+    @manifest.configure(:crontab => <<-HERE
+* * * * * My Awesome Job
+* * * * * Another Awesome Job
+HERE
+)
+    @manifest.cron
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["cron"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["cron"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"]
+    assert_match /Awesome Job/, @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"].params[:content].value
+    assert_match /Another Awesome Job/, @manifest.puppet_resources[Puppet::Type::File]["/etc/crontab"].params[:content].value
   end
 
   def test_sets_default_time_zone
