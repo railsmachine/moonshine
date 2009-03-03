@@ -12,11 +12,9 @@ namespace :moonshine do
     else
       gem_array << {:name => 'rails'}
     end
-    config_path = File.join(Dir.pwd, 'config', 'moonshine.yml')
-    current_config = YAML.load_file(config_path)
-    current_config.merge!(:gems => gem_array)
+    config_path = File.join(Dir.pwd, 'config', 'gems.yml')
     File.open( config_path, 'w' ) do |out|
-      YAML.dump(current_config, out )
+      YAML.dump(gem_array, out )
     end
     puts "config/moonshine.yml has been updated with your application's gem"
     puts "dependencies. Please commit these changes to your SCM or upload"

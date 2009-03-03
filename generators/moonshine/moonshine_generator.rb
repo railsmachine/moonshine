@@ -33,7 +33,8 @@ class MoonshineGenerator < Rails::Generator::Base
       m.directory 'app/manifests/templates'
       m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
       m.directory 'config'
-      m.template  'moonshine.yml', "config/moonshine.yml", :assigns => { :gems => gems }
+      m.template  'moonshine.yml', "config/moonshine.yml"
+      m.template  'gems.yml', "config/gems.yml", :assigns => { :gems => gems }
     end
   end
 

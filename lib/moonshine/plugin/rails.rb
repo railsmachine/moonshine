@@ -10,32 +10,39 @@ module Moonshine::Plugin::Rails
         exec('rake moonshine:db:bootstrap'),
         exec('rake moonshine:app:bootstrap'),
       ],
-      :require => exec('rails_gems'),
+      :require => exec('rake environment'),
       :before => exec('rake db:migrate')
 
     rake 'db:schema:load',
       :refreshonly => true,
-      :unless => mysql_query("select * from #{mysql_config_from_environment[:database]}.schema_migrations;"),
+      :onlyif => 'test -f db/schema.rb',
       :before => exec('rake db:migrate')
 
     rake 'moonshine:db:bootstrap',
-      :require => exec('rake db:schema:load'),
       :onlyif => 'test -d db/bootstrap',
       :refreshonly => true,
-      :require => exec('rake db:schema:load'),
-      :environment => [ "RAILS_ENV=production" ],
-      :before => exec('rake db:migrate')
+      :require => exec('rake db:migrate'),
+      :environment => [ "RAILS_ENV=production" ]
 
     rake 'moonshine:app:bootstrap',
-      :require => exec('rake db:schema:load'),
       :refreshonly => true,
       :require => exec('rake moonshine:db:bootstrap'),
-      :environment => [ "RAILS_ENV=production" ],
-      :before => exec('rake db:migrate')
+      :environment => [ "RAILS_ENV=production" ]
   end
 
   def rails_migrations
-    rake 'db:migrate', :require => exec('rails_gems')
+    rake 'db:migrate'
+  end
+
+  def rails_rake_environment
+    package 'rake', :provider => :gem, :ensure => :installed
+    exec 'rake environment',
+      :cwd => self.class.working_directory,
+      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
+      :require => [
+        exec('rails_gems'),
+        package('rake')
+      ]
   end
 
   def rails_gems
@@ -97,7 +104,7 @@ private
       :command => "rake #{name}",
       :cwd => self.class.working_directory,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
-      :require => exec('rails_gems')
+      :require => exec('rake environment')
     }.merge(options)
   )
   end
@@ -105,4 +112,3 @@ private
 end
 
 include Moonshine::Plugin::Rails
-recipe :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations

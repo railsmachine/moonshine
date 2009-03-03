@@ -6,7 +6,6 @@
 :app_symlinks:
 :shared_children:
 - system
-- logs
+- log
 - pids
 - config
-:gems: <%= gems.to_yaml %>

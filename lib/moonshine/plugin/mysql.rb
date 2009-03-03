@@ -21,17 +21,30 @@ TO #{mysql_config_from_environment[:username]}@localhost
 IDENTIFIED BY '#{mysql_config_from_environment[:password]}';
 FLUSH PRIVILEGES;
 EOF
-    # ok, this could compare the shown grants for the user to what it expects.
-    exec "mysql_user", { :command => mysql_query(grant),
-                             :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
-                             :require => [exec('mysql_database')],
-                             :notify => exec('rails_bootstrap') }
+
+    exec "mysql_user",
+      :command => mysql_query(grant),
+      :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
+      :require => [
+        exec('mysql_database'),
+        exec('rake environment')
+      ],
+      :notify => exec('rails_bootstrap')
   end
 
   def mysql_database
-    exec "mysql_database", { :command => mysql_query("create database #{mysql_config_from_environment[:database]};"),
-                             :unless => mysql_query("show create database #{mysql_config_from_environment[:database]};"),
-                             :require => [service('mysql')] }
+    exec "mysql_database",
+      :command => mysql_query("create database #{mysql_config_from_environment[:database]};"),
+      :unless => mysql_query("show create database #{mysql_config_from_environment[:database]};"),
+      :require => service('mysql')
+  end
+
+  def mysql_fixup_debian_start
+    file '/etc/mysql/debian-start',
+      :ensure => :present,
+      :content => "#!/bin/bash\nexit 0",
+      :mode => '755',
+      :owner => 'root'
   end
 
 private
@@ -46,4 +59,3 @@ private
 end
 
 include Moonshine::Plugin::Mysql
-recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user

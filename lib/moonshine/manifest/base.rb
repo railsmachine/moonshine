@@ -36,7 +36,7 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   #   end
   def self.plugin(name = nil)
     if name.is_a?(Symbol)
-      path = File.join(working_directory, 'vendor', 'plugins', 'name', 'moonshine', 'init.rb')
+      path = File.join(working_directory, 'vendor', 'plugins', name.to_s, 'moonshine', 'init.rb')
     else
       path = name
     end
@@ -68,4 +68,6 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   #database config
   configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
 
+  #gems
+  configure(:gems => (YAML.load_file(File.join(working_directory, 'config', 'gems.yml')) rescue nil))
 end

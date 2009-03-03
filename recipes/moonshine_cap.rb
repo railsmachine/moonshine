@@ -53,7 +53,56 @@ namespace :moonshine do
   after 'deploy:update_code' do
     local_config.upload
     local_config.symlink
-    apply
+    apply if fetch(:moonshine_apply, true) == true
+  end
+
+  namespace :app do
+
+    desc "remotely console"
+    task :console, :roles => :app, :except => {:no_symlink => true} do
+      input = ''
+      run "cd #{current_release} && ./script/console #{fetch(:rails_env, 'production')}" do |channel, stream, data|
+        next if data.chomp == input.chomp || data.chomp == ''
+        print data
+        channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
+      end
+    end
+
+    desc "tail production log files"
+    task :log, :roles => :app, :except => {:no_symlink => true} do
+      run "tail -f #{shared_path}/log/production.log" do |channel, stream, data|
+        puts "#{data}"
+        break if stream == :err
+      end
+    end
+
+    desc "tail apache error log"
+    task :error_log, :roles => :app, :except => {:no_symlink => true} do
+      run "/var/log/apache2/error.log" do |channel, stream, data|
+        puts "#{data}"
+        break if stream == :err
+      end
+    end
+
+    desc "tail apache access log"
+    task :access_log, :roles => :app, :except => {:no_symlink => true} do
+      run "/var/log/apache2/access.log" do |channel, stream, data|
+        puts "#{data}"
+        break if stream == :err
+      end
+    end
+  end
+
+  task :update_and_console do
+    set :moonshine_apply, false
+    deploy.update_code
+    app.console
+  end
+
+  task :update_and_rake do
+    set :moonshine_apply, false
+    deploy.update_code
+    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
   end
 
   namespace :local_config do
