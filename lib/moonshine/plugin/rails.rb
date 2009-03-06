@@ -27,7 +27,7 @@ module Moonshine::Plugin::Rails
   def rails_gems
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
-    return unless configatron.gems
+    return if configatron.gems.nil?
     configatron.gems.each do |gem|
       hash = {
         :provider => :gem,

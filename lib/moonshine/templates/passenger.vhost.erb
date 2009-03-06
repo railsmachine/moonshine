@@ -28,7 +28,7 @@
     # Specify that the given URI is a Rails application. It is allowed to
     # specify this option multiple times. Do this to deploy multiple
     # Rails applications in different sub-URIs under the same virtual host.
-    <% if configatron.passenger.rails_base_uri %>
+    <% unless configatron.passenger.rails_base_uri.nil? %>
     RailsBaseURI configatron.passenger.rails_base_uri
     <% else %>
     # RailsBaseURI <uri>

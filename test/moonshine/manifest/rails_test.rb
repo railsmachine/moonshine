@@ -100,10 +100,11 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["/etc/localtime"]
     assert_equal '/usr/share/zoneinfo/UTC', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+    assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
   end
 
   def test_sets_default_time_zone
-    @manifest.configure(:time_zone => nil)
+    @manifest.configatron.remove('time_zone')
     @manifest.time_zone
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
     assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
