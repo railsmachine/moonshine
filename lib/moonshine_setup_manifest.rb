@@ -24,18 +24,18 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
   #Essentially replicates the deploy:setup command from capistrano, but sets
   #up permissions correctly
   def directories
-    deploy_to_array = configuration[:deploy_to].split('/')
+    deploy_to_array = configatron.deploy_to.split('/')
     deploy_to_array.each_with_index do |dir, index|
       next if index == 0 || index >= (deploy_to_array.size-1)
       file '/'+deploy_to_array[1..index].join('/'), :ensure => :directory
     end
     dirs = [
-      "#{configuration[:deploy_to]}",
-      "#{configuration[:deploy_to]}/shared",
-      "#{configuration[:deploy_to]}/releases"
+      "#{configatron.deploy_to}",
+      "#{configatron.deploy_to}/shared",
+      "#{configatron.deploy_to}/releases"
     ]
     dirs.each do |dir|
-      file dir, :ensure => :directory, :owner => configuration[:user], :group => configuration[:user]
+      file dir, :ensure => :directory, :owner => configatron.user, :group => configatron.user
     end
   end
 end

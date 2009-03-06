@@ -1,8 +1,8 @@
 <VirtualHost *:80>
-    ServerName <%= configuration[:domain] || `hostname -f` %>
-    DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
+    ServerName <%= configatron.domain || `hostname -f` %>
+    DocumentRoot <%= configatron.deploy_to + "/current/public" %>
 
-    <Directory <%= configuration[:deploy_to] + "/current/public" %>>
+    <Directory <%= configatron.deploy_to + "/current/public" %>>
       Options FollowSymLinks
       AllowOverride None
       Order allow,deny
@@ -21,15 +21,15 @@
     # The default is on.
     # Options: <on|off>
 
-    RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect]) || 'On' %>
+    RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.rails_auto_detect) || 'On' %>
 
     ## RailsBaseURI
     #
     # Specify that the given URI is a Rails application. It is allowed to
     # specify this option multiple times. Do this to deploy multiple
     # Rails applications in different sub-URIs under the same virtual host.
-    <% if configuration[:passenger][:rails_base_uri] %>
-    RailsBaseURI configuration[:passenger][:rails_base_uri]
+    <% if configatron.passenger.rails_base_uri %>
+    RailsBaseURI configatron.passenger.rails_base_uri
     <% else %>
     # RailsBaseURI <uri>
     <% end %>
@@ -40,14 +40,14 @@
     # is enabled.
     # Options: <on|off>
 
-    RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) || 'Off' %>
+    RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.allow_mod_rewrite) || 'Off' %>
 
     ## RailsEnv
     #
     # Use this option to specify the default RAILS_ENV value. The default
     # setting is production.
 
-    RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
+    RailsEnv <%= configatron.passenger.rails_env || ENV['RAILS_ENV'] || 'production' %>
 
     ## RailsSpawnMethod
     #
@@ -64,7 +64,7 @@
     #    This spawning method is similar to the one used in Mongrel Cluster.
     #    It does not perform any code caching at all.
 
-    RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
+    RailsSpawnMethod <%= configatron.passenger.rails_spawn_method || 'smart' %>
 
-<%= configuration[:passenger][:vhost_extra] %>
+<%= configatron.passenger.vhost_extra %>
 </VirtualHost>

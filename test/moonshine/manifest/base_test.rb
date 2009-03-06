@@ -5,7 +5,7 @@ end
 
 class Moonshine::Manifest::BaseTest < Test::Unit::TestCase
   def test_loads_configuration
-    assert Moonshine::Manifest::Base.configuration.keys.include?('application')
+    assert_not_nil Moonshine::Manifest::Base.configatron.application
   end
 
   def test_provides_template_helper
@@ -50,7 +50,7 @@ recipe :foo
   end
 
   def test_loads_database_config
-    assert_not_nil Moonshine::Manifest::Base.configuration['database']['production']['encoding']
+    assert_not_nil Moonshine::Manifest::Base.configatron.database.production.encoding
   end
 
 end

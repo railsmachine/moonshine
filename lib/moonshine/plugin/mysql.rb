@@ -32,8 +32,8 @@ EOF
 
   def mysql_database
     exec "mysql_database",
-      :command => mysql_query("create database #{mysql_config_from_environment[:database]};"),
-      :unless => mysql_query("show create database #{mysql_config_from_environment[:database]};"),
+      :command => mysql_query("create database #{mysql_config_from_environment.database};"),
+      :unless => mysql_query("show create database #{mysql_config_from_environment.database};"),
       :require => service('mysql')
   end
 
@@ -52,7 +52,7 @@ private
   end
 
   def mysql_config_from_environment
-    @db_config ||= configuration['database'][(ENV['RAILS_ENV'] || 'production')]
+    @db_config ||= configatron.database.send((ENV['RAILS_ENV'] || 'production').to_sym)
   end
 end
 

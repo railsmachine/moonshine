@@ -10,7 +10,7 @@
 #   config/database.yml
 #
 # The contents of your database config are parsed and are available at
-# <tt>configuration[:database]</tt>.
+# <tt>configatron.database</tt>.
 #
 # == Extending
 #
@@ -63,11 +63,11 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   end
 
   #config/moonshine.yml
-  configure(YAML.load_file(File.join(working_directory, 'config', 'moonshine.yml')))
+  configatron.configure_from_yaml(File.join(working_directory, 'config', 'moonshine.yml'))
 
   #database config
-  configure(:database => YAML.load_file(File.join(working_directory, 'config', 'database.yml')))
+  configatron.database.configure_from_yaml(File.join(working_directory, 'config', 'database.yml'))
 
   #gems
-  configure(:gems => (YAML.load_file(File.join(working_directory, 'config', 'gems.yml')) rescue nil))
+  configatron.gems.configure_from_yaml(File.join(working_directory, 'config', 'gems.yml')) rescue nil
 end
