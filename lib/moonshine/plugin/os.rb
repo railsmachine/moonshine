@@ -14,7 +14,7 @@ module Moonshine::Plugin::Os
   end
 
   def time_zone
-    zone = configatron.time_zone || 'UTC'
+    zone = configatron.retrieve('time_zone', 'UTC')
     file "/etc/timezone",
       :content => zone+"\n",
       :ensure => :present
