@@ -7,5 +7,10 @@ module Moonshine  #:nodoc:
   module Plugin  #:nodoc:
   end
 end
+class Configatron::Store
+  def to_s
+    ''
+  end
+end
 require "#{File.dirname(__FILE__)}/moonshine/manifest/base.rb"
 require "#{File.dirname(__FILE__)}/moonshine/manifest/rails.rb"

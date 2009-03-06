@@ -16,15 +16,15 @@ module Moonshine::Plugin::Mysql
   def mysql_user
     grant =<<EOF
 GRANT ALL PRIVILEGES 
-ON #{mysql_config_from_environment[:database]}.*
-TO #{mysql_config_from_environment[:username]}@localhost 
-IDENTIFIED BY '#{mysql_config_from_environment[:password]}';
+ON #{mysql_config_from_environment.database}.*
+TO #{mysql_config_from_environment.username}@localhost
+IDENTIFIED BY '#{mysql_config_from_environment.password}';
 FLUSH PRIVILEGES;
 EOF
 
     exec "mysql_user",
       :command => mysql_query(grant),
-      :unless => mysql_query("show grants for #{mysql_config_from_environment[:username]}@localhost;"),
+      :unless => mysql_query("show grants for #{mysql_config_from_environment.username}@localhost;"),
       :require => exec('mysql_database'),
       :before => exec('rake tasks'),
       :notify => exec('rails_bootstrap')

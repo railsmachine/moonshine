@@ -50,7 +50,7 @@ recipe :foo
   end
 
   def test_loads_database_config
-    assert_not_nil Moonshine::Manifest::Base.configatron.database.production.encoding
+    assert_equal 'utf8', Moonshine::Manifest::Base.configatron.database.production.encoding
   end
 
 end
