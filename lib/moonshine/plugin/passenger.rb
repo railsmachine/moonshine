@@ -40,7 +40,7 @@ module Moonshine::Plugin::Passenger
       :alias => "passenger_vhost",
       :require => exec("a2enmod passenger")
 
-    a2dissite 'default', :require => file("passenger_vhost")
+    a2dissite '000-default', :require => file("passenger_vhost")
     a2ensite configatron.application, :require => file("passenger_vhost")
   end
 
