@@ -42,7 +42,8 @@ EOF
       :ensure => :present,
       :content => "#!/bin/bash\nexit 0",
       :mode => '755',
-      :owner => 'root'
+      :owner => 'root',
+      :require => package('mysql-server')
   end
 
 private
