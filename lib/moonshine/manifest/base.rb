@@ -69,5 +69,5 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
   configatron.database.configure_from_yaml(File.join(working_directory, 'config', 'database.yml'))
 
   #gems
-  configatron.gems.configure_from_yaml(File.join(working_directory, 'config', 'gems.yml')) rescue nil
+  configatron.gems = (YAML.load_file(File.join(working_directory, 'config', 'gems.yml')) rescue nil)
 end
