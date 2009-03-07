@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    ServerName <%= configatron.domain || `hostname -f` %>
+    ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
     DocumentRoot <%= configatron.deploy_to + "/current/public" %>
 
     <Directory <%= configatron.deploy_to + "/current/public" %>>
@@ -21,7 +21,7 @@
     # The default is on.
     # Options: <on|off>
 
-    RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.rails_auto_detect) || 'On' %>
+    RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.retrieve('rails_auto_detect', true)) %>
 
     ## RailsBaseURI
     #
@@ -40,14 +40,14 @@
     # is enabled.
     # Options: <on|off>
 
-    RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.allow_mod_rewrite) || 'Off' %>
+    RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.retrieve('allow_mod_rewrite', false)) %>
 
     ## RailsEnv
     #
     # Use this option to specify the default RAILS_ENV value. The default
     # setting is production.
 
-    RailsEnv <%= configatron.passenger.rails_env || ENV['RAILS_ENV'] || 'production' %>
+    RailsEnv <%= configatron.passenger.retrieve('rails_env', (ENV['RAILS_ENV'] || 'production')) %>
 
     ## RailsSpawnMethod
     #
@@ -64,7 +64,7 @@
     #    This spawning method is similar to the one used in Mongrel Cluster.
     #    It does not perform any code caching at all.
 
-    RailsSpawnMethod <%= configatron.passenger.rails_spawn_method || 'smart' %>
+    RailsSpawnMethod <%= configatron.passenger.retrieve('rails_spawn_method', 'smart') %>
 
 <%= configatron.passenger.vhost_extra %>
 </VirtualHost>
