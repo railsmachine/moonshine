@@ -67,7 +67,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.passenger_site
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"]
     assert_match /RailsAllowModRewrite Off/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite default' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite 000-default' }
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configatron.application}" }
   end
 
