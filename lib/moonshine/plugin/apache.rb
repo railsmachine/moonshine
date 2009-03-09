@@ -4,6 +4,23 @@ module Moonshine::Plugin::Apache
     package "apache2-mpm-worker", :ensure => :installed
     service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
     a2enmod('rewrite')
+    a2enmod('status')
+    a2enmod('ssl') unless configatron.ssl.nil?
+    status = <<-STATUS
+<IfModule mod_status.c>
+<Location /server-status>
+     SetHandler server-status
+     order deny,allow
+     deny from all
+     allow from 127.0.0.1
+</Location>
+</IfModule>
+STATUS
+    file '/etc/apache2/mods-available/status.conf',
+      :ensure => :present,
+      :mode => '644',
+      :require => exec('a2enmod status'),
+      :content => status
   end
 
 private

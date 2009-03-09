@@ -41,9 +41,25 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
   end
 
+  def test_enables_mod_ssl_if_ssl
+    @manifest.configure(:ssl => {
+      :certificate_file => 'cert_file',
+      :certificate_key_file => 'cert_key_file',
+      :certificate_chain_file => 'cert_chain_file'
+    })
+    @manifest.apache_server
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod ssl' }
+  end
+
   def test_enables_mod_rewrite
     @manifest.apache_server
     assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Exec]["a2enmod rewrite"]
+  end
+
+  def test_enables_mod_status
+    @manifest.apache_server
+    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Exec]["a2enmod status"]
+    assert_match /127.0.0.1/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/mods-available/status.conf"].params[:content].value
   end
 
   def test_installs_passenger_gem
@@ -86,7 +102,6 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_chain_file => 'cert_chain_file'
     })
     @manifest.passenger_site
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod ssl' }
     assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
     assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
   end
