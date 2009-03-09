@@ -11,6 +11,7 @@ module Moonshine::Plugin::Apache
     end
     status = <<-STATUS
 <IfModule mod_status.c>
+ExtendedStatus On
 <Location /server-status>
      SetHandler server-status
      order deny,allow
