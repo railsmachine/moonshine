@@ -5,7 +5,10 @@ module Moonshine::Plugin::Apache
     service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
     a2enmod('rewrite')
     a2enmod('status')
-    a2enmod('ssl') unless configatron.ssl.nil?
+    unless configatron.ssl.nil?
+      a2enmod('headers')
+      a2enmod('ssl')
+    end
     status = <<-STATUS
 <IfModule mod_status.c>
 <Location /server-status>
