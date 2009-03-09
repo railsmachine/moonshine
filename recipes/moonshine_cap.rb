@@ -53,55 +53,11 @@ namespace :moonshine do
     sudo "RAILS_ROOT=#{current_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
-  after 'deploy:update_code' do
+  after 'deploy:finalize_update' do
     local_config.upload
     local_config.symlink
     apply if fetch(:moonshine_apply, true) == true
   end
-
-  namespace :app do
-
-    desc "remotely console"
-    task :console, :roles => :app, :except => {:no_symlink => true} do
-      input = ''
-      run "cd #{current_path} && ./script/console #{fetch(:rails_env, "production")}" do |channel, stream, data|
-        next if data.chomp == input.chomp || data.chomp == ''
-        print data
-        channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
-      end
-    end
-
-    desc "Show requests per second"
-    task :rps, :roles => :app, :except => {:no_symlink => true} do
-      count = 0
-      last = Time.now
-      run "tail -f #{shared_path}/log/#{fetch(:rails_env, "production")}.log" do |ch, stream, out|
-        break if stream == :err
-        count += 1 if out =~ /^Completed in/
-        if Time.now - last >= 1
-          puts "#{ch[:host]}: %2d Requests / Second" % count
-          count = 0
-          last = Time.now
-        end
-      end
-    end
-
-    desc "tail application log file"
-    task :log, :roles => :app, :except => {:no_symlink => true} do
-      run "tail -f #{shared_path}/log/#{fetch(:rails_env, "production")}.log" do |channel, stream, data|
-        puts "#{data}"
-        break if stream == :err
-      end
-    end
-
-    desc "tail vmstat"
-    task :vmstat, :roles => [:web, :db] do
-      run "vmstat 5" do |channel, stream, data|
-        puts "[#{channel[:host]}]"
-        puts data.gsub(/\s+/, "\t")
-        break if stream == :err
-      end
-    end
 
   task :update_and_console do
     set :moonshine_apply, false
@@ -120,35 +76,80 @@ namespace :moonshine do
     deploy.update_code
     run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
   end
+end
 
-  namespace :local_config do
-    
-    desc <<-DESC
-    Uploads local configuration files to the application's shared directory for
-    later symlinking (if necessary). Called if local_config is set.
-    DESC
-    task :upload do
-      fetch(:local_config,[]).each do |file|
-        filename = File.split(file).last
-        if File.exist?( file )
-          put(File.read( file ),"#{shared_path}/#{filename}")
-        end
-      end
+namespace :app do
+
+  desc "remotely console"
+  task :console, :roles => :app, :except => {:no_symlink => true} do
+    input = ''
+    run "cd #{current_path} && ./script/console #{fetch(:rails_env, "production")}" do |channel, stream, data|
+      next if data.chomp == input.chomp || data.chomp == ''
+      print data
+      channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
     end
-    
-    desc <<-DESC
-    Symlinks uploaded local configurations into the release directory.
-    DESC
-    task :symlink do
-      fetch(:local_config,[]).each do |file|
-        filename = File.split(file).last
-        run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{filename} #{current_release}/#{file}"
-      end
-    end
-    
   end
 
+  desc "Show requests per second"
+  task :rps, :roles => :app, :except => {:no_symlink => true} do
+    count = 0
+    last = Time.now
+    run "tail -f #{shared_path}/log/#{fetch(:rails_env, "production")}.log" do |ch, stream, out|
+      break if stream == :err
+      count += 1 if out =~ /^Completed in/
+      if Time.now - last >= 1
+        puts "#{ch[:host]}: %2d Requests / Second" % count
+        count = 0
+        last = Time.now
+      end
+    end
+  end
+
+  desc "tail application log file"
+  task :log, :roles => :app, :except => {:no_symlink => true} do
+    run "tail -f #{shared_path}/log/#{fetch(:rails_env, "production")}.log" do |channel, stream, data|
+      puts "#{data}"
+      break if stream == :err
+    end
+  end
+
+  desc "tail vmstat"
+  task :vmstat, :roles => [:web, :db] do
+    run "vmstat 5" do |channel, stream, data|
+      puts "[#{channel[:host]}]"
+      puts data.gsub(/\s+/, "\t")
+      break if stream == :err
+    end
+  end
 end
+
+namespace :local_config do
+
+  desc <<-DESC
+  Uploads local configuration files to the application's shared directory for
+  later symlinking (if necessary). Called if local_config is set.
+  DESC
+  task :upload do
+    fetch(:local_config,[]).each do |file|
+      filename = File.split(file).last
+      if File.exist?( file )
+        put(File.read( file ),"#{shared_path}/#{filename}")
+      end
+    end
+  end
+  
+  desc <<-DESC
+  Symlinks uploaded local configurations into the release directory.
+  DESC
+  task :symlink do
+    fetch(:local_config,[]).each do |file|
+      filename = File.split(file).last
+      run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{filename} #{current_release}/#{file}"
+    end
+  end
+  
+end
+
 namespace :deploy do
   desc "Restart the Passenger processes on the app server by touching tmp/restart.txt."
   task :restart, :roles => :app, :except => { :no_release => true } do
