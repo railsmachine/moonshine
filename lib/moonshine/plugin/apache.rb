@@ -24,7 +24,8 @@ STATUS
       :ensure => :present,
       :mode => '644',
       :require => exec('a2enmod status'),
-      :content => status
+      :content => status,
+      :notify => service("apache2")
   end
 
 private
