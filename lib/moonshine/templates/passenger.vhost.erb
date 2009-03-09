@@ -1,70 +1,121 @@
 <VirtualHost *:80>
-    ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
-    DocumentRoot <%= configatron.deploy_to + "/current/public" %>
+<% unless configatron.ssl.nil? %>
+  ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+</VirtualHost>
+<VirtualHost <%= configatron.ssl.retrieve('ip', '_default_') %>:443>
+  RequestHeader set X_FORWARDED_PROTO "https"
 
-    <Directory <%= configatron.deploy_to + "/current/public" %>>
-      Options FollowSymLinks
-      AllowOverride None
-      Order allow,deny
-      Allow from all
-    </Directory>
+  SSLEngine on
+  SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+  SSLCertificateFile    <%= configatron.ssl.retrieve('certificate_file', '/etc/ssl/certs/ssl-cert-snakeoil.pem') %>
+  SSLCertificateKeyFile <%= configatron.ssl.retrieve('certificate_key_file', '/etc/ssl/private/ssl-cert-snakeoil.key') %>
+  <% unless configatron.ssl.certificate_chain_file.nil? %>
+  SSLCertificateChainFile <%= configatron.ssl.certificate_chain_file %>
+  <% else %>
+  #SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
+  <% end %>
 
-    ##
-    ## The following options are Rails specific options. They may occur
-    ## here in your VirtualHost entry or in the global configuration.
-    ##
+  BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
-    ## RailsAutoDetect
-    #
-    # Set whether Phusion Passenger should automatically detect whether
-    # a virtual host's document root is a Ruby on Rails application.
-    # The default is on.
-    # Options: <on|off>
+  <%= configatron.ssl.vhost_extra %>
 
-    RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.retrieve('rails_auto_detect', true)) %>
+<% end %>
+  ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
+  DocumentRoot <%= configatron.deploy_to + "/current/public" %>
 
-    ## RailsBaseURI
-    #
-    # Specify that the given URI is a Rails application. It is allowed to
-    # specify this option multiple times. Do this to deploy multiple
-    # Rails applications in different sub-URIs under the same virtual host.
-    <% unless configatron.passenger.rails_base_uri.nil? %>
-    RailsBaseURI configatron.passenger.rails_base_uri
-    <% else %>
-    # RailsBaseURI <uri>
-    <% end %>
+  <Directory <%= configatron.deploy_to + "/current/public" %>>
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
 
-    ## RailsAllowModRewrite
-    #
-    # Passenger will not override mod_rewrite rules if this option
-    # is enabled.
-    # Options: <on|off>
+  ##
+  ## The following options are Rails specific options. They may occur
+  ## here in your VirtualHost entry or in the global configuration.
+  ##
 
-    RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.retrieve('allow_mod_rewrite', false)) %>
+  ## RailsAutoDetect
+  #
+  # Set whether Phusion Passenger should automatically detect whether
+  # a virtual host's document root is a Ruby on Rails application.
+  # The default is on.
+  # Options: <on|off>
 
-    ## RailsEnv
-    #
-    # Use this option to specify the default RAILS_ENV value. The default
-    # setting is production.
+  RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.retrieve('rails_auto_detect', true)) %>
 
-    RailsEnv <%= configatron.passenger.retrieve('rails_env', (ENV['RAILS_ENV'] || 'production')) %>
+  ## RailsBaseURI
+  #
+  # Specify that the given URI is a Rails application. It is allowed to
+  # specify this option multiple times. Do this to deploy multiple
+  # Rails applications in different sub-URIs under the same virtual host.
+  <% unless configatron.passenger.rails_base_uri.nil? %>
+  RailsBaseURI <%= configatron.passenger.rails_base_uri %>
+  <% else %>
+  # RailsBaseURI <uri>
+  <% end %>
 
-    ## RailsSpawnMethod
-    #
-    # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
-    # in order to handle requests. But there are multiple ways with which
-    # processes can be spawned, each having its own set of pros and cons.
-    # Supported spawn methods are:
-    #  smart
-    #    When this spawn method is used, Phusion Passenger will attempt
-    #    to cache Ruby on Rails framework code and application code for
-    #    a limited period of time.
-    #
-    #  conservative
-    #    This spawning method is similar to the one used in Mongrel Cluster.
-    #    It does not perform any code caching at all.
+  ## RailsAllowModRewrite
+  #
+  # Passenger will not override mod_rewrite rules if this option
+  # is enabled.
+  # Options: <on|off>
 
-    RailsSpawnMethod <%= configatron.passenger.retrieve('rails_spawn_method', 'smart') %>
+  RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.retrieve('allow_mod_rewrite', true)) %>
 
-<%= configatron.passenger.vhost_extra %>
+  ## RailsEnv
+  #
+  # Use this option to specify the default RAILS_ENV value. The default
+  # setting is production.
+
+  RailsEnv <%= configatron.passenger.retrieve('rails_env', (ENV['RAILS_ENV'] || 'production')) %>
+
+  ## RailsSpawnMethod
+  #
+  # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
+  # in order to handle requests. But there are multiple ways with which
+  # processes can be spawned, each having its own set of pros and cons.
+  # Supported spawn methods are:
+  #  smart
+  #    When this spawn method is used, Phusion Passenger will attempt
+  #    to cache Ruby on Rails framework code and application code for
+  #    a limited period of time.
+  #
+  #  conservative
+  #    This spawning method is similar to the one used in Mongrel Cluster.
+  #    It does not perform any code caching at all.
+
+  RailsSpawnMethod <%= configatron.passenger.retrieve('rails_spawn_method', 'smart') %>
+
+  # Deflate
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+  RewriteEngine On
+
+  # Prevent access to .git directories
+  RewriteRule ^(.*/)?\.git/ - [F,L]
+  ErrorDocument 403 "Access Forbidden"
+
+  # Check for maintenance file and redirect all requests
+  RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+  RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+  RewriteRule ^.*$ /system/maintenance.html [L]
+
+  # Rewrite index to check for static
+  RewriteRule ^/$ /index.html [QSA]
+
+  # Rewrite to check for Rails cached page
+  RewriteRule ^([^.]+)$ $1.html [QSA]
+
+<% if configatron.ssl.nil? %>
+  <%= configatron.passenger.vhost_extra %>
+<% else %>
+  <%= configatron.ssl.vhost_extra %>
+<% end %>
 </VirtualHost>

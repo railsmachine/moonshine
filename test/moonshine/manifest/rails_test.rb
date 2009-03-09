@@ -66,16 +66,29 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.passenger_configure_gem_path
     @manifest.passenger_site
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"]
-    assert_match /RailsAllowModRewrite Off/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite 000-default' }
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configatron.application}" }
   end
 
   def test_passenger_vhost_configuration
     @manifest.passenger_configure_gem_path
-    @manifest.configure(:passenger => { :allow_mod_rewrite => true })
+    @manifest.configure(:passenger => { :rails_base_uri => '/test' })
     @manifest.passenger_site
-    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_match /RailsBaseURI \/test/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+  end
+
+  def test_ssl_vhost_configuration
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:ssl => {
+      :certificate_file => 'cert_file',
+      :certificate_key_file => 'cert_key_file',
+      :certificate_chain_file => 'cert_chain_file'
+    })
+    @manifest.passenger_site
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod ssl' }
+    assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
   end
 
   def test_installs_postfix
