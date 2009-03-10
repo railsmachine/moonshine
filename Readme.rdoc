@@ -65,8 +65,4 @@ following line to your config/deploy.rb:
     set :local_config, %w(config/database.yml)
 
 This file will then be automatically uploaded and symlinked to
-<tt>current/config/database.yml</tt> on each deploy. Easy
-
-=== Debugging Manifest Failures
-
-When creating a manifest to describe your application, 
+<tt>current/config/database.yml</tt> on each deploy. 
