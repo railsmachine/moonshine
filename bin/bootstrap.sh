@@ -31,7 +31,7 @@ else
   pushd ./source
   ./configure --prefix=$PREFIX
   echo 'Avert your eyes'
-  # YIKES!
+^  # YIKES!
   sed -i 's?LIBS = -ldl?LIBS = $(PRELIBS) -ldl?' ./Makefile
   make PRELIBS="-Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -ltcmalloc_minimal"
   make install

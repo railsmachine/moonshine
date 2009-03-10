@@ -1,5 +1,6 @@
 module Moonshine::Manifest::Rails::Sqlite3
 
+  # Install the sqlite3 gem and it's dependencies
   def sqlite3
     package 'sqlite3', :ensure => :installed
     package 'libsqlite3-dev', :ensure => :installed

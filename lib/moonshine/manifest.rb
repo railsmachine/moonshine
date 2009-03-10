@@ -15,11 +15,6 @@
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
-  # The working directory of the Rails application this manifests describes.
-  def self.working_directory
-    @working_directory ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
-  end
-
   # Load a Moonshine Plugin
   #
   #   class MyManifest < Moonshine::Manifest
@@ -34,7 +29,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #   end
   def self.plugin(name = nil)
     if name.is_a?(Symbol)
-      path = File.join(working_directory, 'vendor', 'plugins', name.to_s, 'moonshine', 'init.rb')
+      path = File.join(rails_root, 'vendor', 'plugins', name.to_s, 'moonshine', 'init.rb')
     else
       path = name
     end
@@ -42,16 +37,30 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     true
    end
 
+  # The working directory of the Rails application this manifests describes.
+  def self.rails_root
+   @rails_root ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
+  end
+
+  def rails_root
+   self.class.rails_root
+  end
+
+  # The current environment's database configuration
+  def database_environment
+   configatron.database.send((ENV['RAILS_ENV'] || 'production').to_sym)
+  end
+
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
-  # with the same basename at <p>RAILS_ROOT/app/manifests/templates</p>, it is
-  # used instead. This is useful to override templates provided by plugins to
-  # customize application configuration files.
+  # with the same basename at <tt>RAILS_ROOT/app/manifests/templates</tt>, it
+  # is used instead. This is useful to override templates provided by plugins
+  # to customize application configuration files.
   def template(pathname, b = nil)
     b ||= self.send(:binding)
     template_contents = nil
     basename = pathname.index('/') ? pathname.split('/').last : pathname
-    if File.exist?(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', basename)))
-      template_contents = File.read(File.expand_path(File.join(self.class.working_directory, 'app', 'manifest', 'templates', basename)))
+    if File.exist?(File.expand_path(File.join(rails_root, 'app', 'manifest', 'templates', basename)))
+      template_contents = File.read(File.expand_path(File.join(rails_root, 'app', 'manifest', 'templates', basename)))
     elsif File.exist?(File.expand_path(pathname))
       template_contents = File.read(File.expand_path(pathname))
     else
@@ -60,12 +69,12 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ERB.new(template_contents).result(b)
   end
 
-  #config/moonshine.yml
-  configatron.configure_from_yaml(File.join(working_directory, 'config', 'moonshine.yml'))
+  # config/moonshine.yml
+  configatron.configure_from_yaml(File.join(rails_root, 'config', 'moonshine.yml'))
 
-  #database config
-  configatron.database.configure_from_yaml(File.join(working_directory, 'config', 'database.yml'))
+  # database config
+  configatron.database.configure_from_yaml(File.join(rails_root, 'config', 'database.yml'))
 
-  #gems
-  configatron.gems = (YAML.load_file(File.join(working_directory, 'config', 'gems.yml')) rescue nil)
+  # gems
+  configatron.gems = (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil)
 end

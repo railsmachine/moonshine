@@ -13,7 +13,7 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
 
   recipe :gems, :directories
 
-  #TODO: replicate bin/bootstrap.sh here for 100% idempotency
+  # TODO: replicate bin/bootstrap.sh here for 100% idempotency
 
   # Installs the gem dependencies of the Moonshine::Manifest::Rails
   def gems
@@ -22,8 +22,8 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
     package 'passenger', :provider => :gem, :ensure => :latest
   end
 
-  #Essentially replicates the deploy:setup command from capistrano, but sets
-  #up permissions correctly
+  # Essentially replicates the deploy:setup command from capistrano, but sets
+  # up permissions correctly
   def directories
     deploy_to_array = configatron.deploy_to.split('/')
     deploy_to_array.each_with_index do |dir, index|

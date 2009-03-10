@@ -1,9 +1,11 @@
 module Moonshine::Manifest::Rails::Passenger
-
+  # Install the passenger gem
   def passenger_gem
     package "passenger", :ensure => :latest, :provider => :gem
   end
 
+  # Build, install, and enable the passenger apache module. Please see the
+  # <tt>passenger.conf.erb</tt> template for passenger configuration options.
   def passenger_apache_module
     # Install Apache2 developer library
     package "apache2-threaded-dev", :ensure => :installed
@@ -15,9 +17,11 @@ module Moonshine::Manifest::Rails::Passenger
       :creates => "#{configatron.passenger.path}/ext/apache2/mod_passenger.so",
       :require => [package("passenger"), package("apache2-mpm-worker"), package("apache2-threaded-dev")]
 
+    load_template = "LoadModule passenger_module #{configatron.passenger.path}/ext/apache2/mod_passenger.so"
+
     file '/etc/apache2/mods-available/passenger.load',
       :ensure => :present,
-      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.load.erb')),
+      :content => load_template,
       :require => [exec("build_passenger")],
       :notify => service("apache2"),
       :alias => "passenger_load"
@@ -32,6 +36,8 @@ module Moonshine::Manifest::Rails::Passenger
     a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]
   end
 
+  # Creates and enables a vhost configuration named after your application.
+  # Also ensures that the <tt>000-default</tt> vhost is disabled.
   def passenger_site
     file "/etc/apache2/sites-available/#{configatron.application}",
       :ensure => :present,
@@ -68,5 +74,3 @@ private
   end
 
 end
-
-include Moonshine::Manifest::Rails::Passenger

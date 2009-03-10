@@ -1,5 +1,7 @@
 module Moonshine::Manifest::Rails::Apache
 
+  # Installs Apache 2.2 and enables mod_rewrite and mod_status. Enables mod_ssl
+  # if there's a configuration hash at <tt>configatron.ssl</tt>
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
     service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
@@ -30,6 +32,9 @@ STATUS
 
 private
 
+  # Symlinks a site from <tt>/etc/apache2/sites-enabled/site</tt> to
+  #<tt>/etc/apache2/sites-available/site</tt>. Creates
+  #<tt>exec("a2ensite #{site}")</tt>.
   def a2ensite(site, options = {})
     exec("a2ensite #{site}", {
         :command => "/usr/sbin/a2ensite #{site}",
@@ -40,6 +45,9 @@ private
     )
   end
 
+  # Removes a symlink from <tt>/etc/apache2/sites-enabled/site</tt> to
+  #<tt>/etc/apache2/sites-available/site</tt>. Creates
+  #<tt>exec("a2dissite #{site}")</tt>.
   def a2dissite(site, options = {})
     exec("a2dissite #{site}", {
         :command => "/usr/sbin/a2dissite #{site}",
@@ -50,6 +58,9 @@ private
     )
   end
 
+  # Symlinks a module from <tt>/etc/apache2/mods-enabled/mod</tt> to
+  #<tt>/etc/apache2/mods-available/mod</tt>. Creates
+  #<tt>exec("a2enmod #{mod}")</tt>.
   def a2enmod(mod, options = {})
     exec("a2enmod #{mod}", {
         :command => "/usr/sbin/a2enmod #{mod}",
@@ -60,6 +71,9 @@ private
     )
   end
 
+  # Removes a symlink from <tt>/etc/apache2/mods-enabled/mod</tt> to
+  #<tt>/etc/apache2/mods-available/mod</tt>. Creates
+  #<tt>exec("a2dismod #{mod}")</tt>.
   def a2dismod(mod, options = {})
     exec("a2dismod #{mod}", {
         :command => "/usr/sbin/a2enmod #{mod}",
@@ -71,5 +85,3 @@ private
   end
 
 end
-
-include Moonshine::Manifest::Rails::Apache

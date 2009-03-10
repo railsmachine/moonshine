@@ -13,12 +13,13 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
     }
   })
 
-  #These recipes are included in in Moonshine::Manifest::Rails
+  # These recipes are included in in Moonshine::Manifest::Rails
   recipe :apache_server
   recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
   recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
-  recipe :ntp, :time_zone, :postfix, :cron_packages
   recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
+  # recipe :sqlite3
+  recipe :ntp, :time_zone, :postfix, :cron_packages
 
   # add your application's custom requirements here
   def application_packages

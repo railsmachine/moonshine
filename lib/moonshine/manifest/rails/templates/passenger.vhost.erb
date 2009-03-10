@@ -16,7 +16,7 @@
   <% unless configatron.ssl.certificate_chain_file.nil? %>
   SSLCertificateChainFile <%= configatron.ssl.certificate_chain_file %>
   <% else %>
-  #SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
+  # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0

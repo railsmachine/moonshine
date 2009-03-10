@@ -59,24 +59,6 @@ namespace :moonshine do
     local_config.symlink
     apply if fetch(:moonshine_apply, true) == true
   end
-
-  task :update_and_console do
-    set :moonshine_apply, false
-    deploy.update_code
-    app.console
-  end
-
-  task :update_and_bootstrap do
-    set :moonshine_apply, false
-    deploy.update_code
-    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace moonshine:bootstrap"
-  end
-
-  task :update_and_rake do
-    set :moonshine_apply, false
-    deploy.update_code
-    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
-  end
 end
 
 namespace :app do
@@ -122,6 +104,7 @@ namespace :app do
       break if stream == :err
     end
   end
+
 end
 
 namespace :local_config do

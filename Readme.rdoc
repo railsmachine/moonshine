@@ -34,17 +34,39 @@ favorite platform supported? Fork Moonshine on GitHub!)
     what you end up with is an extremely maintainable server that you'll
     never need to SSH into again!
 
-== Ongoing Configuration Management with Moonshine
+== Moonshine and Capistrano
 
-One of the greatest beneifts of using Moonshine to deploy your Rails
-application is that your server configuration becomes versioned and deployed
-alongside your application.
+Moonshine tightly integrates with Capistrano, utilizing its callback system
+to apply your manifests to the server on each deploy. In addition, variables
+are set in Capistrano for all keys on the <tt>config/moonshine.yml</tt> hash,
+allowing your Capistrano configuration to be extremly barebones.
 
-=== Adding a Gem
+By default, Capistrano applies the manifest at
+<tt>app/manifests/application_manifest.rb</tt>. To run a different manifest,
+for example one to install and maintain packages on a server of a different
+role:
 
-If you add a feature to your application that requires a new gem - paperclip,
-for example. Once you added the <tt>config.gem</tt> call to <tt>config/environment.rb</tt>,
-run <tt>rake moonshine:gems</tt> to dump your gems to <tt>config/moonshine.yml</tt>.
-Commit these changes along with the change to your application requiring
-paperclip, then run <tt>cap deploy</tt>. During your deploy, Moonshine will
-install the paperclip gem and all system requirements for you!
+    set :moonshine_manifest, 'memcached_manifest'
+
+If you'd like to prevent Capistrano from applying your Moonshine manifests for
+any reason:
+
+    set :moonshine_apply, false
+
+=== Local Config
+
+Often, certain files (<tt>config/database.yml</tt>, etc) are excluded from an
+application's SCM, but required to be present for deploy. We've abstracted
+this pattern with some Capistrano automation that goes great with Moonshine.
+
+For example, if you keep <tt>config/database.yml</tt> out of your SCM, add the
+following line to your config/deploy.rb:
+
+    set :local_config, %w(config/database.yml)
+
+This file will then be automatically uploaded and symlinked to
+<tt>current/config/database.yml</tt> on each deploy. Easy
+
+=== Debugging Manifest Failures
+
+When creating a manifest to describe your application, 
