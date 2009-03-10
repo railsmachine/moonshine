@@ -12,5 +12,5 @@ class Configatron::Store
     ''
   end
 end
-require "#{File.dirname(__FILE__)}/moonshine/manifest/base.rb"
-require "#{File.dirname(__FILE__)}/moonshine/manifest/rails.rb"
+require File.join(File.dirname(__FILE__), 'moonshine', 'manifest', 'base.rb')
+require File.join(File.dirname(__FILE__), 'moonshine', 'manifest', 'rails.rb')

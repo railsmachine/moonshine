@@ -1,12 +1,13 @@
 # Run by moonshine to install dependencies and setup directories. Requires
-# these three variables in a YAML file in <tt>/tmp/moonshine.yml</tt>:
+# these three variables in a YAML <tt>config/moonshine.yml</tt>:
 #
 #   application: your_app_name
 #   user: rails
 #   deploy_to: /srv/your_app_name
 #
-# Calling <tt>cap deploy:setup</tt> or <tt>cap moonshine:bootstrap</tt>
-# in <tt>RAILS_ROOT</tt> performs this step for you.
+# Running <tt>cap deploy:setup</tt> or <tt>cap moonshine:bootstrap</tt>
+# in uploads your <p>config/moonshine.yml</p> to <tt>/tmp/moonshine.yml</tt>
+# on your server and applies this manifest.
 class MoonshineSetupManifest < ShadowPuppet::Manifest
   configure(YAML.load_file('/tmp/moonshine.yml'))
 

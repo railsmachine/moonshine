@@ -5,14 +5,12 @@
 #   config/moonshine.yml
 #
 # The contents of <tt>config/moonshine.yml</tt> are expected to serialize into
-# a hash, and are loaded into the <tt>configuration</tt> object.
+# a hash, and are loaded into the manifest's Configatron::Store.
 #
 #   config/database.yml
 #
 # The contents of your database config are parsed and are available at
 # <tt>configatron.database</tt>.
-#
-# == Extending
 #
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
@@ -45,9 +43,9 @@ class Moonshine::Manifest::Base < ShadowPuppet::Manifest
    end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
-  # with the same basename at RAILS_ROOT/app/manifests/, it is used instead.
-  # This is useful to override templates provided by plugins to customize
-  # application configuration files.
+  # with the same basename at <p>RAILS_ROOT/app/manifests/templates</p>, it is
+  # used instead. This is useful to override templates provided by plugins to
+  # customize application configuration files.
   def template(pathname, b = nil)
     b ||= self.send(:binding)
     template_contents = nil
