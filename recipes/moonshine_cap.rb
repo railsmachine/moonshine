@@ -27,13 +27,6 @@ namespace :moonshine do
   dependencies. Called by deploy:setup.
   DESC
   task :bootstrap do
-    #copy the bootstrap script to the server to install Ruby, RubyGems, ShadowPuppet
-    put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
-    sudo 'chmod a+x /tmp/bootstrap.sh'
-    sudo '/tmp/bootstrap.sh'
-    sudo 'rm /tmp/bootstrap.sh'
-    # copy moonshine_setup_manifest.rb to the server
-    put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
     begin
       config = YAML.load_file(File.join(Dir.pwd, 'config', 'moonshine.yml'))
       put(YAML.dump(config),"/tmp/moonshine.yml")
@@ -41,6 +34,11 @@ namespace :moonshine do
       puts "Please run 'ruby script/generate moonshine' and configure config/moonshine.yml first"
       exit(0)
     end
+    put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
+    put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
+    sudo 'chmod a+x /tmp/bootstrap.sh'
+    sudo '/tmp/bootstrap.sh'
+    sudo 'rm /tmp/bootstrap.sh'
     sudo "shadow_puppet /tmp/moonshine_setup_manifest.rb"
     sudo 'rm /tmp/moonshine_setup_manifest.rb'
     sudo 'rm /tmp/moonshine.yml'
