@@ -1,6 +1,20 @@
 #The Rails Manifest includes recipes for Apache, Mysql, Sqlite3 and Rails
 #running on Ubuntu 8.10 or greater.
 class Moonshine::Manifest::Rails < Moonshine::Manifest
+  def validate_platform
+    unless Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f >= 8.1
+      error = <<-ERROR
+
+
+      Moonshine::Manifest::Rails is currently only supported on Ubuntu 8.10
+      or greater. If you'd like to see your favorite distro supported, fork
+      Moonshine on GitHub!
+      ERROR
+      raise NotImplementedError, error
+    end
+  end
+  recipe :validate_platform
+
   require File.join(File.dirname(__FILE__), 'rails', 'passenger.rb')
   include Moonshine::Manifest::Rails::Passenger
   require File.join(File.dirname(__FILE__), 'rails', 'mysql.rb')
