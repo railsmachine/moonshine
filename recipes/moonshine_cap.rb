@@ -4,7 +4,7 @@ set :git_enable_submodules, 1
 ssh_options[:paranoid] = false
 ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
-
+set :keep_releases, 2
 after 'deploy:restart', 'deploy:cleanup'
 
 #load the moonshine configuration into
