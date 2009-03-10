@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Sqlite3
+module Moonshine::Manifest::Rails::Sqlite3
 
   def sqlite3
     package 'sqlite3', :ensure => :installed

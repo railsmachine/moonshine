@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Passenger
+module Moonshine::Manifest::Rails::Passenger
 
   def passenger_gem
     package "passenger", :ensure => :latest, :provider => :gem
@@ -17,14 +17,14 @@ module Moonshine::Plugin::Passenger
 
     file '/etc/apache2/mods-available/passenger.load',
       :ensure => :present,
-      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.load.erb')),
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.load.erb')),
       :require => [exec("build_passenger")],
       :notify => service("apache2"),
       :alias => "passenger_load"
 
     file '/etc/apache2/mods-available/passenger.conf',
       :ensure => :present,
-      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.conf.erb')),
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.conf.erb')),
       :require => [exec("build_passenger")],
       :notify => service("apache2"),
       :alias => "passenger_conf"
@@ -35,7 +35,7 @@ module Moonshine::Plugin::Passenger
   def passenger_site
     file "/etc/apache2/sites-available/#{configatron.application}",
       :ensure => :present,
-      :content => template(File.join(File.dirname(__FILE__), '..', 'templates', 'passenger.vhost.erb')),
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.vhost.erb')),
       :notify => service("apache2"),
       :alias => "passenger_vhost",
       :require => exec("a2enmod passenger")
@@ -69,4 +69,4 @@ private
 
 end
 
-include Moonshine::Plugin::Passenger
+include Moonshine::Manifest::Rails::Passenger

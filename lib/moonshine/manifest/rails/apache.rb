@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Apache
+module Moonshine::Manifest::Rails::Apache
 
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
@@ -72,4 +72,4 @@ private
 
 end
 
-include Moonshine::Plugin::Apache
+include Moonshine::Manifest::Rails::Apache

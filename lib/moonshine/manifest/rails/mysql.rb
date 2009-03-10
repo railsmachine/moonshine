@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Mysql
+module Moonshine::Manifest::Rails::Mysql
 
   def mysql_server
     package 'mysql-server', :ensure => :installed
@@ -57,4 +57,4 @@ private
   end
 end
 
-include Moonshine::Plugin::Mysql
+include Moonshine::Manifest::Rails::Mysql

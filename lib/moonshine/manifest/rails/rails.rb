@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Rails
+module Moonshine::Manifest::Rails::Rails
 
   def rails_bootstrap
     rake 'moonshine:bootstrap',
@@ -98,4 +98,4 @@ private
 
 end
 
-include Moonshine::Plugin::Rails
+include Moonshine::Manifest::Rails::Rails

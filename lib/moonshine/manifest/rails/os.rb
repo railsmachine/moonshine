@@ -1,4 +1,4 @@
-module Moonshine::Plugin::Os
+module Moonshine::Manifest::Rails::Os
   def cron_packages
     service "cron", :require => package("cron"), :ensure => :running
     package "cron", :ensure => :installed
@@ -26,4 +26,4 @@ module Moonshine::Plugin::Os
 
 end
 
-include Moonshine::Plugin::Os
+include Moonshine::Manifest::Rails::Os

@@ -14,7 +14,7 @@
 #
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
-class Moonshine::Manifest::Base < ShadowPuppet::Manifest
+class Moonshine::Manifest < ShadowPuppet::Manifest
   # The working directory of the Rails application this manifests describes.
   def self.working_directory
     @working_directory ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
