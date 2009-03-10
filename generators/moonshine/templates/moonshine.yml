@@ -1,5 +1,6 @@
 :application: your_app_name
 :user: rails
+:group: rails
 :deploy_to: /srv/your_app_name
 :domain: yourapp.com
 :repository: git@github.com:username/your_app_name.git

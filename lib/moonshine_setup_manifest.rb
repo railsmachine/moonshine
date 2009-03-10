@@ -35,7 +35,11 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
       "#{configatron.deploy_to}/releases"
     ]
     dirs.each do |dir|
-      file dir, :ensure => :directory, :owner => configatron.user, :group => configatron.user
+      file dir,
+      :ensure => :directory,
+      :owner => configatron.user,
+      :group => configatron.retrieve('group', configatron.user),
+      :mode => '775'
     end
   end
 end
