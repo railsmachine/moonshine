@@ -21,7 +21,7 @@
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
-  <%= configatron.ssl.vhost_extra %>
+  <%= configatron.ssl.retrieve('vhost_extra', '') %>
 
 <% end %>
   ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
@@ -116,8 +116,8 @@
   RewriteRule ^([^.]+)$ $1.html [QSA]
 
 <% if configatron.ssl.nil? %>
-  <%= configatron.passenger.vhost_extra %>
+  <%= configatron.passenger.retrieve('vhost_extra', '') %>
 <% else %>
-  <%= configatron.ssl.vhost_extra %>
+  <%= configatron.ssl.retrieve('vhost_extra', '') %>
 <% end %>
 </VirtualHost>
