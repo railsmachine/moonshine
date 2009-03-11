@@ -55,8 +55,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   # with the same basename at <tt>RAILS_ROOT/app/manifests/templates</tt>, it
   # is used instead. This is useful to override templates provided by plugins
   # to customize application configuration files.
-  def template(pathname, b = nil)
-    b ||= self.send(:binding)
+  def template(pathname, b = binding)
     template_contents = nil
     basename = pathname.index('/') ? pathname.split('/').last : pathname
     if File.exist?(File.expand_path(File.join(rails_root, 'app', 'manifest', 'templates', basename)))
