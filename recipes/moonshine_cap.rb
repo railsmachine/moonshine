@@ -35,7 +35,7 @@ namespace :moonshine do
       exit(0)
     end
     put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
-    put(File.read(File.join(File.dirname(__FILE__), '..', 'bin', 'bootstrap.sh')),"/tmp/bootstrap.sh")
+    put(File.read(File.join(File.dirname(__FILE__), "bootstrap.#{fetch(:ruby, 'ree')}.sh")),"/tmp/bootstrap.sh")
     sudo 'chmod a+x /tmp/bootstrap.sh'
     sudo '/tmp/bootstrap.sh'
     sudo 'rm /tmp/bootstrap.sh'
