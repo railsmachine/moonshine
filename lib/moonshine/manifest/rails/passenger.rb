@@ -10,12 +10,28 @@ module Moonshine::Manifest::Rails::Passenger
     # Install Apache2 developer library
     package "apache2-threaded-dev", :ensure => :installed
 
+    file "/usr/local/src", :ensure => :directory
+
+    #have to shell out to another interpreter to make this symlink magic work
+    exec "symlink_passenger",
+      :command => 'ln -nfs `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").first.loaded_from.gsub(/specifications/,"gems").gsub(/.gemspec/,"/")\'` /usr/local/src/passenger',
+      :unless => 'ls -al /usr/local/src/passenger | grep `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s\'`',
+      :require => [
+        package("passenger"),
+        file("/usr/local/src")
+      ]
+
     # Build Passenger from source
     exec "build_passenger",
       :cwd => configatron.passenger.path,
       :command => '/usr/bin/ruby -S rake clean apache2',
       :creates => "#{configatron.passenger.path}/ext/apache2/mod_passenger.so",
-      :require => [package("passenger"), package("apache2-mpm-worker"), package("apache2-threaded-dev")]
+      :require => [
+        package("passenger"),
+        package("apache2-mpm-worker"),
+        package("apache2-threaded-dev"),
+        exec('symlink_passenger')
+      ]
 
     load_template = "LoadModule passenger_module #{configatron.passenger.path}/ext/apache2/mod_passenger.so"
 
