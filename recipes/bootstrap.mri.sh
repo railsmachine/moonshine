@@ -6,12 +6,8 @@ apt-get update
 echo "Installing build packages"
 apt-get install -q -y git-core build-essential zlib1g-dev libssl-dev libreadline5-dev wget
 
-if [ `which ruby` ]; then
- echo "Ruby already installed."
-else
-  echo "Installing Ruby"
-  apt-get install -q -y ruby-full
-fi
+echo "Installing Ruby"
+apt-get install -q -y ruby-full
 
 echo "Installing RubyGems"
 pushd /tmp
