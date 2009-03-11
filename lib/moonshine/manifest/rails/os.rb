@@ -16,6 +16,15 @@ module Moonshine::Manifest::Rails::Os
     package "cron", :ensure => :installed
   end
 
+  #Overwrites <tt>/etc/motd</tt> to indicate Moonshine Managemnt
+  def motd
+    package 'figlet', :ensure => :installed
+    exec '/etc/motd',
+      :command => 'echo "Mooonshine Managed" | figlet | tee /etc/motd',
+      :unless => "grep '(_)' /etc/motd",
+      :require => package('figlet')
+  end
+
   # Install postfix.
   def postfix
     package 'postfix', :ensure => :latest
