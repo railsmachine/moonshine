@@ -19,7 +19,7 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
   recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
   recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
   # recipe :sqlite3
-  recipe :ntp, :time_zone, :postfix, :cron_packages
+  recipe :ntp, :time_zone, :postfix, :cron_packages, :motd
 
   # add your application's custom requirements here
   def application_packages
