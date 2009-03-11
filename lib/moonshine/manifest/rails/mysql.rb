@@ -1,13 +1,20 @@
 module Moonshine::Manifest::Rails::Mysql
 
   # Installs <tt>mysql-server</tt> from apt and enables the <tt>mysql</tt>
-  # service
+  # service. Also creates a configuration file at
+  # <tt>/etc/mysql/conf.d/moonshine.cnf</tt>. See
+  # <tt>templates/moonshine.cnf</tt> for configuration options.
   def mysql_server
     package 'mysql-server', :ensure => :installed
     service 'mysql', :ensure => :running, :require => [
       package('mysql-server'),
       package('mysql')
     ]
+    file '/etc/mysql/conf.d/moonshine.cnf',
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
+      :require => package('mysql-server'),
+      :notify => service('mysql')
   end
 
   # Install the <tt>mysql</tt> rubygem and dependencies
