@@ -19,16 +19,6 @@ class MoonshineSetupManifestTest < Test::Unit::TestCase
     FileUtils.rm_r("/tmp/moonshine.yml") rescue true
   end
 
-  def test_has_gems_recipe
-    assert @manifest.class.recipes.map(&:first).include?(:gems)
-  end
-
-  def test_installs_gems
-    @manifest.gems
-    assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["shadow_puppet"].params[:provider].value
-    assert_equal :gem, @manifest.puppet_resources[Puppet::Type::Package]["shadow_facter"].params[:provider].value
-  end
-
   def test_creates_directories
     assert @manifest.class.recipes.map(&:first).include?(:directories)
     @manifest.directories
