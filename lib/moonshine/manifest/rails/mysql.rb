@@ -21,9 +21,9 @@ module Moonshine::Manifest::Rails::Mysql
   def mysql_user
     grant =<<EOF
 GRANT ALL PRIVILEGES 
-ON #{mysql_config_from_environment.database}.*
-TO #{mysql_config_from_environment.username}@localhost
-IDENTIFIED BY '#{mysql_config_from_environment.password}';
+ON #{database_environment.database}.*
+TO #{database_environment.username}@localhost
+IDENTIFIED BY '#{database_environment.password}';
 FLUSH PRIVILEGES;
 EOF
 
