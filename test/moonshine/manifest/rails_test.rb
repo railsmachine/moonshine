@@ -13,8 +13,8 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_loads_gems_from_config_hash
     @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://gems.github.com/' } ])
     @manifest.rails_gems
-    assert_not_nil Moonshine::Manifest::Rails.configatron.gems
-    Moonshine::Manifest::Rails.configatron.gems.each do |gem|
+    assert_not_nil Moonshine::Manifest::Rails.configuration[:gems]
+    Moonshine::Manifest::Rails.configuration[:gems].each do |gem|
       assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem[:name]]
       assert_equal gem[:source], gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
@@ -81,17 +81,17 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_configures_passenger_vhost
     @manifest.passenger_configure_gem_path
     @manifest.passenger_site
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"]
-    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
+    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
     assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite 000-default' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configatron.application}" }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configuration[:application]}" }
   end
 
   def test_passenger_vhost_configuration
     @manifest.passenger_configure_gem_path
     @manifest.configure(:passenger => { :rails_base_uri => '/test' })
     @manifest.passenger_site
-    assert_match /RailsBaseURI \/test/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_match /RailsBaseURI \/test/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
 
   def test_ssl_vhost_configuration
@@ -102,8 +102,8 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_chain_file => 'cert_chain_file'
     })
     @manifest.passenger_site
-    assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
-    assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configatron.application}"].params[:content].value
+    assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
 
   def test_installs_postfix
@@ -132,7 +132,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_sets_default_time_zone
-    @manifest.configatron.remove('time_zone')
+    @manifest.configure(:time_zone => nil)
     @manifest.time_zone
     assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
     assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value

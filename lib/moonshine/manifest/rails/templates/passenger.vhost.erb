@@ -1,33 +1,31 @@
 <VirtualHost *:80>
-<% unless configatron.ssl.nil? %>
-  ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
+<% if configuration[:ssl] %>
+  ServerName <%= configuration[:domain] || `hostname -f` %>
   RewriteEngine On
   RewriteCond %{HTTPS} !=on
   RewriteCond %{REQUEST_URI} !^/server-status
   RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
 </VirtualHost>
-<VirtualHost <%= configatron.ssl.retrieve('ip', '_default_') %>:443>
+<VirtualHost <%= configuration[:ssl][:ip] || '__default__' %>:443>
   RequestHeader set X_FORWARDED_PROTO "https"
 
   SSLEngine on
   SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-  SSLCertificateFile    <%= configatron.ssl.retrieve('certificate_file', '/etc/ssl/certs/ssl-cert-snakeoil.pem') %>
-  SSLCertificateKeyFile <%= configatron.ssl.retrieve('certificate_key_file', '/etc/ssl/private/ssl-cert-snakeoil.key') %>
-  <% unless configatron.ssl.certificate_chain_file.nil? %>
-  SSLCertificateChainFile <%= configatron.ssl.certificate_chain_file %>
+  SSLCertificateFile    <%= configuration[:ssl][:certificate_file] || '/etc/ssl/certs/ssl-cert-snakeoil.pem' %>
+  SSLCertificateKeyFile <%= configuration[:ssl][:certificate_key_file] || '/etc/ssl/private/ssl-cert-snakeoil.key' %>
+  <% if configuration[:ssl][:certificate_chain_file] %>
+  SSLCertificateChainFile <%= configuration[:ssl][:certificate_chain_file] %>
   <% else %>
   # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
-  <%= configatron.ssl.retrieve('vhost_extra', '') %>
-
 <% end %>
-  ServerName <%= configatron.retrieve('domain', nil) || `hostname -f` %>
-  DocumentRoot <%= configatron.deploy_to + "/current/public" %>
+  ServerName <%= configuration[:domain] || `hostname -f` %>
+  DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
 
-  <Directory <%= configatron.deploy_to + "/current/public" %>>
+  <Directory <%= configuration[:deploy_to] + "/current/public" %>>
     Options FollowSymLinks
     AllowOverride None
     Order allow,deny
@@ -46,15 +44,15 @@
   # The default is on.
   # Options: <on|off>
 
-  RailsAutoDetect <%= passenger_config_boolean(configatron.passenger.retrieve('rails_auto_detect', true)) %>
+  RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect] || true) %>
 
   ## RailsBaseURI
   #
   # Specify that the given URI is a Rails application. It is allowed to
   # specify this option multiple times. Do this to deploy multiple
   # Rails applications in different sub-URIs under the same virtual host.
-  <% unless configatron.passenger.rails_base_uri.nil? %>
-  RailsBaseURI <%= configatron.passenger.rails_base_uri %>
+  <% if configuration[:passenger][:rails_base_uri] %>
+  RailsBaseURI <%= configuration[:passenger][:rails_base_uri] %>
   <% else %>
   # RailsBaseURI <uri>
   <% end %>
@@ -65,14 +63,14 @@
   # is enabled.
   # Options: <on|off>
 
-  RailsAllowModRewrite <%= passenger_config_boolean(configatron.passenger.retrieve('allow_mod_rewrite', true)) %>
+  RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite] || true) %>
 
   ## RailsEnv
   #
   # Use this option to specify the default RAILS_ENV value. The default
   # setting is production.
 
-  RailsEnv <%= configatron.passenger.retrieve('rails_env', (ENV['RAILS_ENV'] || 'production')) %>
+  RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
 
   ## RailsSpawnMethod
   #
@@ -89,7 +87,7 @@
   #    This spawning method is similar to the one used in Mongrel Cluster.
   #    It does not perform any code caching at all.
 
-  RailsSpawnMethod <%= configatron.passenger.retrieve('rails_spawn_method', 'smart') %>
+  RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
   AddOutputFilterByType DEFLATE text/html text/plain text/xml
@@ -115,9 +113,9 @@
   # Rewrite to check for Rails cached page
   RewriteRule ^([^.]+)$ $1.html [QSA]
 
-<% if configatron.ssl.nil? %>
-  <%= configatron.passenger.retrieve('vhost_extra', '') %>
+<% if configuration[:ssl] %>
+  <%= configuration[:ssl][:vhost_extra] %>
 <% else %>
-  <%= configatron.ssl.retrieve('vhost_extra', '') %>
+  <%= configuration[:passenger][:vhost_extra] %>
 <% end %>
 </VirtualHost>

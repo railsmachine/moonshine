@@ -1,13 +1,13 @@
 module Moonshine::Manifest::Rails::Apache
 
   # Installs Apache 2.2 and enables mod_rewrite and mod_status. Enables mod_ssl
-  # if there's a configuration hash at <tt>configatron.ssl</tt>
+  # if <tt>configuration[:ssl]</tt> is present
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
     service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
     a2enmod('rewrite')
     a2enmod('status')
-    unless configatron.ssl.nil?
+    if configuration[:ssl]
       a2enmod('headers')
       a2enmod('ssl')
     end

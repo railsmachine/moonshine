@@ -10,7 +10,7 @@
 #   config/database.yml
 #
 # The contents of your database config are parsed and are available at
-# <tt>configatron.database</tt>.
+# <tt>configuration[:database]</tt>.
 #
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
@@ -48,7 +48,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
 
   # The current environment's database configuration
   def database_environment
-   configatron.database.send((ENV['RAILS_ENV'] || 'production').to_sym)
+   configuration[:database][(ENV['RAILS_ENV'] || 'production').to_sym]
   end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
@@ -69,11 +69,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   # config/moonshine.yml
-  configatron.configure_from_yaml(File.join(rails_root, 'config', 'moonshine.yml'))
+  configure(YAML.load_file(File.join(rails_root, 'config', 'moonshine.yml')))
 
   # database config
-  configatron.database.configure_from_yaml(File.join(rails_root, 'config', 'database.yml'))
+  configure(:database => YAML.load_file(File.join(rails_root, 'config', 'database.yml')))
 
   # gems
-  configatron.gems = (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil)
+  configure(:gems => (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil))
 end

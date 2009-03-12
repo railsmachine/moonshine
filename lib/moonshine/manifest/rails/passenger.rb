@@ -23,9 +23,9 @@ module Moonshine::Manifest::Rails::Passenger
 
     # Build Passenger from source
     exec "build_passenger",
-      :cwd => configatron.passenger.path,
+      :cwd => configuration[:passenger][:path],
       :command => '/usr/bin/ruby -S rake clean apache2',
-      :creates => "#{configatron.passenger.path}/ext/apache2/mod_passenger.so",
+      :creates => "#{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so",
       :require => [
         package("passenger"),
         package("apache2-mpm-worker"),
@@ -33,7 +33,7 @@ module Moonshine::Manifest::Rails::Passenger
         exec('symlink_passenger')
       ]
 
-    load_template = "LoadModule passenger_module #{configatron.passenger.path}/ext/apache2/mod_passenger.so"
+    load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so"
 
     file '/etc/apache2/mods-available/passenger.load',
       :ensure => :present,
@@ -55,7 +55,7 @@ module Moonshine::Manifest::Rails::Passenger
   # Creates and enables a vhost configuration named after your application.
   # Also ensures that the <tt>000-default</tt> vhost is disabled.
   def passenger_site
-    file "/etc/apache2/sites-available/#{configatron.application}",
+    file "/etc/apache2/sites-available/#{configuration[:application]}",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.vhost.erb')),
       :notify => service("apache2"),
@@ -63,18 +63,18 @@ module Moonshine::Manifest::Rails::Passenger
       :require => exec("a2enmod passenger")
 
     a2dissite '000-default', :require => file("passenger_vhost")
-    a2ensite configatron.application, :require => file("passenger_vhost")
+    a2ensite configuration[:application], :require => file("passenger_vhost")
   end
 
   def passenger_configure_gem_path
-    return configatron.passenger.path unless configatron.passenger.path.nil?
+    return configuration[:passenger][:path] if configuration[:passenger] && configuration[:passenger][:path]
     version = begin
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     rescue
       `gem install passenger --no-ri --no-rdoc`
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     end
-    configatron.passenger.path = "#{Gem.dir}/gems/passenger-#{version}"
+    configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{version}" })
   end
 
 private

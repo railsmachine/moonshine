@@ -13,7 +13,6 @@ class MoonshineGeneratorTest < Test::Unit::TestCase
   end
 
   def teardown
-    configatron.reset!
     FileUtils.rm_r(fake_rails_root)
   end
 

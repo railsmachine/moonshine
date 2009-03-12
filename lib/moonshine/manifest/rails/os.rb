@@ -9,7 +9,7 @@ module Moonshine::Manifest::Rails::Os
   #
   #   cron 'rake:task',
   #       :command => "cd #{rails_root} && RAILS_ENV=#{ENV['RAILS_ENV']} rake rake:task",
-  #       :user => configatron.user,
+  #       :user => configuration[:user],
   #       :minute => 15
   def cron_packages
     service "cron", :require => package("cron"), :ensure => :running
@@ -36,10 +36,10 @@ module Moonshine::Manifest::Rails::Os
     service 'ntp', :ensure => :running, :require => package('ntp'), :pattern => 'ntpd'
   end
 
-  # Set the system timezone to <tt>configatron.time_zone</tt> or 'UTC' by
+  # Set the system timezone to <tt>configuration[:time_zone]</tt> or 'UTC' by
   # default.
   def time_zone
-    zone = configatron.retrieve('time_zone', 'UTC')
+    zone = configuration[:time_zone] || 'UTC'
     zone = 'UTC' if zone.nil? || zone.strip == ''
     file "/etc/timezone",
       :content => zone+"\n",

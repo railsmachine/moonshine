@@ -68,14 +68,14 @@ module Moonshine::Manifest::Rails::Rails
   end
 
   # Automatically install all gems needed specified in the array at
-  # <tt>configatron.gems</tt>. This loads gems from <tt>config/gems.yml</tt>,
-  # which can be generated from by running <tt>rake moonshine:gems</tt>
-  # locally.
+  # <tt>configuration[:gems]</tt>. This loads gems from
+  # <tt>config/gems.yml</tt>, which can be generated from by running
+  # <tt>rake moonshine:gems</tt> locally.
   def rails_gems
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
-    return if configatron.gems.nil?
-    configatron.gems.each do |gem|
+    return unless configuration[:gems]
+    configuration[:gems].each do |gem|
       hash = {
         :provider => :gem,
         :before   => exec('rails_gems')
@@ -102,30 +102,30 @@ module Moonshine::Manifest::Rails::Rails
   # Essentially replicates the deploy:setup command from capistrano, but sets
   # up permissions correctly.
   def rails_directories
-    deploy_to_array = configatron.deploy_to.split('/').split('/')
+    deploy_to_array = configuration[:deploy_to].split('/').split('/')
     deploy_to_array.each_with_index do |dir, index|
       next if index == 0 || index >= (deploy_to_array.size-1)
       file '/'+deploy_to_array[1..index].join('/'), :ensure => :directory
     end
     dirs = [
-      "#{configatron.deploy_to}",
-      "#{configatron.deploy_to}/shared",
-      "#{configatron.deploy_to}/releases"
+      "#{configuration[:deploy_to]}",
+      "#{configuration[:deploy_to]}/shared",
+      "#{configuration[:deploy_to]}/releases"
     ]
-    if configatron.shared_children.is_a?(Array)
-      shared_dirs = configatron.shared_children.map { |d| "#{configatron.deploy_to}/shared/#{d}" }
+    if configuration[:shared_children].is_a?(Array)
+      shared_dirs = configuration[:shared_children].map { |d| "#{configuration[:deploy_to]}/shared/#{d}" }
       dirs += shared_dirs
     end
-    if configatron.app_symlinks.is_a?(Array)
-      dirs += ["#{configatron.deploy_to}/shared/public"]
-      symlink_dirs = configatron.app_symlinks.map { |d| "#{configatron.deploy_to}/shared/public/#{d}" }
+    if configuration[:app_symlinks].is_a?(Array)
+      dirs += ["#{configuration[:deploy_to]}/shared/public"]
+      symlink_dirs = configuration[:app_symlinks].map { |d| "#{configuration[:deploy_to]}/shared/public/#{d}" }
       dirs += symlink_dirs
     end
     dirs.each do |dir|
       file dir,
       :ensure => :directory,
-      :owner => configatron.user,
-      :group => configatron.retrieve('group', configatron.user),
+      :owner => configuration[:user],
+      :group => configuration[:group] || configuration[:user],
       :mode => '775'
     end
   end
@@ -137,6 +137,7 @@ private
   def rake(name, options = {})
     exec("rake #{name}", {
       :command => "rake #{name}",
+      :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => exec('rake tasks')
