@@ -55,8 +55,12 @@ namespace :moonshine do
   after 'deploy:finalize_update' do
     local_config.upload
     local_config.symlink
+  end
+
+  before 'deploy:restart' do
     apply if fetch(:moonshine_apply, true) == true
   end
+
 end
 
 namespace :app do
