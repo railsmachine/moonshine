@@ -62,7 +62,7 @@ private
   def logrotate(log_or_glob, options = {})
     options = options.respond_to?(:to_hash) ? options.to_hash : {}
 
-    package "logrotate", :ensure => :installed, :requires => package("cron"), :notify => service("cron")
+    package "logrotate", :ensure => :installed, :require => package("cron"), :notify => service("cron")
 
     safename = log_or_glob.gsub(/[^a-zA-Z]/, '')
 
