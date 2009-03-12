@@ -10,6 +10,8 @@ module Moonshine::Manifest::Rails::Mysql
       package('mysql-server'),
       package('mysql')
     ]
+    #ensure the mysql key is present on the configuration hash
+    configure(:mysql => {})
     file '/etc/mysql/conf.d/moonshine.cnf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
@@ -33,15 +35,15 @@ module Moonshine::Manifest::Rails::Mysql
   def mysql_user
     grant =<<EOF
 GRANT ALL PRIVILEGES 
-ON #{database_environment.database}.*
-TO #{database_environment.username}@localhost
-IDENTIFIED BY '#{database_environment.password}';
+ON #{database_environment[:database]}.*
+TO #{database_environment[:username]}@localhost
+IDENTIFIED BY '#{database_environment[:password]}';
 FLUSH PRIVILEGES;
 EOF
 
     exec "mysql_user",
       :command => mysql_query(grant),
-      :unless => mysql_query("show grants for #{database_environment.username}@localhost;"),
+      :unless => mysql_query("show grants for #{database_environment[:username]}@localhost;"),
       :require => exec('mysql_database'),
       :before => exec('rake tasks'),
       :notify => exec('rails_bootstrap')
@@ -50,8 +52,8 @@ EOF
   # Create the database from the current <tt>database_environment</tt>
   def mysql_database
     exec "mysql_database",
-      :command => mysql_query("create database #{database_environment.database};"),
-      :unless => mysql_query("show create database #{database_environment.database};"),
+      :command => mysql_query("create database #{database_environment[:database]};"),
+      :unless => mysql_query("show create database #{database_environment[:database]};"),
       :require => service('mysql')
   end
 
