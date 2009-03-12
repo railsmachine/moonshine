@@ -149,4 +149,12 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal '/usr/share/zoneinfo/America/New_York', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
   end
 
+  def test_logroate_helper_generates_config
+    @manifest.send(:logrotate, '/srv/theapp/shared/logs/*.log', {:options => %w(daily missingok compress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
+    @manifest.send(:logrotate, '/srv/otherapp/shared/logs/*.log', {:options => %w(daily missingok nocompress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["logrotate"]
+    assert_match /compress/, @manifest.puppet_resources[Puppet::Type::File]["/etc/logrotate.d/srvtheappsharedlogslog.conf"].params[:content].value
+    assert_match /nocompress/, @manifest.puppet_resources[Puppet::Type::File]["/etc/logrotate.d/srvotherappsharedlogslog.conf"].params[:content].value
+  end
+
 end

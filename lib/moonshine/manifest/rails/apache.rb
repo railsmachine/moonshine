@@ -28,6 +28,11 @@ STATUS
       :require => exec('a2enmod status'),
       :content => status,
       :notify => service("apache2")
+
+    logrotate('/var/log/apache2/*.log', {
+      :options => %w(daily missingok compress delaycompress sharedscripts),
+      :postrotate => '/etc/init.d/apache2 reload'
+    })
   end
 
 private

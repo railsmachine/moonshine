@@ -45,6 +45,14 @@ module Moonshine::Manifest::Rails::Rails
     rake 'db:migrate'
   end
 
+  # Rotates the logs for this rails app
+  def rails_logrotate
+    logrotate("#{configuration[:deploy_to]}/shared/log/*", {
+      :options => %w(daily missingok compress delaycompress sharedscripts),
+      :postrotate => "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
+    })
+  end
+
   # This task ensures Rake is installed and that <tt>rake environment</tt>
   # executes without error in your <tt>rails_root</tt>.
   def rails_rake_environment

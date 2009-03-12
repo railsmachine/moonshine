@@ -1,0 +1,10 @@
+<%= log_or_glob %> {
+  <% options[:options].each do |o| %>
+  <%= o %>
+  <% end %>
+  <% unless options[:postrotate].nil? %>
+  postrotate
+    <%= options[:postrotate] %>
+  endscript
+  <% end %>
+}

@@ -49,4 +49,28 @@ module Moonshine::Manifest::Rails::Os
       :notify => service('ntp')
   end
 
+private
+
+  #Provides a helper for creating logrotate config for various parts of your
+  #stack. For example:
+  #
+  #  logrotate('/srv/theapp/shared/logs/*.log', {
+  #    :options => %w(daily missingok compress delaycompress sharedscripts),
+  #    :postrotate => 'touch /srv/theapp/current/tmp/restart.txt'
+  #  })
+  #
+  def logrotate(log_or_glob, options = {})
+    options = options.respond_to?(:to_hash) ? options.to_hash : {}
+
+    package "logrotate", :ensure => :installed, :requires => package("cron"), :notify => service("cron")
+
+    safename = log_or_glob.gsub(/[^a-zA-Z]/, '')
+
+    file "/etc/logrotate.d/#{safename}.conf",
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), "templates", "logrotate.conf.erb"), binding),
+      :notify => service("cron"),
+      :alias => "logrotate_#{safename}"
+  end
+
 end
