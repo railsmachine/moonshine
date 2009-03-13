@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + '/../../test_helper.rb'
 
+#mock out the gem source index to fake like passenger is installed, but
+#nothing else
+module Gem  #:nodoc:
+  class SourceIndex  #:nodoc:
+    alias_method :orig_search, :search
+    def search(gem_pattern, platform_only = false)
+      if gem_pattern.name.to_s =~ /passenger/
+        orig_search(gem_pattern, platform_only)
+      else
+        []
+      end
+    end
+  end
+end
+
 class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def setup
@@ -19,6 +34,18 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       assert_equal gem[:source], gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
     end
+  end
+
+  def test_magically_loads_gem_dependencies
+    @manifest.configure(:gems => [ 
+      { :name => 'webrat' },
+      { :name => 'thoughtbot-paperclip', :source => 'http://gems.github.com/' }
+    ])
+    @manifest.rails_gems
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['webrat']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['thoughtbot-paperclip']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['libxml2-dev']
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['imagemagick']
   end
 
   def test_creates_directories

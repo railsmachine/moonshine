@@ -15,6 +15,8 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   end
   recipe :validate_platform
 
+  configure(:apt_gems => YAML.load_file(File.join(File.dirname(__FILE__), 'rails', 'apt_gems.yml')))
+
   require File.join(File.dirname(__FILE__), 'rails', 'passenger.rb')
   include Moonshine::Manifest::Rails::Passenger
   require File.join(File.dirname(__FILE__), 'rails', 'mysql.rb')

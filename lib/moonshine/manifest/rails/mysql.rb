@@ -26,8 +26,7 @@ module Moonshine::Manifest::Rails::Mysql
 
   # Install the <tt>mysql</tt> rubygem and dependencies
   def mysql_gem
-    package "libmysqlclient15-dev", :ensure => :installed
-    package "mysql", :ensure => :installed, :provider => :gem, :require => package("libmysqlclient15-dev")
+    gem('mysql')
   end
 
   # GRANT the database user specified in the current <tt>database_environment</tt>

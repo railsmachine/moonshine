@@ -76,26 +76,10 @@ module Moonshine::Manifest::Rails::Rails
     exec 'rails_gems', :command => 'true'
     return unless configuration[:gems]
     configuration[:gems].each do |gem|
-      hash = {
-        :provider => :gem,
-        :before   => exec('rails_gems')
-      }
-      hash.merge!(:source => gem[:source]) if gem[:source]
-      exact_dep = gem[:version] ? Gem::Dependency.new(gem[:name], gem[:version]) : Gem::Dependency.new(gem[:name], '>0')
-      matches = Gem.source_index.search(exact_dep)
-      installed_spec = matches.first
-      if installed_spec
-        #it's already loaded, let's just specify that we want it installed
-        hash.merge!(:ensure => :installed)
-      elsif gem[:version]
-        #if it's not installed and version specified, we require that version
-        hash.merge!(:ensure => gem[:version])
-      else
-        #otherwise we don't care
-        hash.merge!(:ensure => :installed)
-      end
-      #finally create the dependency
-      package(gem[:name], hash)
+      gem(gem[:name], {
+        :version => gem[:version],
+        :source => gem[:source]
+      })
     end
   end
 
@@ -131,8 +115,85 @@ module Moonshine::Manifest::Rails::Rails
   end
 
 private
+  # Creates package("#{name}") with <tt>:provider</tt> set to <tt>:gem</tt>.
+  # The given <tt>options[:version]</tt> requirement is tweaked to ensure
+  # gems aren't reinstalled on each run. <tt>options[:source]</tt> does what
+  # you'd expect, as well.
+  #
+  # === Gem Package Dependencies
+  #
+  # System dependencies are loaded if any exist for the gem or any of it's
+  # gem dependencies in <tt>apt_gems.yml</tt>. For example, calling
+  # <tt>gem('webrat')</tt> knows to install <tt>libxml2-dev</tt> and
+  # <tt>libxslt1-dev</tt> because those are defined as dependencies for
+  # <tt>nokogiri</tt>.
+  #
+  # To define system dependencies not include in moonshine:
+  #
+  #   class UrManifest < ShadowPuppet::Manifest
+  #     configure(:apt_gems => {
+  #       :fakegem => [
+  #         'package1',
+  #         'package2
+  #       ]
+  #     })
+  #   end
+  #
+  # If you were then to require the installation of <tt>fakegem</tt> <strong>
+  # or any gem that depends on <tt>fakegem</tt></strong>, <tt>package1</tt>
+  # and <tt>package2</tt> would be installed first via apt.
+  def gem(name, options = {})
+    hash = {
+      :provider => :gem,
+      :before   => exec('rails_gems'),
+    }
+    hash.merge!(:source => options[:source]) if options[:source]
+    #fixup the version required
+    exact_dep = Gem::Dependency.new(name, options[:version] || '>0')
+    matches = Gem.source_index.search(exact_dep)
+    installed_spec = matches.first
+    if installed_spec
+      #it's already loaded, let's just specify that we want it installed
+      hash.merge!(:ensure => :installed)
+    else
+      if options[:version]
+        #if it's not installed and version specified, we require that version
+        hash.merge!(:ensure => options[:version])
+      else
+        #otherwise we don't care
+        hash.merge!(:ensure => :installed)
+      end
+      hash = append_system_dependecies(exact_dep, hash)
+    end
+    hash.delete(:version)
+    package(name, hash)
+  end
 
-  # Creates exec('rake #name') that runs in <tt>rails root</tt> of the rails
+  def append_system_dependecies(exact_dep, hash) #:nodoc:
+    #fixup the requires key to be an array
+    if hash[:require] && !hash[:require].is_a?(Array)
+      hash[:require] = [hash[:require]]
+    end
+    hash[:require] = [] unless hash[:require]
+    # load this gems' dependencies. we don't create packages for em, we just
+    # check them against the system dependency map
+    specs = Gem::SpecFetcher.fetcher.fetch exact_dep
+    spec = specs.first.first
+    deps = spec.dependencies
+    deps << exact_dep
+    deps.each do |dep|
+      (configuration[:apt_gems][dep.name.to_sym] || []).each do |apt|
+        package apt, :ensure => :installed
+        hash[:require] << package(apt)
+      end
+    end
+    hash.delete(:require) if hash[:require] == []
+    hash
+  rescue
+    hash
+  end
+
+  # Creates exec("rake #name") that runs in <tt>rails root</tt> of the rails
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {

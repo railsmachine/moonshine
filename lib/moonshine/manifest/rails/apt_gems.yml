@@ -1,0 +1,20 @@
+mysql:
+- libmysqlclient15-dev
+sqlite3-ruby:
+- sqlite3
+- libsqlite3-dev
+nokogiri:
+- libxml2-dev
+- libxslt1-dev
+rmagick:
+- imagemagick
+- libmagick9-dev
+paperclip:
+- imagemagick
+- libmagick9-dev
+thoughtbot-paperclip:
+- imagemagick
+- libmagick9-dev
+mini_magick:
+- imagemagick
+- libmagick9-dev
