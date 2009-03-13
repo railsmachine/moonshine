@@ -4,10 +4,6 @@ Moonshine is Rails deployment and configuration management done right.
 
 === Deploying Your Rails Application with Moonshine in 15 minutes
 
-Moonshine includes ShadowPuppet manifests to automatically deploy your Rails
-application to any server running Ubuntu 8.10. (Want to see your
-favorite platform supported? Fork Moonshine on GitHub!)
-
 ==== Requirements
 
 * A server running Ubuntu 8.10 (Want to see your favorite platform supported? 
