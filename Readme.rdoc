@@ -8,12 +8,23 @@ Moonshine includes ShadowPuppet manifests to automatically deploy your Rails
 application to any server running Ubuntu 8.10. (Want to see your
 favorite platform supported? Fork Moonshine on GitHub!)
 
+==== Requirements
+
+* A server running Ubuntu 8.10 (Want to see your favorite platform supported? 
+  Fork Moonshine on GitHub!)
+* A user on this server that can:
+  * Execute commands via sudo
+  * Access your application's Git repository
+
+==== Instructions
+
 * <tt>ruby script/plugin install git://github.com/railsmachine/moonshine.git</tt>
 * Ensure all required gems are declared using <tt>config.gem</tt> calls in
   <tt>config/environment.rb</tt>.
 * <tt>ruby script/generate moonshine</tt>
 * Edit the configuration file at <tt>config/moonshine.yml</tt> with your
-  apps's details.
+  apps's details. (If you're using a user other than <tt>rails</tt>, specify
+  this here)
 * Edit the Moonshine::Manifest::Rails manifest generated for your application
   at <tt>app/manifests/application_manifest.rb</tt> to declare other packages,
   services, or files your application depends on (memcached, sphinx, etc).
