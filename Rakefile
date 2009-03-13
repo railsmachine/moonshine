@@ -59,7 +59,7 @@ task :_push do
   system "git push github master"
 end
 
-task :push => [:redoc, :pull, :spec, :_push]
+task :push => [:redoc, :pull, :test, :_push]
 
 task :redoc do
   #clean
