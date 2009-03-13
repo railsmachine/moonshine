@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>File: manifest.rb [Moonshine]</title>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+    <link href='../../../rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>manifest.rb</h1>
+        <div class='paths'>
+          lib/moonshine/manifest.rb
+          (<a href="http://github.com/railsmachine/moonshine/tree/master/lib/moonshine/manifest.rb">view online</a>)
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>Fri Mar 13 12:56:06 -0400 2009</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            This is the base Moonshine Manifest class, which provides a simple system
+            for loading moonshine recpies from plugins, a template helper, and parses
+            several configuration files:
+            </p>
+            <pre>config/moonshine.yml</pre>
+            <p>
+            The contents of <tt>config/moonshine.yml</tt> are expected to serialize
+            into a hash, and are loaded into the manifest&#8217;s Configatron::Store.
+            </p>
+            <pre>config/database.yml</pre>
+            <p>
+            The contents of your database config are parsed and are available at
+            <tt>configuration[:database]</tt>.
+            </p>
+            <p>
+            If you&#8217;d like to create another &#8216;default rails stack&#8217;
+            using other tools that what <a
+            href="../../../classes/Moonshine/Manifest/Rails.html">Moonshine::Manifest::Rails</a>
+            uses, subclass this and go nuts.
+            </p>
+          </div>
+          <div id='section'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+    </div>
+  </body>
+</html>

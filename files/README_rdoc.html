@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>File: README.rdoc [Moonshine]</title>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+    <link href='../rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <div class='name'>README.rdoc</div>
+        <div class='paths'>
+          README.rdoc
+          (<a href="http://github.com/railsmachine/moonshine/tree/master/README.rdoc">view online</a>)
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>Fri Mar 13 12:56:06 -0400 2009</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <h1>Moonshine</h1>
+            <p>
+            Moonshine is Rails deployment and configuration management done right.
+            </p>
+            <h3>Deploying Your Rails Application with Moonshine in 15 minutes</h3>
+            <p>
+            Moonshine includes ShadowPuppet manifests to automatically deploy your
+            Rails application to any server running Ubuntu 8.10. (Want to see your
+            favorite platform supported? Fork Moonshine on GitHub!)
+            </p>
+            <h4>Requirements</h4>
+            <ul>
+            <li>A server running Ubuntu 8.10 (Want to see your favorite platform supported?
+            Fork Moonshine on GitHub!)
+            
+            </li>
+            <li>A user on this server that can:
+            
+            <ul>
+            <li>Execute commands via sudo
+            
+            </li>
+            <li>Access your application&#8217;s Git repository
+            
+            </li>
+            </ul>
+            </li>
+            </ul>
+            <h4>Instructions</h4>
+            <ul>
+            <li><tt>ruby script/plugin install
+            git://github.com/railsmachine/moonshine.git</tt>
+            
+            </li>
+            <li>Ensure all required gems are declared using <tt>config.gem</tt> calls in
+            <tt>config/environment.rb</tt>.
+            
+            </li>
+            <li><tt>ruby script/generate moonshine</tt>
+            
+            </li>
+            <li>Edit the configuration file at <tt>config/moonshine.yml</tt> with your
+            apps&#8217;s details. (If you&#8217;re using a user other than
+            <tt>rails</tt>, specify this here)
+            
+            </li>
+            <li>Edit the <a
+            href="../classes/Moonshine/Manifest/Rails.html">Moonshine::Manifest::Rails</a>
+            manifest generated for your application at
+            <tt>app/manifests/application_manifest.rb</tt> to declare other packages,
+            services, or files your application depends on (memcached, sphinx, etc).
+            
+            </li>
+            <li><tt>capify</tt> your application
+            
+            <ul>
+            <li>Your <tt>config/deploy.rb</tt> can be super barebones, as Moonshine loads
+            the contents of <tt>config/moonshine.yml</tt> in as Cap variables and sets
+            some sane defaults. Here&#8217;s what I use:
+            
+            <pre>server &quot;myubuntuserver.com&quot;, :app, :web, :db, :primary =&gt; true</pre>
+            </li>
+            </ul>
+            </li>
+            <li><tt>git add . &amp;&amp; git commit -am &quot;added moonshine&quot;
+            &amp;&amp; git push</tt>
+            
+            </li>
+            <li><tt>cap deploy:setup</tt>
+            
+            <ul>
+            <li>This will bootstrap your Ubuntu server with Ruby Enterprise Edition.
+            
+            </li>
+            </ul>
+            </li>
+            <li><tt>cap deploy</tt>
+            
+            <ul>
+            <li>This will install all needed dependencies for your application and deploy
+            it for the first time. The initial deploy will take awhile, as things such
+            as MySQL, etc, are being installed. It&#8217;s worth the wait though,
+            because what you end up with is an extremely maintainable server that
+            you&#8217;ll never need to SSH into again!
+            
+            </li>
+            </ul>
+            </li>
+            </ul>
+            <h2>Moonshine and Capistrano</h2>
+            <p>
+            Moonshine tightly integrates with Capistrano, utilizing its callback system
+            to apply your manifests to the server on each deploy. In addition,
+            variables are set in Capistrano for all keys on the
+            <tt>config/moonshine.yml</tt> hash, allowing your Capistrano configuration
+            to be extremly barebones.
+            </p>
+            <p>
+            By default, Capistrano applies the manifest at
+            <tt>app/manifests/application_manifest.rb</tt>. To run a different
+            manifest, for example one to install and maintain packages on a server of a
+            different role:
+            </p>
+            <pre>set :moonshine_manifest, 'memcached_manifest'</pre>
+            <p>
+            If you&#8217;d like to prevent Capistrano from applying your Moonshine
+            manifests for any reason:
+            </p>
+            <pre>set :moonshine_apply, false</pre>
+            <h3>Local Config</h3>
+            <p>
+            Often, certain files (<tt>config/database.yml</tt>, etc) are excluded from
+            an application&#8217;s SCM, but required to be present for deploy.
+            We&#8217;ve abstracted this pattern with some Capistrano automation that
+            goes great with Moonshine.
+            </p>
+            <p>
+            For example, if you keep <tt>config/database.yml</tt> out of your SCM, add
+            the following line to your config/deploy.rb:
+            </p>
+            <pre>set :local_config, %w(config/database.yml)</pre>
+            <p>
+            This file will then be automatically uploaded and symlinked to
+            <tt>current/config/database.yml</tt> on each deploy.
+            </p>
+          </div>
+          <div id='section'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+    </div>
+  </body>
+</html>
