@@ -14,7 +14,7 @@ module Moonshine::Manifest::Rails::Passenger
 
     #have to shell out to another interpreter to make this symlink magic work
     exec "symlink_passenger",
-      :command => 'ln -nfs `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").first.loaded_from.gsub(/specifications/,"gems").gsub(/.gemspec/,"/")\'` /usr/local/src/passenger',
+      :command => 'ln -nfs `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").last.loaded_from.gsub(/specifications/,"gems").gsub(/.gemspec/,"/")\'` /usr/local/src/passenger',
       :unless => 'ls -al /usr/local/src/passenger | grep `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s\'`',
       :require => [
         package("passenger"),
