@@ -163,3 +163,15 @@ namespace :deploy do
     moonshine.bootstrap
   end
 end
+
+task :update_and_console do
+  set :moonshine_apply, false
+  deploy.update_code
+  app.console
+end
+
+task :update_and_rake do
+  set :moonshine_apply, false
+  deploy.update_code
+  run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
+end
