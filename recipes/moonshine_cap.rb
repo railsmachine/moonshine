@@ -52,6 +52,20 @@ namespace :moonshine do
     sudo "RAILS_ROOT=#{current_release} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
+  desc "Update code and then run a console. Useful for debugging deployment."
+  task :update_and_console do
+    set :moonshine_apply, false
+    deploy.update_code
+    app.console
+  end
+
+  desc "Update code and then run 'rake environment'. Useful for debugging deployment."
+  task :update_and_rake do
+    set :moonshine_apply, false
+    deploy.update_code
+    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
+  end
+
   after 'deploy:finalize_update' do
     local_config.upload
     local_config.symlink
@@ -162,16 +176,4 @@ namespace :deploy do
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
   end
-end
-
-task :update_and_console do
-  set :moonshine_apply, false
-  deploy.update_code
-  app.console
-end
-
-task :update_and_rake do
-  set :moonshine_apply, false
-  deploy.update_code
-  run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
 end
