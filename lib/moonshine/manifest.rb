@@ -58,8 +58,8 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def template(pathname, b = binding)
     template_contents = nil
     basename = pathname.index('/') ? pathname.split('/').last : pathname
-    if File.exist?(File.expand_path(File.join(rails_root, 'app', 'manifest', 'templates', basename)))
-      template_contents = File.read(File.expand_path(File.join(rails_root, 'app', 'manifest', 'templates', basename)))
+    if File.exist?(File.expand_path(File.join(rails_root, 'app', 'manifests', 'templates', basename)))
+      template_contents = File.read(File.expand_path(File.join(rails_root, 'app', 'manifests', 'templates', basename)))
     elsif File.exist?(File.expand_path(pathname))
       template_contents = File.read(File.expand_path(pathname))
     else
