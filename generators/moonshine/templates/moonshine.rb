@@ -1,31 +1,49 @@
 require "#{File.dirname(__FILE__)}/../../vendor/plugins/moonshine/lib/moonshine.rb"
 class <%= klass_name %> < Moonshine::Manifest::Rails
-  # By default, configuration is automatically loaded from <tt>config/moonshine.yml</tt>
-  # If necessary, you may provide extra configuration directly to this class.
-  # The hash passed to the configure method is deep merged with what is in
-  # <tt>config/moonshine.yml</tt>. This could be used, for example, to store
-  # passwords and/or private keys outside of your SCM, or to query a web
-  # service for configuration data.
-  configure({
-    :passenger   => {
-      :max_pool_size => 3,
-      :use_global_queue => true
-    }
-  })
+  # The majority of your configuration should be in <tt>config/moonshine.yml</tt>
+  # If necessary, you may provide extra configuration directly in this class 
+  # using the configure method. The hash passed to the configure method is deep 
+  # merged with what is in <tt>config/moonshine.yml</tt>. This could be used, 
+  # for example, to store passwords and/or private keys outside of your SCM, or 
+  # to query a web service for configuration data.
+  #
+  # In the example below, the value configuration[:custom][:random] can be used in 
+  # your moonshine settings or templates.
+  #
+  # require 'net/http'
+  # require 'json'
+  # random = JSON::load(Net::HTTP.get(URI.parse('http://twitter.com/statuses/public_timeline.json'))).last['id']
+  # configure({
+  #   :custom => { :random => random  }
+  # })
 
-  # These recipes are included in in Moonshine::Manifest::Rails
-  recipe :apache_server
-  recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
-  recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
-  recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
+  # The default_stack recipe install Rails, Apache, Passenger, MySQL,
+  # Postfix, Cron, and NTP. To customize the stack, see lib/moonshine/manifest/rails.rb
+  recipe :default_stack
   # recipe :sqlite3
-  recipe :ntp, :time_zone, :postfix, :cron_packages, :motd
 
-  # add your application's custom requirements here
+  # Add your application's custom requirements here
   def application_packages
-    # package 'some_awesome_gem', :ensure => :installed, :provider => :gem, :require => package('some_awesome_native_package')
-    # package 'some_awesome_native_package', :ensure => :installed
+    # If you've already told Moonshine about a package required by a gem with
+    # :apt_gems in <tt>moonshine.yml</tt> you do not need to include it here.
+    # package 'some_native_package', :ensure => :installed
+    
+    # some_rake_task = "/usr/bin/rake -f #{configuration[:deploy_to]}/current/Rakefile custom:task RAILS_ENV=#{ENV['RAILS_ENV']}"
+    # cron 'custom:task', :command => some_rake_task, :user => configuration[:user], :minute => 0, :hour => 0
+    
+    # %w( root rails ).each do |user|
+    #   mailalias user, :recipient => 'you@domain.com'
+    # end
+    
+    # farm_config = <<-CONFIG
+    #   MOOCOWS = 3
+    #   HORSIES = 10
+    # CONFIG
+    # file '/etc/farm.conf', :ensure => :present, :content => farm_config
+    
+    # Logs for Rails, MySQL, and Apache are rotated by default
+    # logrotate '/var/log/some_service.log', :options => %w(weekly missingok compress), :postrotate => '/etc/init.d/some_service restart'
   end
-  # The following line delcares the 'application_packages' method as a recipe
+  # The following line includes the 'application_packages' recipe defined above
   recipe :application_packages
 end
