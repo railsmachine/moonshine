@@ -133,7 +133,7 @@ namespace :local_config do
     fetch(:local_config,[]).each do |file|
       filename = File.split(file).last
       if File.exist?( file )
-        put(File.read( file ),"#{shared_path}/#{filename}")
+        put(File.read( file ),"#{shared_path}/config/#{filename}")
       end
     end
   end
@@ -144,7 +144,7 @@ namespace :local_config do
   task :symlink do
     fetch(:local_config,[]).each do |file|
       filename = File.split(file).last
-      run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{filename} #{current_release}/#{file}"
+      run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/config/#{filename} #{current_release}/#{file}"
     end
   end
   
