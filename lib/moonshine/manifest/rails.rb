@@ -34,10 +34,10 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   # MySQL, Rails, NTP, Cron, Postfix. To customize your stack, call the 
   # individual recipes you want to include rather than default_stack.
   def default_stack
-    recipe :apache_server
-    recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
-    recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
-    recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
-    recipe :ntp, :time_zone, :postfix, :cron_packages, :motd
+    self.class.recipe :apache_server
+    self.class.recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
+    self.class.recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
+    self.class.recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations
+    self.class.recipe :ntp, :time_zone, :postfix, :cron_packages, :motd
   end
 end
