@@ -7,7 +7,7 @@ echo "Installing build packages"
 apt-get install -q -y git-core build-essential zlib1g-dev libssl-dev libreadline5-dev wget
 
 echo "Removing Ruby from apt"
-apt-get remove -q -y ruby*
+apt-get remove -q -y ^ruby*
 
 PREFIX="/usr"
 REE="ruby-enterprise-1.8.6-20090201"
