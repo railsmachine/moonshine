@@ -23,6 +23,9 @@
 
 <% end %>
   ServerName <%= configuration[:domain] || `hostname -f` %>
+  <% if configuration[:domain_aliases] %>
+  ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
+  <% end %>
   DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
