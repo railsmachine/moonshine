@@ -1,0 +1,5 @@
+Templates placed in this directory will be used by Moonshine instead of the 
+default templates with the same name.
+
+The default templates for MySQL, Passenger module config, Passenger vhosts, and logrotate can 
+be found at vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates.
