@@ -105,10 +105,9 @@
   ErrorDocument 403 "Access Forbidden"
 
   # Check for maintenance file and redirect all requests
-  ErrorDocument 503 /system/maintenance.html
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
-  RewriteRule ^.*$ /system/maintenance.html [R=503,L]
+  RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
   RewriteRule ^/$ /index.html [QSA]
