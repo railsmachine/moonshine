@@ -100,6 +100,12 @@
 
   RewriteEngine On
 
+<% if configuration[:ssl] %>
+  <%= configuration[:ssl][:vhost_extra] %>
+<% else %>
+  <%= configuration[:passenger][:vhost_extra] %>
+<% end %>
+
   # Prevent access to .git directories
   RewriteRule ^(.*/)?\.git/ - [F,L]
   ErrorDocument 403 "Access Forbidden"
@@ -115,9 +121,4 @@
   # Rewrite to check for Rails cached page
   RewriteRule ^([^.]+)$ $1.html [QSA]
 
-<% if configuration[:ssl] %>
-  <%= configuration[:ssl][:vhost_extra] %>
-<% else %>
-  <%= configuration[:passenger][:vhost_extra] %>
-<% end %>
 </VirtualHost>
