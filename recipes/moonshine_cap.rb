@@ -5,7 +5,9 @@ ssh_options[:paranoid] = false
 ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
 set :keep_releases, 2
+
 after 'deploy:restart', 'deploy:cleanup'
+after 'deploy:symlink', 'app:symlinks:update'
 
 #load the moonshine configuration into
 require 'yaml'
@@ -78,6 +80,19 @@ namespace :moonshine do
 end
 
 namespace :app do
+
+  namespace :symlinks do
+
+    desc <<-DESC
+    Link public directories to shared location.
+    DESC
+    task :update, :roles => [:app, :web] do
+      if app_symlinks
+        app_symlinks.each { |link| run "ln -nfs #{shared_path}/public/#{link} #{current_path}/public/#{link}" }
+      end
+    end
+
+  end
 
   desc "remotely console"
   task :console, :roles => :app, :except => {:no_symlink => true} do
