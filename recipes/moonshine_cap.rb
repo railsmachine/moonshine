@@ -87,9 +87,7 @@ namespace :app do
     Link public directories to shared location.
     DESC
     task :update, :roles => [:app, :web] do
-      if app_symlinks
-        app_symlinks.each { |link| run "ln -nfs #{shared_path}/public/#{link} #{current_path}/public/#{link}" }
-      end
+      fetch(:app_symlinks, []).each { |link| run "ln -nfs #{shared_path}/public/#{link} #{current_path}/public/#{link}" }
     end
 
   end
