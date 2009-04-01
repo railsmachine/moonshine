@@ -52,13 +52,21 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
   
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
-  def deploy_stage
+  def self.deploy_stage
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
   
+  def deploy_stage
+    self.class.deploy_stage
+  end
+  
   # Only run tasks on the specified stage.
-  def on_stage(stagename)
+  def self.on_stage(stagename)
     yield if deploy_stage == stagename
+  end
+  
+  def on_stage(stagename)
+    self.class.on_stage(stagename)
   end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
