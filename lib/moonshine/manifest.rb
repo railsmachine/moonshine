@@ -51,10 +51,12 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
    configuration[:database][(ENV['RAILS_ENV'] || 'production').to_sym]
   end
   
+  # The current deployment target. Best when used with capistrano-ext's multistage settings.
   def deploy_stage
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
   
+  # Only run tasks on the specified stage.
   def on_stage(stagename)
     yield if deploy_stage == stagename
   end
