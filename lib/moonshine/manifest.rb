@@ -62,7 +62,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   
   # Only run tasks on the specified stage.
   def on_stage(stagename)
-    self.class.on_stage(stagename)
+    yield if deploy_stage == stagename
   end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
