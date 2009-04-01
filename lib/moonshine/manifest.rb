@@ -61,10 +61,6 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
   
   # Only run tasks on the specified stage.
-  def self.on_stage(stagename)
-    yield if deploy_stage == stagename
-  end
-  
   def on_stage(stagename)
     self.class.on_stage(stagename)
   end
