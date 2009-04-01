@@ -55,7 +55,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
   
-  def stage(stagename)
+  def on_stage(stagename)
     yield if deploy_stage == stagename
   end
 
