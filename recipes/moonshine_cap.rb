@@ -51,7 +51,7 @@ namespace :moonshine do
     on_rollback do
       run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
     end
-    sudo "RAILS_ROOT=#{current_release} DEPLOY_STAGE=#{fetch(:stage, 'production')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
+    sudo "RAILS_ROOT=#{current_release} DEPLOY_STAGE=#{fetch(:stage, 'undefined')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
   desc "Update code and then run a console. Useful for debugging deployment."

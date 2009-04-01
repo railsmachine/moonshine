@@ -50,6 +50,14 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def database_environment
    configuration[:database][(ENV['RAILS_ENV'] || 'production').to_sym]
   end
+  
+  def deploy_stage
+    ENV['DEPLOY_STAGE'] || 'undefined'
+  end
+  
+  def stage(stagename)
+    yield if deploy_stage == stagename
+  end
 
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
   # with the same basename at <tt>RAILS_ROOT/app/manifests/templates</tt>, it
