@@ -18,6 +18,8 @@ ruby setup.rb
 ln -s /usr/bin/gem1.8 /usr/bin/gem
 gem update --system
 popd
+echo "Cleaning up RubyGems Download"
+rm -rf rubygems-1.3.1*
 popd
 
 echo "Installing Shadow Puppet"
