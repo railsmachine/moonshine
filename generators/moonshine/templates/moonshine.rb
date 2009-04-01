@@ -43,6 +43,11 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
     
     # Logs for Rails, MySQL, and Apache are rotated by default
     # logrotate '/var/log/some_service.log', :options => %w(weekly missingok compress), :postrotate => '/etc/init.d/some_service restart'
+    
+    # Only run the following on the 'testing' stage using capistrano-ext's multistage functionality.
+    # on_stage 'testing' do
+    #   file '/etc/motd', :ensure => file, :content => "Welcome to the TEST server!"
+    # end
   end
   # The following line includes the 'application_packages' recipe defined above
   recipe :application_packages
