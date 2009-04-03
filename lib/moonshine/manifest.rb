@@ -45,10 +45,19 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def rails_root
    self.class.rails_root
   end
+  
+  # The current Rails environment
+  def self.rails_env
+    ENV["RAILS_ENV"] || 'production'
+  end
+  
+  def rails_env
+    self.class.rails_env
+  end
 
   # The current environment's database configuration
   def database_environment
-   configuration[:database][(ENV['RAILS_ENV'] || 'production').to_sym]
+   configuration[:database][rails_env.to_sym]
   end
   
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
