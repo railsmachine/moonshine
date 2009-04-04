@@ -42,7 +42,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_magically_loads_gem_dependencies
-    @manifest.configure(:gems => [ 
+    @manifest.configure(:gems => [
       { :name => 'webrat' },
       { :name => 'thoughtbot-paperclip', :source => 'http://gems.github.com/' }
     ])
