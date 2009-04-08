@@ -46,7 +46,7 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
     
     # Only run the following on the 'testing' stage using capistrano-ext's multistage functionality.
     # on_stage 'testing' do
-    #   file '/etc/motd', :ensure => file, :content => "Welcome to the TEST server!"
+    #   file '/etc/motd', :ensure => :file, :content => "Welcome to the TEST server!"
     # end
   end
   # The following line includes the 'application_packages' recipe defined above
