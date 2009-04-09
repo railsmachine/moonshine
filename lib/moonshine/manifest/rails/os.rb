@@ -19,8 +19,8 @@ module Moonshine::Manifest::Rails::Os
   #Overwrites <tt>/etc/motd</tt> to indicate Moonshine Managemnt
   def motd
     exec '/etc/motd',
-      :command => 'echo "Mooonshine Managed" | tee /etc/motd',
-      :unless => "grep 'Mooonshine' /etc/motd"
+      :command => 'echo "Moonshine Managed" | tee /etc/motd',
+      :unless => "grep 'Moonshine' /etc/motd"
   end
 
   # Install postfix.
