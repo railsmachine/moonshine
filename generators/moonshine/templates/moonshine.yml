@@ -1,7 +1,7 @@
 :ruby: ree
 :application: your_app_name
 :user: rails
-:group: rails
+#:time_zone: UTC
 :deploy_to: /srv/your_app_name
 :domain: yourapp.com
 #:domain_aliases:

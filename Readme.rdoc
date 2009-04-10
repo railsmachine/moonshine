@@ -73,3 +73,14 @@ following line to your config/deploy.rb:
 
 This file will then be automatically uploaded and symlinked to
 <tt>current/config/database.yml</tt> on each deploy. 
+
+=== Running Tests
+
+To run the test suite, follow these steps to create a testbed app:
+
+    rails moonshine_tests
+    cd moonshine_tests
+    git clone git://github.com/railsmachine/moonshine.git /vendor/plugins/moonshine
+    script/generate moonshine
+    cd vendor/plugins/moonshine
+    rake test
