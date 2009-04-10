@@ -10,23 +10,24 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
 
   def test_provides_template_helper
     @manifest = Moonshine::Manifest.new
-    config = '<%= configuration[:application] %>'
-    @manifest.expects(:configuration).returns(:application => 'bar')
-    path = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))
-    File.expects(:exist?).with(File.expand_path(File.join(@manifest.rails_root, 'app', 'manifest', 'templates', 'passenger.conf.erb'))).returns(false)
-    File.expects(:exist?).with(path).returns(true)
-    File.expects(:read).with(path).returns(config)
-    assert_equal 'bar', @manifest.template(path)
+    @manifest.configure(:application => 'bar')
+    template = 'template: <%= configuration[:application] %>'
+    plugin_template_path = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb'))
+    app_template_path = File.expand_path(File.join(@manifest.rails_root, 'app', 'manifests', 'templates', 'passenger.conf.erb'))
+    File.expects(:exist?).with(app_template_path).returns(false)
+    File.expects(:exist?).with(plugin_template_path).returns(true)
+    File.expects(:read).with(plugin_template_path).returns(template)
+    assert_equal 'template: bar', @manifest.template(plugin_template_path)
   end
 
   def test_app_templates_override_moonshine_templates
     @manifest = Moonshine::Manifest.new
-    config = '<%= configuration[:application] %>'
-    @manifest.expects(:configuration).returns(:application => 'bar')
-    path = File.expand_path(File.join(@manifest.rails_root, 'app', 'manifest', 'templates', 'passenger.conf.erb'))
-    File.expects(:exist?).with(path).returns(true)
-    File.expects(:read).with(path).returns(config)
-    assert_equal 'bar', @manifest.template(path)
+    @manifest.configure(:application => 'bar')
+    template = 'app_template: <%= configuration[:application] %>'
+    app_template_path = File.expand_path(File.join(@manifest.rails_root, 'app', 'manifests', 'templates', 'passenger.conf.erb'))
+    File.expects(:exist?).with(app_template_path).returns(true)
+    File.expects(:read).with(app_template_path).returns(template)
+    assert_equal 'app_template: bar', @manifest.template(app_template_path)
   end
 
   def test_loads_plugins
