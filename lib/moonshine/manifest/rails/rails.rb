@@ -84,7 +84,9 @@ module Moonshine::Manifest::Rails::Rails
     gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
     file '/etc/gemrc',
       :ensure   => :present,
-      :mode     => '700',
+      :mode     => '744',
+      :owner    => 'root',
+      :group    => 'root',
       :content  => gemrc.to_yaml
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
