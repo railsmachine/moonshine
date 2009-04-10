@@ -25,15 +25,20 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert @manifest.executable?
   end
 
+  def test_sets_up_gem_sources
+    @manifest.rails_gems
+    assert_match /gems.github.com/, @manifest.puppet_resources[Puppet::Type::File]["/etc/gemrc"].params[:content].value
+  end
+
   def test_loads_gems_from_config_hash
     @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://gems.github.com/' } ])
     @manifest.rails_gems
     assert_not_nil Moonshine::Manifest::Rails.configuration[:gems]
     Moonshine::Manifest::Rails.configuration[:gems].each do |gem|
       assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem[:name]]
-      assert_equal gem[:source], gem_resource.params[:source].value
       assert_equal :gem, gem_resource.params[:provider].value
     end
+    assert_nil @manifest.puppet_resources[Puppet::Type::Package]['jnewland-pulse'].params[:source]
   end
 
   def test_magically_loads_gem_dependencies

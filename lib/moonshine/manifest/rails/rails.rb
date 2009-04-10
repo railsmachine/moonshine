@@ -72,10 +72,25 @@ module Moonshine::Manifest::Rails::Rails
   # <tt>config/gems.yml</tt>, which can be generated from by running
   # <tt>rake moonshine:gems</tt> locally.
   def rails_gems
+    gemrc = {
+      :verbose => true,
+      :gem => "--no-ri --no-rdoc",
+      :update_sources => true,
+      :sources => [
+        'http://gems.rubyforge.org',
+        'http://gems.github.com',
+      ]
+    }
+    gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
+    file '/etc/gemrc',
+      :ensure   => :present,
+      :mode     => '700',
+      :content  => gemrc.to_yaml
     #stub for dependencies
     exec 'rails_gems', :command => 'true'
     return unless configuration[:gems]
     configuration[:gems].each do |gem|
+      gem.delete(:source) if gem[:source] && gem[:source] =~ /gems.github.com/
       gem(gem[:name], {
         :version => gem[:version],
         :source => gem[:source]
@@ -146,6 +161,7 @@ private
     hash = {
       :provider => :gem,
       :before   => exec('rails_gems'),
+      :require  => file('/etc/gemrc')
     }
     hash.merge!(:source => options[:source]) if options[:source]
     #fixup the version required
