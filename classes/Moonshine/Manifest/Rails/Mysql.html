@@ -42,18 +42,18 @@
             <h2>Methods</h2>
             <h3>public instance</h3>
             <ol>
-              <li><a href="#M000023">mysql_database</a></li>
-              <li><a href="#M000024">mysql_fixup_debian_start</a></li>
-              <li><a href="#M000021">mysql_gem</a></li>
-              <li><a href="#M000020">mysql_server</a></li>
-              <li><a href="#M000022">mysql_user</a></li>
+              <li><a href="#M000033">mysql_database</a></li>
+              <li><a href="#M000034">mysql_fixup_debian_start</a></li>
+              <li><a href="#M000031">mysql_gem</a></li>
+              <li><a href="#M000030">mysql_server</a></li>
+              <li><a href="#M000032">mysql_user</a></li>
             </ol>
           </div>
           <div id='section'>
             <div id='methods'>
               <h2>Public instance methods</h2>
-              <div class='public-instance method' id='method-M000023'>
-                <a name='M000023'>      </a>
+              <div class='public-instance method' id='method-M000033'>
+                <a name='M000033'>      </a>
                 <div class='synopsis'>
                   <span class='name'>mysql_database</span>
                   <span class='arguments'>()</span>
@@ -64,14 +64,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000023-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000033-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000023-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 53</span>&#x000A;53:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_database</span>&#x000A;54:     <span class="ruby-identifier">exec</span> <span class="ruby-value str">&quot;mysql_database&quot;</span>,&#x000A;55:       <span class="ruby-identifier">:command</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;create database #{database_environment[:database]};&quot;</span>),&#x000A;56:       <span class="ruby-identifier">:unless</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;show create database #{database_environment[:database]};&quot;</span>),&#x000A;57:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">service</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;58:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000033-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 53</span>&#x000A;53:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_database</span>&#x000A;54:     <span class="ruby-identifier">exec</span> <span class="ruby-value str">&quot;mysql_database&quot;</span>,&#x000A;55:       <span class="ruby-identifier">:command</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;create database #{database_environment[:database]};&quot;</span>),&#x000A;56:       <span class="ruby-identifier">:unless</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;show create database #{database_environment[:database]};&quot;</span>),&#x000A;57:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">service</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;58:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000024'>
-                <a name='M000024'>      </a>
+              <div class='public-instance method' id='method-M000034'>
+                <a name='M000034'>      </a>
                 <div class='synopsis'>
                   <span class='name'>mysql_fixup_debian_start</span>
                   <span class='arguments'>()</span>
@@ -83,14 +83,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000024-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000034-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000024-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 62</span>&#x000A;62:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_fixup_debian_start</span>&#x000A;63:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/mysql/debian-start'</span>,&#x000A;64:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;65:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;#!/bin/bash\nexit 0&quot;</span>,&#x000A;66:       <span class="ruby-identifier">:mode</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'755'</span>,&#x000A;67:       <span class="ruby-identifier">:owner</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'root'</span>,&#x000A;68:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>)&#x000A;69:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000034-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 62</span>&#x000A;62:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_fixup_debian_start</span>&#x000A;63:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/mysql/debian-start'</span>,&#x000A;64:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;65:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;#!/bin/bash\nexit 0&quot;</span>,&#x000A;66:       <span class="ruby-identifier">:mode</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'755'</span>,&#x000A;67:       <span class="ruby-identifier">:owner</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'root'</span>,&#x000A;68:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>)&#x000A;69:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000021'>
-                <a name='M000021'>      </a>
+              <div class='public-instance method' id='method-M000031'>
+                <a name='M000031'>      </a>
                 <div class='synopsis'>
                   <span class='name'>mysql_gem</span>
                   <span class='arguments'>()</span>
@@ -101,14 +101,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000021-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000031-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000021-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 28</span>&#x000A;28:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_gem</span>&#x000A;29:     <span class="ruby-identifier">gem</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;30:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000031-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 28</span>&#x000A;28:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_gem</span>&#x000A;29:     <span class="ruby-identifier">gem</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;30:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000020'>
-                <a name='M000020'>      </a>
+              <div class='public-instance method' id='method-M000030'>
+                <a name='M000030'>      </a>
                 <div class='synopsis'>
                   <span class='name'>mysql_server</span>
                   <span class='arguments'>()</span>
@@ -122,14 +122,14 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000020-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000030-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000020-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 7</span>&#x000A; 7:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_server</span>&#x000A; 8:     <span class="ruby-identifier">package</span> <span class="ruby-value str">'mysql-server'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:installed</span>&#x000A; 9:     <span class="ruby-identifier">service</span> <span class="ruby-value str">'mysql'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:running</span>, <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> [&#x000A;10:       <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>),&#x000A;11:       <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;12:     ]&#x000A;13:     <span class="ruby-comment cmt">#ensure the mysql key is present on the configuration hash</span>&#x000A;14:     <span class="ruby-identifier">configure</span>(<span class="ruby-identifier">:mysql</span> =<span class="ruby-operator">&gt;</span> {})&#x000A;15:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/mysql/conf.d/moonshine.cnf'</span>,&#x000A;16:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;17:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">template</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword kw">__FILE__</span>), <span class="ruby-value str">'templates'</span>, <span class="ruby-value str">'moonshine.cnf.erb'</span>)),&#x000A;18:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>),&#x000A;19:       <span class="ruby-identifier">:notify</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">service</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;20: &#x000A;21:     <span class="ruby-identifier">logrotate</span>(<span class="ruby-value str">'/var/log/mysql*'</span>, {&#x000A;22:       <span class="ruby-identifier">:options</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">%w(daily missingok compress delaycompress sharedscripts)</span>,&#x000A;23:       <span class="ruby-identifier">:postrotate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'mysqladmin flush-logs'</span>&#x000A;24:     })&#x000A;25:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000030-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 7</span>&#x000A; 7:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_server</span>&#x000A; 8:     <span class="ruby-identifier">package</span> <span class="ruby-value str">'mysql-server'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:installed</span>&#x000A; 9:     <span class="ruby-identifier">service</span> <span class="ruby-value str">'mysql'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:running</span>, <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> [&#x000A;10:       <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>),&#x000A;11:       <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;12:     ]&#x000A;13:     <span class="ruby-comment cmt">#ensure the mysql key is present on the configuration hash</span>&#x000A;14:     <span class="ruby-identifier">configure</span>(<span class="ruby-identifier">:mysql</span> =<span class="ruby-operator">&gt;</span> {})&#x000A;15:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/mysql/conf.d/moonshine.cnf'</span>,&#x000A;16:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;17:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">template</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword kw">__FILE__</span>), <span class="ruby-value str">'templates'</span>, <span class="ruby-value str">'moonshine.cnf.erb'</span>)),&#x000A;18:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">package</span>(<span class="ruby-value str">'mysql-server'</span>),&#x000A;19:       <span class="ruby-identifier">:notify</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">service</span>(<span class="ruby-value str">'mysql'</span>)&#x000A;20: &#x000A;21:     <span class="ruby-identifier">logrotate</span>(<span class="ruby-value str">'/var/log/mysql*'</span>, {&#x000A;22:       <span class="ruby-identifier">:options</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">%w(daily missingok compress delaycompress sharedscripts)</span>,&#x000A;23:       <span class="ruby-identifier">:postrotate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'mysqladmin flush-logs'</span>&#x000A;24:     })&#x000A;25:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000022'>
-                <a name='M000022'>      </a>
+              <div class='public-instance method' id='method-M000032'>
+                <a name='M000032'>      </a>
                 <div class='synopsis'>
                   <span class='name'>mysql_user</span>
                   <span class='arguments'>()</span>
@@ -142,10 +142,10 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000022-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000032-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000022-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 34</span>&#x000A;34:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_user</span>&#x000A;35:     <span class="ruby-identifier">grant</span> =<span class="ruby-value str">&quot;GRANT ALL PRIVILEGES \nON \#{database_environment[:database]}.*\nTO \#{database_environment[:username]}@localhost\nIDENTIFIED BY '\#{database_environment[:password]}';\nFLUSH PRIVILEGES;\n&quot;</span>&#x000A;36: &#x000A;37:     <span class="ruby-identifier">exec</span> <span class="ruby-value str">&quot;mysql_user&quot;</span>,&#x000A;38:       <span class="ruby-identifier">:command</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-identifier">grant</span>),&#x000A;39:       <span class="ruby-identifier">:unless</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;show grants for #{database_environment[:username]}@localhost;&quot;</span>),&#x000A;40:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'mysql_database'</span>),&#x000A;41:       <span class="ruby-identifier">:before</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'rake tasks'</span>),&#x000A;42:       <span class="ruby-identifier">:notify</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'rails_bootstrap'</span>)&#x000A;43:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000032-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/mysql.rb, line 34</span>&#x000A;34:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_user</span>&#x000A;35:     <span class="ruby-identifier">grant</span> =<span class="ruby-value str">&quot;GRANT ALL PRIVILEGES \nON \#{database_environment[:database]}.*\nTO \#{database_environment[:username]}@localhost\nIDENTIFIED BY '\#{database_environment[:password]}';\nFLUSH PRIVILEGES;\n&quot;</span>&#x000A;36: &#x000A;37:     <span class="ruby-identifier">exec</span> <span class="ruby-value str">&quot;mysql_user&quot;</span>,&#x000A;38:       <span class="ruby-identifier">:command</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-identifier">grant</span>),&#x000A;39:       <span class="ruby-identifier">:unless</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">mysql_query</span>(<span class="ruby-node">&quot;show grants for #{database_environment[:username]}@localhost;&quot;</span>),&#x000A;40:       <span class="ruby-identifier">:require</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'mysql_database'</span>),&#x000A;41:       <span class="ruby-identifier">:before</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'rake tasks'</span>),&#x000A;42:       <span class="ruby-identifier">:notify</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exec</span>(<span class="ruby-value str">'rails_bootstrap'</span>)&#x000A;43:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
             </div>

@@ -54,7 +54,8 @@
             <h2>Methods</h2>
             <h3>public instance</h3>
             <ol>
-              <li><a href="#M000007">validate_platform</a></li>
+              <li><a href="#M000013">default_stack</a></li>
+              <li><a href="#M000012">validate_platform</a></li>
             </ol>
           </div>
           <div id='context'>
@@ -63,6 +64,7 @@
               <ol>
                 <li><a href="Rails/Passenger.html">Moonshine::Manifest::Rails::Passenger</a></li>
                 <li><a href="Rails/Mysql.html">Moonshine::Manifest::Rails::Mysql</a></li>
+                <li><a href="Rails/Postgresql.html">Moonshine::Manifest::Rails::Postgresql</a></li>
                 <li><a href="Rails/Sqlite3.html">Moonshine::Manifest::Rails::Sqlite3</a></li>
                 <li><a href="Rails/Apache.html">Moonshine::Manifest::Rails::Apache</a></li>
                 <li><a href="Rails/Rails.html">Moonshine::Manifest::Rails::Rails</a></li>
@@ -73,17 +75,40 @@
           <div id='section'>
             <div id='methods'>
               <h2>Public instance methods</h2>
-              <div class='public-instance method' id='method-M000007'>
-                <a name='M000007'>      </a>
+              <div class='public-instance method' id='method-M000013'>
+                <a name='M000013'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>default_stack</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  A super recipe that uses the recipes for installing <a
+                  href="Rails/Apache.html">Apache</a>, <a
+                  href="Rails/Passenger.html">Passenger</a>, MySQL, <a
+                  href="Rails/Rails.html">Rails</a>, NTP, Cron, Postfix. To customize your
+                  stack, call the individual recipes you want to include rather than
+                  default_stack.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000013-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000013-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails.rb, line 39</span>&#x000A;39:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default_stack</span>&#x000A;40:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">recipe</span> <span class="ruby-identifier">:apache_server</span>&#x000A;41:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">recipe</span> <span class="ruby-identifier">:passenger_gem</span>, <span class="ruby-identifier">:passenger_configure_gem_path</span>, <span class="ruby-identifier">:passenger_apache_module</span>, <span class="ruby-identifier">:passenger_site</span>&#x000A;42:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">recipe</span> <span class="ruby-identifier">:mysql_server</span>, <span class="ruby-identifier">:mysql_gem</span>, <span class="ruby-identifier">:mysql_database</span>, <span class="ruby-identifier">:mysql_user</span>, <span class="ruby-identifier">:mysql_fixup_debian_start</span>&#x000A;43:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">recipe</span> <span class="ruby-identifier">:rails_rake_environment</span>, <span class="ruby-identifier">:rails_gems</span>, <span class="ruby-identifier">:rails_directories</span>, <span class="ruby-identifier">:rails_bootstrap</span>, <span class="ruby-identifier">:rails_migrations</span>&#x000A;44:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">recipe</span> <span class="ruby-identifier">:ntp</span>, <span class="ruby-identifier">:time_zone</span>, <span class="ruby-identifier">:postfix</span>, <span class="ruby-identifier">:cron_packages</span>, <span class="ruby-identifier">:motd</span>&#x000A;45:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000012'>
+                <a name='M000012'>      </a>
                 <div class='synopsis'>
                   <span class='name'>validate_platform</span>
                   <span class='arguments'>()</span>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000007-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000012-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000007-source'>   <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails.rb, line 4</span>&#x000A;4:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_platform</span>&#x000A;5:     <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">lsbdistid</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'Ubuntu'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">lsbdistrelease</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">8.1</span>&#x000A;6:       <span class="ruby-identifier">error</span> = <span class="ruby-value str">&quot;\n\nMoonshine::Manifest::Rails is currently only supported on Ubuntu 8.10\nor greater. If you'd like to see your favorite distro supported, fork\nMoonshine on GitHub!\n&quot;</span>&#x000A;7:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-identifier">error</span>&#x000A;8:     <span class="ruby-keyword kw">end</span>&#x000A;9:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000012-source'>   <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails.rb, line 4</span>&#x000A;4:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">validate_platform</span>&#x000A;5:     <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">lsbdistid</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'Ubuntu'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Facter</span>.<span class="ruby-identifier">lsbdistrelease</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">8.1</span>&#x000A;6:       <span class="ruby-identifier">error</span> = <span class="ruby-value str">&quot;\n\nMoonshine::Manifest::Rails is currently only supported on Ubuntu 8.10\nor greater. If you'd like to see your favorite distro supported, fork\nMoonshine on GitHub!\n&quot;</span>&#x000A;7:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">NotImplementedError</span>, <span class="ruby-identifier">error</span>&#x000A;8:     <span class="ruby-keyword kw">end</span>&#x000A;9:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
             </div>

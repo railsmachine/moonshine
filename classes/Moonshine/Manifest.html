@@ -69,19 +69,43 @@
             <h2>Methods</h2>
             <h3>public class</h3>
             <ol>
+              <li><a href="#M000008">deploy_stage</a></li>
               <li><a href="#M000002">plugin</a></li>
+              <li><a href="#M000005">rails_env</a></li>
               <li><a href="#M000003">rails_root</a></li>
             </ol>
             <h3>public instance</h3>
             <ol>
-              <li><a href="#M000005">database_environment</a></li>
+              <li><a href="#M000007">database_environment</a></li>
+              <li><a href="#M000009">deploy_stage</a></li>
+              <li><a href="#M000010">on_stage</a></li>
+              <li><a href="#M000006">rails_env</a></li>
               <li><a href="#M000004">rails_root</a></li>
-              <li><a href="#M000006">template</a></li>
+              <li><a href="#M000011">template</a></li>
             </ol>
           </div>
           <div id='section'>
             <div id='methods'>
               <h2>Public class methods</h2>
+              <div class='public-class method' id='method-M000008'>
+                <a name='M000008'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>deploy_stage</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  The current deployment target. Best when used with capistrano-ext&#8217;s
+                  multistage settings.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000008-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000008-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 64</span>&#x000A;64:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">deploy_stage</span>&#x000A;65:     <span class="ruby-constant">ENV</span>[<span class="ruby-value str">'DEPLOY_STAGE'</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'undefined'</span>&#x000A;66:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
               <div class='public-class method' id='method-M000002'>
                 <a name='M000002'>      </a>
                 <div class='synopsis'>
@@ -99,6 +123,24 @@
                     [show source]
                   </a>
                   <pre id='M000002-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 30</span>&#x000A;30:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">plugin</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>)&#x000A;31:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Symbol</span>)&#x000A;32:       <span class="ruby-identifier">path</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">rails_root</span>, <span class="ruby-value str">'vendor'</span>, <span class="ruby-value str">'plugins'</span>, <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-value str">'moonshine'</span>, <span class="ruby-value str">'init.rb'</span>)&#x000A;33:     <span class="ruby-keyword kw">else</span>&#x000A;34:       <span class="ruby-identifier">path</span> = <span class="ruby-identifier">name</span>&#x000A;35:     <span class="ruby-keyword kw">end</span>&#x000A;36:     <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">eval</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>), <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">path</span>)&#x000A;37:     <span class="ruby-keyword kw">true</span>&#x000A;38:    <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000005'>
+                <a name='M000005'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>rails_env</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  The current <a href="Manifest/Rails.html">Rails</a> environment
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000005-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000005-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 50</span>&#x000A;50:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">rails_env</span>&#x000A;51:     <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;RAILS_ENV&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'production'</span>&#x000A;52:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <div class='public-class method' id='method-M000003'>
@@ -121,8 +163,8 @@
                 </div>
               </div>
               <h2>Public instance methods</h2>
-              <div class='public-instance method' id='method-M000005'>
-                <a name='M000005'>      </a>
+              <div class='public-instance method' id='method-M000007'>
+                <a name='M000007'>      </a>
                 <div class='synopsis'>
                   <span class='name'>database_environment</span>
                   <span class='arguments'>()</span>
@@ -133,10 +175,54 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000005-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000007-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000005-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 50</span>&#x000A;50:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">database_environment</span>&#x000A;51:    <span class="ruby-identifier">configuration</span>[<span class="ruby-identifier">:database</span>][(<span class="ruby-constant">ENV</span>[<span class="ruby-value str">'RAILS_ENV'</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'production'</span>).<span class="ruby-identifier">to_sym</span>]&#x000A;52:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000007-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 59</span>&#x000A;59:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">database_environment</span>&#x000A;60:    <span class="ruby-identifier">configuration</span>[<span class="ruby-identifier">:database</span>][<span class="ruby-identifier">rails_env</span>.<span class="ruby-identifier">to_sym</span>]&#x000A;61:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000009'>
+                <a name='M000009'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>deploy_stage</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000009-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000009-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 68</span>&#x000A;68:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">deploy_stage</span>&#x000A;69:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">deploy_stage</span>&#x000A;70:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000010'>
+                <a name='M000010'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>on_stage</span>
+                  <span class='arguments'>(stagename) {|if deploy_stage == stagename| ...}</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Only run tasks on the specified stage.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000010-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000010-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 73</span>&#x000A;73:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">on_stage</span>(<span class="ruby-identifier">stagename</span>)&#x000A;74:     <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">deploy_stage</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">stagename</span>&#x000A;75:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000006'>
+                <a name='M000006'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>rails_env</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000006-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000006-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 54</span>&#x000A;54:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rails_env</span>&#x000A;55:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">rails_env</span>&#x000A;56:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <div class='public-instance method' id='method-M000004'>
@@ -152,8 +238,8 @@
                   <pre id='M000004-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 45</span>&#x000A;45:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rails_root</span>&#x000A;46:    <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">rails_root</span>&#x000A;47:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
-              <div class='public-instance method' id='method-M000006'>
-                <a name='M000006'>      </a>
+              <div class='public-instance method' id='method-M000011'>
+                <a name='M000011'>      </a>
                 <div class='synopsis'>
                   <span class='name'>template</span>
                   <span class='arguments'>(pathname, b = binding)</span>
@@ -167,10 +253,10 @@
                   </p>
                 </div>
                 <div class='source'>
-                  <a class='source-toggle' href='#' onclick="toggleCode('M000006-source'); return false">
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000011-source'); return false">
                     [show source]
                   </a>
-                  <pre id='M000006-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 58</span>&#x000A;58:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template</span>(<span class="ruby-identifier">pathname</span>, <span class="ruby-identifier">b</span> = <span class="ruby-identifier">binding</span>)&#x000A;59:     <span class="ruby-identifier">template_contents</span> = <span class="ruby-keyword kw">nil</span>&#x000A;60:     <span class="ruby-identifier">basename</span> = <span class="ruby-identifier">pathname</span>.<span class="ruby-identifier">index</span>(<span class="ruby-value str">'/'</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">pathname</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>).<span class="ruby-identifier">last</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">pathname</span>&#x000A;61:     <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">rails_root</span>, <span class="ruby-value str">'app'</span>, <span class="ruby-value str">'manifest'</span>, <span class="ruby-value str">'templates'</span>, <span class="ruby-identifier">basename</span>)))&#x000A;62:       <span class="ruby-identifier">template_contents</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">rails_root</span>, <span class="ruby-value str">'app'</span>, <span class="ruby-value str">'manifest'</span>, <span class="ruby-value str">'templates'</span>, <span class="ruby-identifier">basename</span>)))&#x000A;63:     <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">pathname</span>))&#x000A;64:       <span class="ruby-identifier">template_contents</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">pathname</span>))&#x000A;65:     <span class="ruby-keyword kw">else</span>&#x000A;66:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">LoadError</span>, <span class="ruby-node">&quot;Can't find template #{pathname}&quot;</span>&#x000A;67:     <span class="ruby-keyword kw">end</span>&#x000A;68:     <span class="ruby-constant">ERB</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template_contents</span>).<span class="ruby-identifier">result</span>(<span class="ruby-identifier">b</span>)&#x000A;69:   <span class="ruby-keyword kw">end</span></pre>
+                  <pre id='M000011-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest.rb, line 81</span>&#x000A;81:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template</span>(<span class="ruby-identifier">pathname</span>, <span class="ruby-identifier">b</span> = <span class="ruby-identifier">binding</span>)&#x000A;82:     <span class="ruby-identifier">template_contents</span> = <span class="ruby-keyword kw">nil</span>&#x000A;83:     <span class="ruby-identifier">basename</span> = <span class="ruby-identifier">pathname</span>.<span class="ruby-identifier">index</span>(<span class="ruby-value str">'/'</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">pathname</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>).<span class="ruby-identifier">last</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">pathname</span>&#x000A;84:     <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">rails_root</span>, <span class="ruby-value str">'app'</span>, <span class="ruby-value str">'manifests'</span>, <span class="ruby-value str">'templates'</span>, <span class="ruby-identifier">basename</span>)))&#x000A;85:       <span class="ruby-identifier">template_contents</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">rails_root</span>, <span class="ruby-value str">'app'</span>, <span class="ruby-value str">'manifests'</span>, <span class="ruby-value str">'templates'</span>, <span class="ruby-identifier">basename</span>)))&#x000A;86:     <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">pathname</span>))&#x000A;87:       <span class="ruby-identifier">template_contents</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">pathname</span>))&#x000A;88:     <span class="ruby-keyword kw">else</span>&#x000A;89:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">LoadError</span>, <span class="ruby-node">&quot;Can't find template #{pathname}&quot;</span>&#x000A;90:     <span class="ruby-keyword kw">end</span>&#x000A;91:     <span class="ruby-constant">ERB</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template_contents</span>).<span class="ruby-identifier">result</span>(<span class="ruby-identifier">b</span>)&#x000A;92:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
             </div>
