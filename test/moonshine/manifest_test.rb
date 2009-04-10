@@ -52,7 +52,7 @@ recipe :foo
   end
 
   def test_loads_database_config
-    assert_equal 'utf8', Moonshine::Manifest.configuration[:database][:production][:encoding]
+    assert_not_nil 'utf8', Moonshine::Manifest.configuration[:database][:production]
   end
 
   def test_on_stage_runs_when_string_stage_matches
