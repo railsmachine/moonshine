@@ -21,6 +21,8 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   include Moonshine::Manifest::Rails::Passenger
   require File.join(File.dirname(__FILE__), 'rails', 'mysql.rb')
   include Moonshine::Manifest::Rails::Mysql
+  require File.join(File.dirname(__FILE__), 'rails', 'postgresql.rb')
+  include Moonshine::Manifest::Rails::Postgresql
   require File.join(File.dirname(__FILE__), 'rails', 'sqlite3.rb')
   include Moonshine::Manifest::Rails::Sqlite3
   require File.join(File.dirname(__FILE__), 'rails', 'apache.rb')

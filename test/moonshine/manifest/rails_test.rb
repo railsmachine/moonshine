@@ -189,4 +189,34 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_match /nocompress/, @manifest.puppet_resources[Puppet::Type::File]["/etc/logrotate.d/srvotherappsharedlogslog.conf"].params[:content].value
   end
 
+  def test_postgresql_server
+    @manifest.postgresql_server
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["postgresql-8.3"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-client"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-contrib"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/postgresql/8.3/main/pg_hba.conf"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/postgresql/8.3/main/postgresql.conf"]
+  end
+
+  def test_postgresql_gem
+    @manifest.postgresql_gem
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgres"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["pg"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-client"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-contrib"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["libpq-dev"]
+  end
+
+  def test_postgresql_database_and_user
+    @manifest.expects(:database_environment).at_least_once.returns({
+      :username => 'pg_username',
+      :database => 'pg_database',
+      :password => 'pg_password'
+    })
+    @manifest.postgresql_user
+    @manifest.postgresql_database
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/psql -c "CREATE USER pg_username WITH PASSWORD \'pg_password\'"' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/createdb -O pg_username pg_database' }
+  end
+
 end
