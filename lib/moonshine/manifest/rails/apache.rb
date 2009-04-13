@@ -11,6 +11,17 @@ module Moonshine::Manifest::Rails::Apache
       a2enmod('headers')
       a2enmod('ssl')
     end
+    if configuration[:apache] && configuration[:apache][:users]
+      htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/current/config/htpasswd"
+      
+      file htpasswd, :ensure => :file, :owner => 'rails', :mode => '644'
+      
+      configuration[:apache][:users].each do |user,pass|
+        exec "htpasswd #{user}",
+          :command => "htpasswd -b #{htpasswd} #{user} #{pass}",
+          :unless  => "grep '#{user}' #{htpasswd}"
+      end
+    end
     status = <<-STATUS
 <IfModule mod_status.c>
 ExtendedStatus On
@@ -88,5 +99,5 @@ private
       }.merge(options)
     )
   end
-
+  
 end

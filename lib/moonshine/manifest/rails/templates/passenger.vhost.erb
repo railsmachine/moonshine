@@ -35,6 +35,32 @@
     Allow from all
   </Directory>
 
+  <% if configuration[:apache ] and (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>
+  <Location / >
+    <% if configuration[:apache][:users] %>
+    authtype basic
+    authuserfile <%= configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/current/config/htpasswd" %>
+    authname "<%= configuration[:authname] || configuration[:domain] %>"
+    <% end %>
+    <Limit GET POST DELETE PUT>
+      order deny,allow
+      <% if configuration[:apache][:users] || configuration[:apache][:allow] %>
+      deny from all
+      <% end %>
+      <% configuration[:apache][:deny].to_a.each do |deny| %>
+      deny from <%= deny %>
+      <% end %>
+      <% configuration[:apache][:allow].to_a.each do |allow| %> 
+      allow from <%= allow %>
+      <% end %>
+      <% if configuration[:apache][:users] %>
+      require valid-user
+      <% end %>
+      Satisfy <%= configuration[:apache][:satisfy] || 'Any' %>
+    </Limit>
+  </Location>
+  <% end %>
+
   ##
   ## The following options are Rails specific options. They may occur
   ## here in your VirtualHost entry or in the global configuration.

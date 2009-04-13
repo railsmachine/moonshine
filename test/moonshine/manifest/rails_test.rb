@@ -21,6 +21,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest = Moonshine::Manifest::Rails.new
   end
 
+
   def test_is_executable
     assert @manifest.executable?
   end
@@ -136,6 +137,63 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.passenger_site
     assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
     assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+  end
+  
+  def test_htpasswd_generation
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:apache => {
+      :users => {
+        :jimbo  => 'motorcycle',
+        :joebob => 'jimbo'
+      }
+    })
+    @manifest.apache_server
+    
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/current/config/htpasswd jimbo motorcycle' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/current/config/htpasswd joebob jimbo' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["#{@manifest.configuration[:deploy_to]}/current/config/htpasswd"]
+  end
+
+  def test_vhost_basic_auth_configuration
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:apache => {
+      :users => {
+        :jimbo  => 'motorcycle',
+        :joebob => 'jimbo'
+      }
+    })
+    @manifest.passenger_site
+
+    assert_match /<Location \/ >/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /authuserfile #{@manifest.configuration[:deploy_to]}\/current\/config\/htpasswd/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /require valid-user/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+  end
+ 
+  def test_vhost_allow_configuration
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:apache => {
+      :users => {},
+      :deny  => {},
+      :allow => ['192.168.1','env=safari_user']
+    })
+    @manifest.passenger_site
+    vhost = @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /<Location \/ >/, vhost
+    assert_match /allow from 192.168.1/, vhost
+    assert_match /allow from env=safari_user/, vhost
+  end
+
+  def test_vhost_deny_configuration
+    @manifest.passenger_configure_gem_path
+    @manifest.configure(:apache => {
+      :users => {},
+      :allow => {},
+      :deny => ['192.168.1','env=safari_user']
+    })
+    @manifest.passenger_site
+    
+    assert_match /<Location \/ >/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /deny from 192.168.1/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
 
   def test_installs_postfix
