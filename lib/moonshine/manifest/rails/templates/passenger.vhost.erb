@@ -39,7 +39,7 @@
   <Location / >
     <% if configuration[:apache][:users] %>
     authtype basic
-    authuserfile <%= configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/current/config/htpasswd" %>
+    authuserfile <%= configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd" %>
     authname "<%= configuration[:authname] || configuration[:domain] %>"
     <% end %>
     <Limit GET POST DELETE PUT>

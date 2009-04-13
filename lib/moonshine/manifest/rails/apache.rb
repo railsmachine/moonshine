@@ -12,7 +12,7 @@ module Moonshine::Manifest::Rails::Apache
       a2enmod('ssl')
     end
     if configuration[:apache] && configuration[:apache][:users]
-      htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/current/config/htpasswd"
+      htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd"
       
       file htpasswd, :ensure => :file, :owner => 'rails', :mode => '644'
       
