@@ -36,7 +36,7 @@ innodb_lock_wait_timeout          = <%= configuration[:mysql][:innodb_lock_wait_
 default-time-zone     = <%= configuration[:mysql][:default_time_zone] || 'SYSTEM' %>
 connect_timeout       = <%= configuration[:mysql][:connect_timeout] || '10' %>
 back_log              = <%= configuration[:mysql][:back_log] || '50' %>
-max_connections       = <%= configuration[:mysql][:max_connections] || '10' %>
+max_connections       = <%= configuration[:mysql][:max_connections] || '25' %>
 max_connect_errors    = <%= configuration[:mysql][:max_connect_errors] || '10' %>
 table_cache           = <%= configuration[:mysql][:table_cache] || '2048' %>
 max_allowed_packet    = <%= configuration[:mysql][:max_allowed_packet] || '32M' %>
