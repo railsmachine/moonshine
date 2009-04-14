@@ -1,11 +1,134 @@
 <VirtualHost *:80>
-<% if configuration[:ssl] %>
   ServerName <%= configuration[:domain] || `hostname -f` %>
+  <% if configuration[:domain_aliases] %>
+  ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
+  <% end %>
+<% if configuration[:ssl] && configuration[:ssl][:only] %>
   RewriteEngine On
   RewriteCond %{HTTPS} !=on
   RewriteCond %{REQUEST_URI} !^/server-status
   RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+<% else %>
+  DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
+
+  <Directory <%= configuration[:deploy_to] + "/current/public" %>>
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  <% if configuration[:apache ] && (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>
+  <Location / >
+    <% if configuration[:apache][:users] %>
+    authtype basic
+    authuserfile <%= configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd" %>
+    authname "<%= configuration[:authname] || configuration[:domain] %>"
+    <% end %>
+    <Limit GET POST DELETE PUT>
+      order deny,allow
+      <% if configuration[:apache][:users] || configuration[:apache][:allow] %>
+      deny from all
+      <% end %>
+      <% configuration[:apache][:deny].to_a.each do |deny| %>
+      deny from <%= deny %>
+      <% end %>
+      <% configuration[:apache][:allow].to_a.each do |allow| %> 
+      allow from <%= allow %>
+      <% end %>
+      <% if configuration[:apache][:users] %>
+      require valid-user
+      <% end %>
+      Satisfy <%= configuration[:apache][:satisfy] || 'Any' %>
+    </Limit>
+  </Location>
+  <% end %>
+
+  ##
+  ## The following options are Rails specific options. They may occur
+  ## here in your VirtualHost entry or in the global configuration.
+  ##
+
+  ## RailsAutoDetect
+  #
+  # Set whether Phusion Passenger should automatically detect whether
+  # a virtual host's document root is a Ruby on Rails application.
+  # The default is on.
+  # Options: <on|off>
+
+  RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect] || true) %>
+
+  ## RailsBaseURI
+  #
+  # Specify that the given URI is a Rails application. It is allowed to
+  # specify this option multiple times. Do this to deploy multiple
+  # Rails applications in different sub-URIs under the same virtual host.
+  <% if configuration[:passenger][:rails_base_uri] %>
+  RailsBaseURI <%= configuration[:passenger][:rails_base_uri] %>
+  <% else %>
+  # RailsBaseURI <uri>
+  <% end %>
+
+  ## RailsAllowModRewrite
+  #
+  # Passenger will not override mod_rewrite rules if this option
+  # is enabled.
+  # Options: <on|off>
+
+  RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite] || true) %>
+
+  ## RailsEnv
+  #
+  # Use this option to specify the default RAILS_ENV value. The default
+  # setting is production.
+
+  RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
+
+  ## RailsSpawnMethod
+  #
+  # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
+  # in order to handle requests. But there are multiple ways with which
+  # processes can be spawned, each having its own set of pros and cons.
+  # Supported spawn methods are:
+  #  smart
+  #    When this spawn method is used, Phusion Passenger will attempt
+  #    to cache Ruby on Rails framework code and application code for
+  #    a limited period of time.
+  #
+  #  conservative
+  #    This spawning method is similar to the one used in Mongrel Cluster.
+  #    It does not perform any code caching at all.
+
+  RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
+
+  # Deflate
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+  RewriteEngine On
+
+  <%= configuration[:passenger][:vhost_extra] %>
+
+  # Prevent access to .git directories
+  RewriteRule ^(.*/)?\.git/ - [F,L]
+  ErrorDocument 403 "Access Forbidden"
+
+  # Check for maintenance file and redirect all requests
+  RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
+  RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+  RewriteRule ^.*$ /system/maintenance.html [L]
+
+  # Rewrite index to check for static
+  RewriteRule ^/$ /index.html [QSA]
+
+  # Rewrite to check for Rails cached page
+  RewriteRule ^([^.]+)$ $1.html [QSA]
+<% end %>
 </VirtualHost>
+
+<% if configuration[:ssl] %>
 <VirtualHost <%= configuration[:ssl][:ip] || '_default_' %>:443>
   RequestHeader set X_FORWARDED_PROTO "https"
 
@@ -21,7 +144,6 @@
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
-<% end %>
   ServerName <%= configuration[:domain] || `hostname -f` %>
   <% if configuration[:domain_aliases] %>
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
@@ -147,4 +269,5 @@
   # Rewrite to check for Rails cached page
   RewriteRule ^([^.]+)$ $1.html [QSA]
 
-</VirtualHost>
+  </VirtualHost>
+<% end %>
