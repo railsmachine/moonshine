@@ -1,3 +1,5 @@
+curb:
+- libcurl4-openssl-dev
 mysql:
 - libmysqlclient15-dev
 sqlite3-ruby:
