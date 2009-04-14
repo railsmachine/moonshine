@@ -149,9 +149,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     })
     @manifest.apache_server
     
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/current/config/htpasswd jimbo motorcycle' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/current/config/htpasswd joebob jimbo' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["#{@manifest.configuration[:deploy_to]}/current/config/htpasswd"]
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/shared/config/htpasswd jimbo motorcycle' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/shared/config/htpasswd joebob jimbo' }
+    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["#{@manifest.configuration[:deploy_to]}/shared/config/htpasswd"]
   end
 
   def test_vhost_basic_auth_configuration
@@ -165,7 +165,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.passenger_site
 
     assert_match /<Location \/ >/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_match /authuserfile #{@manifest.configuration[:deploy_to]}\/current\/config\/htpasswd/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /authuserfile #{@manifest.configuration[:deploy_to]}\/shared\/config\/htpasswd/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
     assert_match /require valid-user/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
   end
  
