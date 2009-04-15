@@ -22,6 +22,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_default_stack
+    @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'mysql' })
     @manifest.default_stack
     assert @manifest.recipes.map(&:first).include?(:apache_server), 'apache_server'
     [:passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site].each do |passenger_stack|
@@ -36,6 +37,20 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     [:ntp, :time_zone, :postfix, :cron_packages, :motd].each do |os_stack|
       assert @manifest.recipes.map(&:first).include?(os_stack), os_stack.to_s
     end
+  end
+  
+  def test_default_stack_with_postgresql
+    @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'postgresql' })
+    @manifest.default_stack
+    [:postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database].each do |pgsql_stack|
+      assert @manifest.recipes.map(&:first).include?(pgsql_stack), pgsql_stack.to_s
+    end
+  end
+
+  def test_default_stack_with_sqlite
+    @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'sqlite' })
+    @manifest.default_stack
+    assert @manifest.recipes.map(&:first).include?(:sqlite3), 'sqlite3'
   end
 
   def test_is_executable
