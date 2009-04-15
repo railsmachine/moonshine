@@ -17,11 +17,7 @@ module Moonshine::Manifest::Rails::Mysql
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
       :require => package('mysql-server'),
       :notify => service('mysql')
-
-    logrotate('/var/log/mysql*', {
-      :options => %w(daily missingok compress delaycompress sharedscripts),
-      :postrotate => 'mysqladmin flush-logs'
-    })
+    file '/etc/logrotate.d/varlogmysql.conf', :ensure => :absent
   end
 
   # Install the <tt>mysql</tt> rubygem and dependencies

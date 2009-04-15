@@ -21,6 +21,22 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest = Moonshine::Manifest::Rails.new
   end
 
+  def test_default_stack
+    @manifest.default_stack
+    assert @manifest.recipes.map(&:first).include?(:apache_server), 'apache_server'
+    [:passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site].each do |passenger_stack|
+      assert @manifest.recipes.map(&:first).include?(passenger_stack), passenger_stack.to_s
+    end
+    [:mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start].each do |mysql_stack|
+      assert @manifest.recipes.map(&:first).include?(mysql_stack), mysql_stack.to_s
+    end
+    [:rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate].each do |rails_stack|
+      assert @manifest.recipes.map(&:first).include?(rails_stack), rails_stack.to_s
+    end
+    [:ntp, :time_zone, :postfix, :cron_packages, :motd].each do |os_stack|
+      assert @manifest.recipes.map(&:first).include?(os_stack), os_stack.to_s
+    end
+  end
 
   def test_is_executable
     assert @manifest.executable?
