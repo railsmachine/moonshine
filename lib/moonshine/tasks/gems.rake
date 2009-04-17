@@ -16,7 +16,7 @@ namespace :moonshine do
     File.open( config_path, 'w' ) do |out|
       YAML.dump(gem_array, out )
     end
-    puts "config/moonshine.yml has been updated with your application's gem"
+    puts "config/gems.yml has been updated with your application's gem"
     puts "dependencies. Please commit these changes to your SCM or upload"
     puts "them to your server with the cap local_config:upload command."
   end
