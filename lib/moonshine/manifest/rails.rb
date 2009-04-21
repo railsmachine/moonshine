@@ -49,6 +49,6 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
       self.class.recipe :sqlite3
     end
     self.class.recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
-    self.class.recipe :ntp, :time_zone, :postfix, :cron_packages, :motd
+    self.class.recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates
   end
 end

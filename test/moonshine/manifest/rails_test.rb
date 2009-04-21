@@ -34,7 +34,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     [:rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate].each do |rails_stack|
       assert @manifest.recipes.map(&:first).include?(rails_stack), rails_stack.to_s
     end
-    [:ntp, :time_zone, :postfix, :cron_packages, :motd].each do |os_stack|
+    [:ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates].each do |os_stack|
       assert @manifest.recipes.map(&:first).include?(os_stack), os_stack.to_s
     end
   end
@@ -51,6 +51,18 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'sqlite' })
     @manifest.default_stack
     assert @manifest.recipes.map(&:first).include?(:sqlite3), 'sqlite3'
+  end
+
+  def test_automatic_security_updates
+    @manifest.configure(:unattended_upgrade => { :package_blacklist => ['foo', 'bar', 'widget']})
+    @manifest.configure(:user => 'rails')
+    @manifest.security_updates
+    assert_not_nil @manifest.packages["unattended-upgrades"]
+    assert_not_nil @manifest.files["/etc/apt/apt.conf.d/10periodic"]
+    assert_not_nil @manifest.files["/etc/apt/apt.conf.d/50unattended-upgrades"]
+    assert_match /APT::Periodic::Unattended-Upgrade "1"/, @manifest.files["/etc/apt/apt.conf.d/10periodic"].params[:content].value
+    assert_match /Unattended-Upgrade::Mail "rails@localhost";/, @manifest.files["/etc/apt/apt.conf.d/50unattended-upgrades"].params[:content].value
+    assert_match /"foo";/, @manifest.files["/etc/apt/apt.conf.d/50unattended-upgrades"].params[:content].value
   end
 
   def test_is_executable

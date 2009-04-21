@@ -1,0 +1,18 @@
+// Automatically upgrade packages from these (origin, archive) pairs
+Unattended-Upgrade::Allowed-Origins {
+	"Ubuntu intrepid-security";
+//	"Ubuntu intrepid-updates";
+};
+
+// List of packages to not update
+Unattended-Upgrade::Package-Blacklist {
+<% configuration[:unattended_upgrade][:package_blacklist].to_a.each do |blacklist| %>
+"<%= blacklist %>";
+<% end %>
+};
+
+// Send email to this address for problems or packages upgrades
+// If empty or unset then no email is sent, make sure that you
+// have a working mail setup on your system. The package 'mailx'
+// must be installed or anything that provides /usr/bin/mail.
+Unattended-Upgrade::Mail "<%= configuration[:user] %>@localhost";

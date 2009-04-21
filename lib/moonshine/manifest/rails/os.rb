@@ -66,6 +66,28 @@ from installing any gems, packages, or dependencies directly on the server.
       :notify => service('ntp')
   end
 
+  # Configure automatic security updates. Output regarding errors
+  # will be sent to <tt>configuration[:user]</tt>. To exclude specific
+  # packages from these upgrades, create an array of packages on
+  # <tt>configuration[:unattended_upgrade][:package_blacklist]</tt>
+  def security_updates
+    configure(:unattended_upgrade => {})
+    unattended_config = <<-CONFIG
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+CONFIG
+
+    package 'unattended-upgrades', :ensure => :latest
+    file '/etc/apt/apt.conf.d/10periodic',
+      :ensure => :present,
+      :mode => '644',
+      :content => unattended_config
+    file '/etc/apt/apt.conf.d/50unattended-upgrades',
+      :ensure => :present,
+      :mode => '644',
+      :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
+  end
+
 private
 
   #Provides a helper for creating logrotate config for various parts of your
