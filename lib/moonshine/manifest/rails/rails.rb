@@ -47,10 +47,11 @@ module Moonshine::Manifest::Rails::Rails
 
   # Rotates the logs for this rails app
   def rails_logrotate
-    logrotate("#{configuration[:deploy_to]}/shared/log/*", {
+    logrotate("#{configuration[:deploy_to]}/shared/log/*.log", {
       :options => %w(daily missingok compress delaycompress sharedscripts),
       :postrotate => "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
     })
+    file "/etc/logrotate.d/#{configuration[:deploy_to].gsub('/','')}sharedlog.conf", :ensure => :absent
   end
 
   # This task ensures Rake is installed and that <tt>rake environment</tt>
