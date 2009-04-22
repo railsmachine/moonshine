@@ -4,6 +4,9 @@
 default-character-set   = <%= configuration[:mysql][:default_character_set] || 'utf8' %>
 
 [mysqld]
+######### storage engine
+default-storage-engine  = <%= configuration[:mysql][:default_storage_engine] || 'innodb' %>
+
 ######### character sets
 character_set_server    = <%= configuration[:mysql][:character_set_server] || 'utf8' %>
 collation_server        = <%= configuration[:mysql][:collation_server] || 'utf8_general_ci' %>
