@@ -32,7 +32,7 @@
         </div>
         <div class='last-update'>
           Last Update:
-          <span class='datetime'>Fri Apr 10 16:30:08 -0400 2009</span>
+          <span class='datetime'>Wed Apr 22 17:03:07 -0400 2009</span>
         </div>
       </div>
       <div id='content'>
@@ -158,6 +158,11 @@
             This file will then be automatically uploaded and symlinked to
             <tt>current/config/database.yml</tt> on each deploy.
             </p>
+            <h3>Running Tests</h3>
+            <p>
+            To run the test suite, follow these steps to create a testbed app:
+            </p>
+            <pre>rails moonshine_tests&#x000A;cd moonshine_tests&#x000A;git clone git://github.com/railsmachine/moonshine.git /vendor/plugins/moonshine&#x000A;script/generate moonshine&#x000A;cd vendor/plugins/moonshine&#x000A;rake test</pre>
           </div>
           <div id='section'>
           </div>
