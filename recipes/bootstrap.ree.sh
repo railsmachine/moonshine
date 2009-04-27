@@ -10,7 +10,7 @@ echo "Removing Ruby from apt"
 apt-get remove -q -y ^ruby*
 
 PREFIX="/usr"
-REE="ruby-enterprise-1.8.6-20090201"
+REE="ruby-enterprise-1.8.6-20090421"
 
 if [ `which ruby` ]; then
 
@@ -22,35 +22,16 @@ else
 
   pushd /tmp
   echo "Downloading REE"
-  wget -q http://rubyforge.org/frs/download.php/51100/$REE.tar.gz
+  wget -q http://rubyforge.org/frs/download.php/55511/$REE.tar.gz
   echo "Untar REE"
-  tar xvzf $REE.tar.gz
+  tar xzf $REE.tar.gz
   pushd $REE/
 
-  echo "Installing fancy google memory thingie"
-  pushd ./source/vendor/google-perftools-0.99.2
-  ./configure --prefix=$PREFIX --disable-dependency-tracking
-  make libtcmalloc_minimal.la
-  rm -f $PREFIX/lib/libtcmalloc_minimal*.so*
-  cp -pf .libs/libtcmalloc_minimal*.so* $PREFIX/lib/
-  popd
-
-  echo "Makeing and installing REE"
-  pushd ./source
-  ./configure --prefix=$PREFIX
-  echo 'Avert your eyes'
-  # YIKES!
-  sed -i 's?LIBS = -ldl?LIBS = $(PRELIBS) -ldl?' ./Makefile
-  make PRELIBS="-Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -ltcmalloc_minimal"
-  make install
-  popd
-
-  echo "Installing RubyGems"
-  pushd ./rubygems
-  ruby setup.rb --no-rdoc --no-ri
-  popd
+  echo "Running installer"
+  ./installer --dont-install-useful-gems -a $PREFIX
 
   echo "Cleaning up REE download"
+  popd
   rm -rf $REE*
   popd
 
