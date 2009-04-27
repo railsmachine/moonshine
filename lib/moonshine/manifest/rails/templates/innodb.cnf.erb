@@ -1,0 +1,6 @@
+# set the log_file_size before mysqld is started to ensure logs are created
+# correctly the first time
+[mysqld]
+innodb_log_buffer_size            = <%= configuration[:mysql][:innodb_log_buffer_size] || '64M' %>
+innodb_log_file_size              = <%= configuration[:mysql][:innodb_log_file_size] || '80M' %>
+innodb_log_files_in_group         = <%= configuration[:mysql][:innodb_log_files_in_group] || '3' %>
