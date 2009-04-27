@@ -12,10 +12,9 @@ module Moonshine::Manifest::Rails::Passenger
 
     file "/usr/local/src", :ensure => :directory
 
-    #have to shell out to another interpreter to make this symlink magic work
     exec "symlink_passenger",
-      :command => 'ln -nfs `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").last.loaded_from.gsub(/specifications/,"gems").gsub(/.gemspec/,"/")\'` /usr/local/src/passenger',
-      :unless => 'ls -al /usr/local/src/passenger | grep `ruby -rubygems -e \'puts Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s\'`',
+      :command => 'ln -nfs `passenger-config --root` /usr/local/src/passenger',
+      :unless => 'ls -al /usr/local/src/passenger | grep `passenger-config --root`',
       :require => [
         package("passenger"),
         file("/usr/local/src")
@@ -25,7 +24,7 @@ module Moonshine::Manifest::Rails::Passenger
     exec "build_passenger",
       :cwd => configuration[:passenger][:path],
       :command => '/usr/bin/ruby -S rake clean apache2',
-      :creates => "#{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so",
+      :unless => "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
       :require => [
         package("passenger"),
         package("apache2-mpm-worker"),
@@ -72,7 +71,7 @@ module Moonshine::Manifest::Rails::Passenger
       Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     rescue
       `gem install passenger --no-ri --no-rdoc`
-      Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
+      `passenger-config --version`.chomp
     end
     configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{version}" })
   end
