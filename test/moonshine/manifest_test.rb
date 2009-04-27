@@ -32,7 +32,8 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
   end
 
   def test_loads_plugins
-    File.expects(:read).returns("""
+    @manifest = Moonshine::Manifest.new
+    File.expects(:read).with(File.expand_path(File.join(@manifest.rails_root, 'vendor', 'plugins', 'moonshine_iptables', 'moonshine','init.rb'))).returns("""
 configure(:eval => true)
 
 module EvalTest
