@@ -16,11 +16,30 @@ module Moonshine::Manifest::Rails::Os
     package "cron", :ensure => :installed
   end
 
-  #Overwrites <tt>/etc/motd</tt> to indicate Moonshine Managemnt
+  # Create a MOTD to remind those logging in via SSH that things are managed
+  # with Moonshine
   def motd
-    exec '/etc/motd',
-      :command => 'echo "Moonshine Managed" | tee /etc/motd',
-      :unless => "grep 'Moonshine' /etc/motd"
+    motd_contents ="""-----------------
+Moonshine Managed
+-----------------
+
+  Application:  #{configuration[:application]}
+  Repository:   #{configuration[:repository]}
+  Deploy Path:  #{configuration[:deploy_to]}
+
+----------------
+  A Reminder
+----------------
+As the configuration of this server is managed with Moonshine, please refrain
+from installing any gems, packages, or dependencies directly on the server.
+----------------
+"""
+    file '/var/run/motd',
+      :mode => '644',
+      :content => `uname -snrvm`+motd_contents
+    file '/etc/motd.tail',
+      :mode => '644',
+      :content => motd_contents
   end
 
   # Install postfix.
