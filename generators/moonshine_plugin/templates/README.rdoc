@@ -1,0 +1,11 @@
+= <%= name %>
+
+== A plugin for Moonshine[http://github.com/railsmachine/moonshine]
+
+=== Instructions
+
+* <tt>script/plugin install git://github.com/ACCOUNT/<%= plugin_name%>.git</tt>
+* Configure settings if any are required by this plugin.
+* Include the plugin and recipe(s) you want to use in your Moonshine manifest.
+    plugin :<%= name %>
+    recipe :<%= name %>
