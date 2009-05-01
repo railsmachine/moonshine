@@ -22,10 +22,10 @@ class MoonshineSetupManifestTest < Test::Unit::TestCase
   def test_creates_directories
     assert @manifest.class.recipes.map(&:first).include?(:directories)
     @manifest.directories
-    assert_not_nil deploy_to = @manifest.puppet_resources[Puppet::Type::File]["#{@manifest.configuration[:deploy_to]}"]
-    assert_equal :directory, deploy_to.params[:ensure].value
-    assert_equal @user, deploy_to.params[:owner].value
-    assert_equal @user, deploy_to.params[:group].value
+    assert_not_nil deploy_to = @manifest.files["#{@manifest.configuration[:deploy_to]}"]
+    assert_equal :directory, deploy_to.ensure
+    assert_equal @user, deploy_to.owner
+    assert_equal @user, deploy_to.group
   end
 
 end

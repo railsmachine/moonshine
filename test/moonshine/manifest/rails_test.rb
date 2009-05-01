@@ -59,7 +59,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_sets_up_gem_sources
     @manifest.rails_gems
-    assert_match /gems.github.com/, @manifest.puppet_resources[Puppet::Type::File]["/etc/gemrc"].params[:content].value
+    assert_match /gems.github.com/, @manifest.files["/etc/gemrc"].content
   end
 
   def test_loads_gems_from_config_hash
@@ -67,10 +67,10 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     @manifest.rails_gems
     assert_not_nil Moonshine::Manifest::Rails.configuration[:gems]
     Moonshine::Manifest::Rails.configuration[:gems].each do |gem|
-      assert_not_nil gem_resource = @manifest.puppet_resources[Puppet::Type::Package][gem[:name]]
-      assert_equal :gem, gem_resource.params[:provider].value
+      assert_not_nil gem_resource = @manifest.packages[gem[:name]]
+      assert_equal :gem, gem_resource.provider
     end
-    assert_nil @manifest.puppet_resources[Puppet::Type::Package]['jnewland-pulse'].params[:source]
+    assert_nil @manifest.packages['jnewland-pulse'].source
   end
 
   def test_magically_loads_gem_dependencies
@@ -79,10 +79,10 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       { :name => 'thoughtbot-paperclip', :source => 'http://gems.github.com/' }
     ])
     @manifest.rails_gems
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['webrat']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['thoughtbot-paperclip']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['libxml2-dev']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['imagemagick']
+    assert_not_nil @manifest.packages['webrat']
+    assert_not_nil @manifest.packages['thoughtbot-paperclip']
+    assert_not_nil @manifest.packages['libxml2-dev']
+    assert_not_nil @manifest.packages['imagemagick']
   end
 
   def test_creates_directories
@@ -93,16 +93,16 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     }
     @manifest.configure(config)
     @manifest.rails_directories
-    assert_not_nil shared_dir = @manifest.puppet_resources[Puppet::Type::File]["/srv/foo/shared"]
-    assert_equal :directory, shared_dir.params[:ensure].value
-    assert_equal 'foo', shared_dir.params[:owner].value
-    assert_equal 'foo', shared_dir.params[:group].value
+    assert_not_nil shared_dir = @manifest.files["/srv/foo/shared"]
+    assert_equal :directory, shared_dir.ensure
+    assert_equal 'foo', shared_dir.owner
+    assert_equal 'foo', shared_dir.group
   end
 
   def test_installs_apache
     @manifest.apache_server
-    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Service]["apache2"]
-    assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.params[:require].value.to_s
+    assert_not_nil apache = @manifest.services["apache2"]
+    assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.require.to_s
   end
 
   def test_enables_mod_ssl_if_ssl
@@ -112,50 +112,50 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_chain_file => 'cert_chain_file'
     })
     @manifest.apache_server
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod ssl' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2enmod ssl' }
   end
 
   def test_enables_mod_rewrite
     @manifest.apache_server
-    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Exec]["a2enmod rewrite"]
+    assert_not_nil apache = @manifest.execs["a2enmod rewrite"]
   end
 
   def test_enables_mod_status
     @manifest.apache_server
-    assert_not_nil apache = @manifest.puppet_resources[Puppet::Type::Exec]["a2enmod status"]
-    assert_match /127.0.0.1/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/mods-available/status.conf"].params[:content].value
+    assert_not_nil apache = @manifest.execs["a2enmod status"]
+    assert_match /127.0.0.1/, @manifest.files["/etc/apache2/mods-available/status.conf"].content
   end
 
   def test_installs_passenger_gem
     @manifest.passenger_configure_gem_path
     @manifest.passenger_gem
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["passenger"]
+    assert_not_nil @manifest.packages["passenger"]
   end
 
   def test_installs_passenger_module
     @manifest.passenger_configure_gem_path
     @manifest.passenger_apache_module
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]['apache2-threaded-dev']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]['/etc/apache2/mods-available/passenger.load']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]['/etc/apache2/mods-available/passenger.conf']
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2enmod passenger' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/ruby -S rake clean apache2' }
+    assert_not_nil @manifest.packages['apache2-threaded-dev']
+    assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.load']
+    assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.conf']
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2enmod passenger' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/ruby -S rake clean apache2' }
   end
 
   def test_configures_passenger_vhost
     @manifest.passenger_configure_gem_path
     @manifest.passenger_site
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
-    assert_match /RailsAllowModRewrite On/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/sbin/a2dissite 000-default' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == "/usr/sbin/a2ensite #{@manifest.configuration[:application]}" }
+    assert_not_nil @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
+    assert_match /RailsAllowModRewrite On/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2dissite 000-default' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == "/usr/sbin/a2ensite #{@manifest.configuration[:application]}" }
   end
 
   def test_passenger_vhost_configuration
     @manifest.passenger_configure_gem_path
     @manifest.configure(:passenger => { :rails_base_uri => '/test' })
     @manifest.passenger_site
-    assert_match /RailsBaseURI \/test/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /RailsBaseURI \/test/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
 
   def test_ssl_vhost_configuration
@@ -166,8 +166,8 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_chain_file => 'cert_chain_file'
     })
     @manifest.passenger_site
-    assert_match /SSLEngine on/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_match /https/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /SSLEngine on/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
+    assert_match /https/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
   
   def test_htpasswd_generation
@@ -180,9 +180,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     })
     @manifest.apache_server
     
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/shared/config/htpasswd jimbo motorcycle' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == 'htpasswd -b /srv/foo/shared/config/htpasswd joebob jimbo' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["#{@manifest.configuration[:deploy_to]}/shared/config/htpasswd"]
+    assert_not_nil @manifest.execs.find { |n, r| r.command == 'htpasswd -b /srv/foo/shared/config/htpasswd jimbo motorcycle' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == 'htpasswd -b /srv/foo/shared/config/htpasswd joebob jimbo' }
+    assert_not_nil @manifest.files["#{@manifest.configuration[:deploy_to]}/shared/config/htpasswd"]
   end
 
   def test_vhost_basic_auth_configuration
@@ -195,9 +195,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     })
     @manifest.passenger_site
 
-    assert_match /<Location \/ >/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_match /authuserfile #{@manifest.configuration[:deploy_to]}\/shared\/config\/htpasswd/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_match /require valid-user/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /<Location \/ >/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
+    assert_match /authuserfile #{@manifest.configuration[:deploy_to]}\/shared\/config\/htpasswd/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
+    assert_match /require valid-user/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
  
   def test_vhost_allow_configuration
@@ -208,7 +208,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :allow => ['192.168.1','env=safari_user']
     })
     @manifest.passenger_site
-    vhost = @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    vhost = @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
     assert_match /<Location \/ >/, vhost
     assert_match /allow from 192.168.1/, vhost
     assert_match /allow from env=safari_user/, vhost
@@ -223,77 +223,77 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     })
     @manifest.passenger_site
     
-    assert_match /<Location \/ >/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
-    assert_match /deny from 192.168.1/, @manifest.puppet_resources[Puppet::Type::File]["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].params[:content].value
+    assert_match /<Location \/ >/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
+    assert_match /deny from 192.168.1/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
 
   def test_installs_postfix
     @manifest.postfix
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postfix"]
+    assert_not_nil @manifest.packages["postfix"]
   end
 
   def test_installs_ntp
     @manifest.ntp
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["ntp"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["ntp"]
+    assert_not_nil @manifest.services["ntp"]
+    assert_not_nil @manifest.packages["ntp"]
   end
 
   def test_installs_cron
     @manifest.cron_packages
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["cron"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["cron"]
+    assert_not_nil @manifest.services["cron"]
+    assert_not_nil @manifest.packages["cron"]
   end
 
   def test_sets_default_time_zone
     @manifest.time_zone
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["/etc/localtime"]
-    assert_equal '/usr/share/zoneinfo/UTC', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
-    assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
+    assert_not_nil @manifest.files["/etc/timezone"]
+    assert_not_nil @manifest.packages["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/UTC', @manifest.files["/etc/localtime"].ensure
+    assert_equal "UTC\n", @manifest.files["/etc/timezone"].content
   end
 
   def test_sets_default_time_zone
     @manifest.configure(:time_zone => nil)
     @manifest.time_zone
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
-    assert_equal "UTC\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"]
-    assert_equal '/usr/share/zoneinfo/UTC', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+    assert_not_nil @manifest.files["/etc/timezone"]
+    assert_equal "UTC\n", @manifest.files["/etc/timezone"].content
+    assert_not_nil @manifest.files["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/UTC', @manifest.files["/etc/localtime"].ensure
   end
 
   def test_sets_configured_time_zone
     @manifest.configure(:time_zone => 'America/New_York')
     @manifest.time_zone
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"]
-    assert_equal "America/New_York\n", @manifest.puppet_resources[Puppet::Type::File]["/etc/timezone"].params[:content].value
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"]
-    assert_equal '/usr/share/zoneinfo/America/New_York', @manifest.puppet_resources[Puppet::Type::File]["/etc/localtime"].params[:ensure].value
+    assert_not_nil @manifest.files["/etc/timezone"]
+    assert_equal "America/New_York\n", @manifest.files["/etc/timezone"].content
+    assert_not_nil @manifest.files["/etc/localtime"]
+    assert_equal '/usr/share/zoneinfo/America/New_York', @manifest.files["/etc/localtime"].ensure
   end
 
   def test_logroate_helper_generates_config
     @manifest.send(:logrotate, '/srv/theapp/shared/logs/*.log', {:options => %w(daily missingok compress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
     @manifest.send(:logrotate, '/srv/otherapp/shared/logs/*.log', {:options => %w(daily missingok nocompress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["logrotate"]
-    assert_match /compress/, @manifest.puppet_resources[Puppet::Type::File]["/etc/logrotate.d/srvtheappsharedlogslog.conf"].params[:content].value
-    assert_match /nocompress/, @manifest.puppet_resources[Puppet::Type::File]["/etc/logrotate.d/srvotherappsharedlogslog.conf"].params[:content].value
+    assert_not_nil @manifest.packages["logrotate"]
+    assert_match /compress/, @manifest.files["/etc/logrotate.d/srvtheappsharedlogslog.conf"].content
+    assert_match /nocompress/, @manifest.files["/etc/logrotate.d/srvotherappsharedlogslog.conf"].content
   end
 
   def test_postgresql_server
     @manifest.postgresql_server
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Service]["postgresql-8.3"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-client"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-contrib"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/postgresql/8.3/main/pg_hba.conf"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::File]["/etc/postgresql/8.3/main/postgresql.conf"]
+    assert_not_nil @manifest.services["postgresql-8.3"]
+    assert_not_nil @manifest.packages["postgresql-client"]
+    assert_not_nil @manifest.packages["postgresql-contrib"]
+    assert_not_nil @manifest.files["/etc/postgresql/8.3/main/pg_hba.conf"]
+    assert_not_nil @manifest.files["/etc/postgresql/8.3/main/postgresql.conf"]
   end
 
   def test_postgresql_gem
     @manifest.postgresql_gem
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgres"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["pg"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-client"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["postgresql-contrib"]
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Package]["libpq-dev"]
+    assert_not_nil @manifest.packages["postgres"]
+    assert_not_nil @manifest.packages["pg"]
+    assert_not_nil @manifest.packages["postgresql-client"]
+    assert_not_nil @manifest.packages["postgresql-contrib"]
+    assert_not_nil @manifest.packages["libpq-dev"]
   end
 
   def test_postgresql_database_and_user
@@ -304,8 +304,8 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     })
     @manifest.postgresql_user
     @manifest.postgresql_database
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/psql -c "CREATE USER pg_username WITH PASSWORD \'pg_password\'"' }
-    assert_not_nil @manifest.puppet_resources[Puppet::Type::Exec].find { |n, r| r.params[:command].value == '/usr/bin/createdb -O pg_username pg_database' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/psql -c "CREATE USER pg_username WITH PASSWORD \'pg_password\'"' }
+    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/createdb -O pg_username pg_database' }
   end
 
 end
