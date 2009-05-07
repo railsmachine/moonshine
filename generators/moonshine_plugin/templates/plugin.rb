@@ -1,22 +1,19 @@
 module <%= module_name %>
 
-  # Add recipes here to create the functionality of your plugin
-  # You can set variables in the application manifest via the
-  # <tt>configure</tt> method:
+  # Define options for this plugin via the <tt>configure</tt> method
+  # in your application manifest:
   #
-  #   configure(:my_plugin => {:key => 'value'})
+  #   configure(:<%= name %> => {:foo => true})
   #
-  # You can then access those variables here in the plugin:
-  #
-  #   configuration[:my_plugin][:key]
-  #
-  # Remember to include the plugin and call the recipe(s)
-  # you need in the manifest:
+  # Then include the plugin and call the recipe(s) you need:
   #
   #  plugin :<%= name %>
   #  recipe :<%= name %>
-  def <%= name %>
+  def <%= name %>(options = {})
     # define the recipe
+    # options specified with the configure method will be 
+    # automatically available here in the options hash.
+    #    options[:foo]   # => true
   end
   
 end
