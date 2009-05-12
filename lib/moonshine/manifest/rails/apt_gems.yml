@@ -24,3 +24,6 @@ postgres:
 - postgresql-client
 - postgresql-contrib
 - libpq-dev
+libxml-ruby:
+- libxml2
+- libxml2-dev
