@@ -32,8 +32,9 @@ namespace :moonshine do
     begin
       config = YAML.load_file(File.join(Dir.pwd, 'config', 'moonshine.yml'))
       put(YAML.dump(config),"/tmp/moonshine.yml")
-    rescue
-      puts "Please run 'ruby script/generate moonshine' and configure config/moonshine.yml first"
+    rescue Exception => e
+      puts e
+      puts "Please make sure the settings in moonshine.yml are valid and that the target hostname is correct."
       exit(0)
     end
     put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
