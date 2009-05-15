@@ -44,10 +44,9 @@ EOF
 
     exec "mysql_user",
       :command => mysql_query(grant),
-      :unless => mysql_query("show grants for #{database_environment[:username]}@localhost;"),
+      :unless  => "mysqlshow -u#{database_environment[:username]} -p#{database_environment[:password]} #{database_environment[:database]}",
       :require => exec('mysql_database'),
-      :before => exec('rake tasks'),
-      :notify => exec('rails_bootstrap')
+      :before => exec('rake tasks')
   end
 
   # Create the database from the current <tt>database_environment</tt>
@@ -55,7 +54,8 @@ EOF
     exec "mysql_database",
       :command => mysql_query("create database #{database_environment[:database]};"),
       :unless => mysql_query("show create database #{database_environment[:database]};"),
-      :require => service('mysql')
+      :require => service('mysql'),
+      :notify => exec('rails_bootstrap')
   end
 
   # Noop <tt>/etc/mysql/debian-start</tt>, which does some nasty table scans on
