@@ -46,6 +46,7 @@
               <li><a href="#M000020">motd</a></li>
               <li><a href="#M000022">ntp</a></li>
               <li><a href="#M000021">postfix</a></li>
+              <li><a href="#M000024">security_updates</a></li>
               <li><a href="#M000023">time_zone</a></li>
             </ol>
           </div>
@@ -125,6 +126,27 @@
                     [show source]
                   </a>
                   <pre id='M000021-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/os.rb, line 46</span>&#x000A;46:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">postfix</span>&#x000A;47:     <span class="ruby-identifier">package</span> <span class="ruby-value str">'postfix'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:latest</span>&#x000A;48:   <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000024'>
+                <a name='M000024'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>security_updates</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Configure automatic security updates. Output regarding errors will be sent
+                  to <tt>configuration[:user]</tt>. To exclude specific packages from these
+                  upgrades, create an array of packages on
+                  <tt>configuration[:unattended_upgrade][:package_blacklist]</tt>
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000024-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000024-source'>    <span class="ruby-comment cmt"># File lib/moonshine/manifest/rails/os.rb, line 73</span>&#x000A;73:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">security_updates</span>&#x000A;74:     <span class="ruby-identifier">configure</span>(<span class="ruby-identifier">:unattended_upgrade</span> =<span class="ruby-operator">&gt;</span> {})&#x000A;75:     <span class="ruby-identifier">unattended_config</span> = <span class="ruby-value str">&quot;APT::Periodic::Update-Package-Lists \&quot;1\&quot;;\nAPT::Periodic::Unattended-Upgrade \&quot;1\&quot;;\n&quot;</span>&#x000A;76: &#x000A;77:     <span class="ruby-identifier">package</span> <span class="ruby-value str">'unattended-upgrades'</span>, <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:latest</span>&#x000A;78:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/apt/apt.conf.d/10periodic'</span>,&#x000A;79:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;80:       <span class="ruby-identifier">:mode</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'644'</span>,&#x000A;81:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">unattended_config</span>&#x000A;82:     <span class="ruby-identifier">file</span> <span class="ruby-value str">'/etc/apt/apt.conf.d/50unattended-upgrades'</span>,&#x000A;83:       <span class="ruby-identifier">:ensure</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:present</span>,&#x000A;84:       <span class="ruby-identifier">:mode</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'644'</span>,&#x000A;85:       <span class="ruby-identifier">:content</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">template</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword kw">__FILE__</span>), <span class="ruby-value str">&quot;templates&quot;</span>, <span class="ruby-value str">&quot;unattended_upgrades.erb&quot;</span>))&#x000A;86:   <span class="ruby-keyword kw">end</span></pre>
                 </div>
               </div>
               <div class='public-instance method' id='method-M000023'>
