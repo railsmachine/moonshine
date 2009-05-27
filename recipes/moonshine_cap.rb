@@ -7,7 +7,6 @@ default_run_options[:pty] = true
 set :keep_releases, 2
 
 after 'deploy:restart', 'deploy:cleanup'
-after 'deploy:symlink', 'app:symlinks:update'
 
 #load the moonshine configuration into
 require 'yaml'
@@ -50,9 +49,9 @@ namespace :moonshine do
   desc 'Apply the Moonshine manifest for this application'
   task :apply do
     on_rollback do
-      run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
+      run "cd #{latest_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
     end
-    sudo "RAILS_ROOT=#{current_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE']||fetch(:stage,'undefined')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{current_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
+    sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE']||fetch(:stage,'undefined')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
   desc "Update code and then run a console. Useful for debugging deployment."
@@ -66,15 +65,16 @@ namespace :moonshine do
   task :update_and_rake do
     set :moonshine_apply, false
     deploy.update_code
-    run "cd #{current_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
+    run "cd #{latest_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
   end
 
   after 'deploy:finalize_update' do
     local_config.upload
     local_config.symlink
+    app.symlinks.update
   end
 
-  before 'deploy:restart' do
+  before 'deploy:symlink' do
     apply if fetch(:moonshine_apply, true) == true
   end
 
@@ -88,7 +88,7 @@ namespace :app do
     Link public directories to shared location.
     DESC
     task :update, :roles => [:app, :web] do
-      fetch(:app_symlinks, []).each { |link| run "ln -nfs #{shared_path}/public/#{link} #{current_path}/public/#{link}" }
+      fetch(:app_symlinks, []).each { |link| run "ln -nfs #{shared_path}/public/#{link} #{latest_release}/public/#{link}" }
     end
 
   end
@@ -158,7 +158,7 @@ namespace :local_config do
   task :symlink do
     fetch(:local_config,[]).each do |file|
       filename = File.split(file).last
-      run "ls #{current_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/config/#{filename} #{current_release}/#{file}"
+      run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/config/#{filename} #{latest_release}/#{file}"
     end
   end
   
