@@ -52,6 +52,7 @@ namespace :moonshine do
       run "cd #{latest_release} && RAILS_ENV=#{fetch(:rails_env, 'production')} rake --trace environment"
     end
     sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE']||fetch(:stage,'undefined')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
+    sudo "touch /var/log/moonshine_rake.log && cat /var/log/moonshine_rake.log"
   end
 
   desc "Update code and then run a console. Useful for debugging deployment."

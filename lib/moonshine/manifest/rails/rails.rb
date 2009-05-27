@@ -58,13 +58,20 @@ module Moonshine::Manifest::Rails::Rails
   # executes without error in your <tt>rails_root</tt>.
   def rails_rake_environment
     package 'rake', :provider => :gem, :ensure => :installed
+    file '/var/log/moonshine_rake.log',
+      :ensure   => :present,
+      :owner    => configuration[:user],
+      :group    => configuration[:group] || configuration[:user],
+      :mode     => '775',
+      :content  => ' '
     exec 'rake tasks',
-      :command => 'rake -T > /dev/null',
+      :command => 'rake environment >> /var/log/moonshine_rake.log',
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => [
         exec('rails_gems'),
-        package('rake')
+        package('rake'),
+        file('/var/log/moonshine_rake.log')
       ]
   end
 
@@ -216,7 +223,7 @@ private
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {
-      :command => "rake #{name}",
+      :command => "rake #{name} >> /var/log/moonshine_rake.log",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
