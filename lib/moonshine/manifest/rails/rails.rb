@@ -66,6 +66,7 @@ module Moonshine::Manifest::Rails::Rails
       :content  => ' '
     exec 'rake tasks',
       :command => 'rake environment >> /var/log/moonshine_rake.log',
+      :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => [
