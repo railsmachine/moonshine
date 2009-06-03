@@ -1,4 +1,4 @@
-<% hostname = `hostname -s`.chomp %>
+<% log_prefix = configuration[:mysql][:log_prefix] || `hostname -s`.chomp %>
 
 [client]
 default-character-set   = <%= configuration[:mysql][:default_character_set] || 'utf8' %>
@@ -15,10 +15,10 @@ collation_server        = <%= configuration[:mysql][:collation_server] || 'utf8_
 server-id                = <%= configuration[:mysql][:server_id] || '1' %>
 auto-increment-increment = <%= configuration[:mysql][:auto_increment_increment] || '10' %>
 auto-increment-offset    = <%= configuration[:mysql][:auto_increment_offset] || configuration[:mysql][:server_id] || '1' %>
-log-bin                  = <%= configuration[:mysql][:log_bin] || "#{hostname}-bin" %>
-log-bin-index            = <%= configuration[:mysql][:log_bin_index] || "#{hostname}-bin" %>
-relay-log                = <%= configuration[:mysql][:relay_log] || "#{hostname}-relay" %>
-relay-log-index          = <%= configuration[:mysql][:relay_log_index] || "#{hostname}-relay" %>
+log-bin                  = <%= configuration[:mysql][:log_bin] || "#{log_prefix}-bin" %>
+log-bin-index            = <%= configuration[:mysql][:log_bin_index] || "#{log_prefix}-bin" %>
+relay-log                = <%= configuration[:mysql][:relay_log] || "#{log_prefix}-relay" %>
+relay-log-index          = <%= configuration[:mysql][:relay_log_index] || "#{log_prefix}-relay" %>
 replicate-same-server-id = <%= configuration[:mysql][:replicate_same_server_id] || '0' %>
 
 ######### innodb options
