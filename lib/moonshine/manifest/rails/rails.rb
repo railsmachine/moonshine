@@ -65,7 +65,7 @@ module Moonshine::Manifest::Rails::Rails
       :mode     => '775',
       :content  => ' '
     exec 'rake tasks',
-      :command => 'rake environment >> /var/log/moonshine_rake.log',
+      :command => 'rake environment 2>&1 >> /var/log/moonshine_rake.log',
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
@@ -224,7 +224,7 @@ private
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {
-      :command => "rake #{name} >> /var/log/moonshine_rake.log",
+      :command => "rake #{name} 2>&1 >> /var/log/moonshine_rake.log",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
