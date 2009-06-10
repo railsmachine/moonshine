@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "***Bootstrappin' the system!***"
 apt-get update
 
 echo "Installing build packages"
@@ -10,30 +9,27 @@ echo "Removing Ruby from apt"
 apt-get remove -q -y ^ruby*
 
 PREFIX="/usr"
-REE="ruby-enterprise-1.8.6-20090421"
+REE="ruby-enterprise-1.8.6-20090610"
 
-if [ `which ruby` ]; then
-
- echo "Ruby already installed."
-
-else
+if [ -z `which ruby` ] || [ "$FORCE_RUBY" = "true" ]; then
 
   echo "Installing Ruby"
 
-  pushd /tmp
+  cd /tmp
   echo "Downloading REE"
-  wget -q http://rubyforge.org/frs/download.php/55511/$REE.tar.gz
+  wget -q http://assets.railsmachine.com/other/$REE.tar.gz
   echo "Untar REE"
   tar xzf $REE.tar.gz
-  pushd $REE/
 
   echo "Running installer"
-  ./installer --dont-install-useful-gems -a $PREFIX
+  ./$REE/installer --dont-install-useful-gems -a $PREFIX
 
   echo "Cleaning up REE download"
-  popd
   rm -rf $REE*
-  popd
+
+else
+
+  echo "Ruby already installed."
 
 fi
 

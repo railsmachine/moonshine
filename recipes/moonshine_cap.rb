@@ -39,7 +39,7 @@ namespace :moonshine do
     put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
     put(File.read(File.join(File.dirname(__FILE__), "bootstrap.#{fetch(:ruby, 'ree')}.sh")),"/tmp/bootstrap.sh")
     sudo 'chmod a+x /tmp/bootstrap.sh'
-    sudo '/tmp/bootstrap.sh'
+    sudo "FORCE_RUBY=#{fetch(:force_ruby,'false')} /tmp/bootstrap.sh"
     sudo 'rm /tmp/bootstrap.sh'
     sudo "shadow_puppet /tmp/moonshine_setup_manifest.rb"
     sudo 'rm /tmp/moonshine_setup_manifest.rb'
@@ -190,5 +190,21 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
+  end
+end
+
+namespace :ruby do
+  desc "Forces a reinstall of Ruby and restarts Apache/Passenger"
+  task :upgrade do
+    set :force_ruby, 'true'
+    moonshine.bootstrap
+    apache.restart
+  end
+end
+
+namespace :apache do
+  desc "Restarts the Apache web server"
+  task :restart do
+    sudo 'service apache2 restart'
   end
 end
