@@ -1,7 +1,8 @@
 module Moonshine::Manifest::Rails::Passenger
   # Install the passenger gem
   def passenger_gem
-    package "passenger", :ensure => :latest, :provider => :gem
+    configure(:passenger => {})
+    package "passenger", :ensure => (configuration[:passenger][:version] || :latest), :provider => :gem
   end
 
   # Build, install, and enable the passenger apache module. Please see the
@@ -66,9 +67,10 @@ module Moonshine::Manifest::Rails::Passenger
   end
 
   def passenger_configure_gem_path
-    return configuration[:passenger][:path] if configuration[:passenger] && configuration[:passenger][:path]
+    configure(:passenger => {})
+    return configuration[:passenger][:path] if configuration[:passenger][:path]
     version = begin
-      Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
+      configuration[:passenger][:version] || Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
     rescue
       `gem install passenger --no-ri --no-rdoc`
       `passenger-config --version`.chomp
