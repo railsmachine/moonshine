@@ -27,3 +27,6 @@ postgres:
 libxml-ruby:
 - libxml2
 - libxml2-dev
+image_science:
+- libfreeimage3
+- libfreeimage-dev

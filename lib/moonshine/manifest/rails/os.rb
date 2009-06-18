@@ -73,8 +73,8 @@ from installing any gems, packages, or dependencies directly on the server.
   def security_updates
     configure(:unattended_upgrade => {})
     unattended_config = <<-CONFIG
-APT::Periodic::Update-Package-Lists "1";
-APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Update-Package-Lists "#{configuration[:unattended_upgrade][:package_lists]||1}";
+APT::Periodic::Unattended-Upgrade "#{configuration[:unattended_upgrade][:interval]||1}";
 CONFIG
 
     package 'unattended-upgrades', :ensure => :latest
