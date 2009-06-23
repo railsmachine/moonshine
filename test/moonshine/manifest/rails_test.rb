@@ -139,9 +139,19 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_installs_passenger_gem
+    @manifest.configure(:passenger => { :version => nil })
     @manifest.passenger_configure_gem_path
     @manifest.passenger_gem
     assert_not_nil @manifest.packages["passenger"]
+    assert_equal :latest, @manifest.packages["passenger"].ensure
+  end
+
+  def test_can_pin_passenger_to_a_specific_version
+    @manifest.configure(:passenger => { :version => '2.2.2' })
+    @manifest.passenger_configure_gem_path
+    @manifest.passenger_gem
+    assert_not_nil @manifest.packages["passenger"]
+    assert_equal '2.2.2', @manifest.packages["passenger"].ensure
   end
 
   def test_installs_passenger_module
