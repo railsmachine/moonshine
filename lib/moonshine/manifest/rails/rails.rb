@@ -47,9 +47,10 @@ module Moonshine::Manifest::Rails::Rails
 
   # Rotates the logs for this rails app
   def rails_logrotate
+    configure(:rails_logrotate => {})
     logrotate("#{configuration[:deploy_to]}/shared/log/*.log", {
-      :options => %w(daily missingok compress delaycompress sharedscripts),
-      :postrotate => "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
+      :options => configuration[:rails_logrotate][:options] || %w(daily missingok compress delaycompress sharedscripts),
+      :postrotate => configuration[:rails_logrotate][:postrotate] || "touch #{configuration[:deploy_to]}/current/tmp/restart.txt"
     })
     file "/etc/logrotate.d/#{configuration[:deploy_to].gsub('/','')}sharedlog.conf", :ensure => :absent
   end

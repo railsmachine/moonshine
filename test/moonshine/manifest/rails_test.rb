@@ -300,6 +300,22 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_match /nocompress/, @manifest.files["/etc/logrotate.d/srvotherappsharedlogslog.conf"].content
   end
 
+  def test_rails_logroate_is_configurable
+    @manifest.configure(
+      :deploy_to => '/srv/foo',
+      :rails_logrotate => {
+        :options => %w(foo bar baz),
+        :postrotate => 'do something'
+      }
+    )
+    @manifest.send(:rails_logrotate)
+    assert_not_nil @manifest.packages["logrotate"]
+    assert_match /foo/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_no_match /compress/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_match /do something/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+    assert_no_match /restart\.txt/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
+  end
+
   def test_postgresql_server
     @manifest.postgresql_server
     assert_not_nil @manifest.services["postgresql-8.3"]
