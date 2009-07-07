@@ -121,7 +121,7 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
-  RewriteRule ^/$ /index.html [QSA]
+  RewriteRule ^([^.]+)$ $1/index.html [QSA]
 
   # Rewrite to check for Rails cached page
   RewriteRule ^([^.]+)$ $1.html [QSA]
@@ -264,7 +264,7 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
-  RewriteRule ^/$ /index.html [QSA]
+  RewriteRule ^([^.]+)$ $1/index.html [QSA]
 
   # Rewrite to check for Rails cached page
   RewriteRule ^([^.]+)$ $1.html [QSA]

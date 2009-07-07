@@ -3,3 +3,4 @@ pkg
 rdoc
 doc
 coverage
+.autotest
