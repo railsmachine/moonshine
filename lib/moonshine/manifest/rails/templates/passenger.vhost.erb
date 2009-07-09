@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-  ServerName <%= configuration[:domain] || `hostname -f` %>
+  ServerName <%= configuration[:domain] || (Facter.to_hash["hostname"] + '.' + Facter.to_hash["domain"]) %>
   <% if configuration[:domain_aliases] %>
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
   <% end %>
@@ -150,7 +150,7 @@
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
-  ServerName <%= configuration[:domain] || `hostname -f` %>
+  ServerName <%= configuration[:domain] || (Facter.to_hash["hostname"] + '.' + Facter.to_hash["domain"]) %>
   <% if configuration[:domain_aliases] %>
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
   <% end %>

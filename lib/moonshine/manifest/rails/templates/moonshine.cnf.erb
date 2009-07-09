@@ -1,4 +1,4 @@
-<% log_prefix = configuration[:mysql][:log_prefix] || `hostname -s`.chomp %>
+<% log_prefix = configuration[:mysql][:log_prefix] || Facter.to_hash["hostname"] %>
 
 [client]
 default-character-set   = <%= configuration[:mysql][:default_character_set] || 'utf8' %>
