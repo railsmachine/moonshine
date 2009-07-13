@@ -84,3 +84,9 @@ To run the test suite, follow these steps to create a testbed app:
     script/generate moonshine
     cd vendor/plugins/moonshine
     rake test
+    
+=== Getting Help
+
+You can find more examples in the documentation[http://railsmachine.github.com/moonshine] and on the Wiki[http://wiki.github.com/railsmachine/moonshine].
+
+For help or general discussion, visit the Moonshine newsgroup[http://groups.google.com/group/railsmachine-moonshine].
