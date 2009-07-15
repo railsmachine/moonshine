@@ -3,7 +3,7 @@
 apt-get update
 
 echo "Installing build packages"
-apt-get install -q -y git-core build-essential zlib1g-dev libssl-dev libreadline5-dev wget
+apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget
 
 echo "Installing Ruby"
 apt-get install -q -y ruby-full

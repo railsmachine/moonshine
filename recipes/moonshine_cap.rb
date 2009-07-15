@@ -1,11 +1,3 @@
-set :branch, 'master'
-set :scm, :git
-set :git_enable_submodules, 1
-ssh_options[:paranoid] = false
-ssh_options[:forward_agent] = true
-default_run_options[:pty] = true
-set :keep_releases, 2
-
 after 'deploy:restart', 'deploy:cleanup'
 
 #load the moonshine configuration into
@@ -20,6 +12,14 @@ rescue Exception
   puts "edit config/moonshine.yml, then re-run capistrano."
   exit(1)
 end
+
+set :branch, 'master'
+set :scm, :git unless repository =~ /^svn/
+set :git_enable_submodules, 1
+ssh_options[:paranoid] = false
+ssh_options[:forward_agent] = true
+default_run_options[:pty] = true
+set :keep_releases, 2
 
 namespace :moonshine do
 
@@ -190,6 +190,7 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
+    vcs.install
   end
 end
 
@@ -206,5 +207,17 @@ namespace :apache do
   desc "Restarts the Apache web server"
   task :restart do
     sudo 'service apache2 restart'
+  end
+end
+
+namespace :vcs do
+  desc "Installs the scm"
+  task :install do
+    package = case fetch(:scm).to_s
+      when 'svn' then 'subversion'
+      when 'git' then 'git-core'
+      else scm.to_s
+    end
+    sudo "apt-get -qq -y install #{package}"
   end
 end
