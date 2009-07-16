@@ -7,6 +7,7 @@
 #:domain_aliases:
 #  - assets1.yourapp.com
 #  - assets2.yourapp.com
+#:scm: git
 :repository: git@github.com:username/your_app_name.git
 # Use :app_symlinks to setup directories under public/ that you want to persist
 # across deployments. They'll be symlinked to the shared directory.
