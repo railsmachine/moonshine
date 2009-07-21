@@ -77,7 +77,8 @@ task :redoc do
   #move it all to the root
   system "cp -r doc/* . && rm -rf doc"
 
-  #commit and push
+  #add, commit and push
+  system "git add ."
   system "git commit -am 'regenerate rdocs' && git push origin gh-pages && git push github gh-pages"
   system "git checkout master"
 end
