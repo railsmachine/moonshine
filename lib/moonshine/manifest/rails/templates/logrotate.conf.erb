@@ -7,4 +7,9 @@
     <%= options[:postrotate] %>
   endscript
   <% end %>
+  <% unless options[:prerotate].nil? %>
+  prerotate
+    <%= options[:prerotate] %>
+  endscript
+  <% end %>
 }

@@ -21,6 +21,8 @@ rescue Exception
   exit(1)
 end
 
+set :scm, :svn if !! repository =~ /^svn/
+
 namespace :moonshine do
 
   desc <<-DESC
@@ -190,6 +192,7 @@ namespace :deploy do
   DESC
   task :setup, :except => { :no_release => true } do
     moonshine.bootstrap
+    vcs.install
   end
 end
 
@@ -206,5 +209,17 @@ namespace :apache do
   desc "Restarts the Apache web server"
   task :restart do
     sudo 'service apache2 restart'
+  end
+end
+
+namespace :vcs do
+  desc "Installs the scm"
+  task :install do
+    package = case fetch(:scm).to_s
+      when 'svn' then 'subversion'
+      when 'git' then 'git-core'
+      else scm.to_s
+    end
+    sudo "apt-get -qq -y install #{package}"
   end
 end
