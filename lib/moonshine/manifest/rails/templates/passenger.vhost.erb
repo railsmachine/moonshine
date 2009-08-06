@@ -121,10 +121,16 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
-  RewriteRule ^([^.]+)$ $1/index.html [QSA]
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
+  RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [L]
 
-  # Rewrite to check for Rails cached page
-  RewriteRule ^([^.]+)$ $1.html [QSA]
+  # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
+  RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1 [QSA,L]
+
+  # Rewrite to check for Rails cached html page
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI}.html -f
+  RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1.html [QSA,L]
 <% end %>
 </VirtualHost>
 
@@ -264,10 +270,16 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
-  RewriteRule ^([^.]+)$ $1/index.html [QSA]
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
+  RewriteRule  ^([^.]+)$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
 
-  # Rewrite to check for Rails cached page
-  RewriteRule ^([^.]+)$ $1.html [QSA]
+  # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
+  RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1 [QSA,L]
+
+  # Rewrite to check for Rails cached html page
+  RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI}.html -f
+  RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1.html [QSA,L]
 
   </VirtualHost>
 <% end %>
