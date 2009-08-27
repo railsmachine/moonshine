@@ -14,7 +14,7 @@ module Moonshine::Manifest::Rails::Apache
     if configuration[:apache] && configuration[:apache][:users]
       htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd"
       
-      file htpasswd, :ensure => :file, :owner => 'rails', :mode => '644'
+      file htpasswd, :ensure => :file, :owner => configuration[:user], :mode => '644'
       
       configuration[:apache][:users].each do |user,pass|
         exec "htpasswd #{user}",
