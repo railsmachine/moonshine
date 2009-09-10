@@ -36,5 +36,8 @@ fi
 echo "Installing Rake"
 gem install rake --no-rdoc --no-ri
 
+echo "Installing Puppet"
+gem install puppet -v 0.24.6 --no-rdoc --no-ri
+
 echo "Installing Shadow Puppet"
 gem install shadow_puppet --no-rdoc --no-ri
