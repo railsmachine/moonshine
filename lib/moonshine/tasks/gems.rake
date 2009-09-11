@@ -1,7 +1,7 @@
 namespace :moonshine do
   desc "Update config/moonshine.yml with a list of the required gems"
   task :gems => 'gems:base' do
-    gem_array = Rails.configuration.gems.reject(&:frozen?).map do |gem|
+    gem_array = Rails.configuration.gems.reject{|g| g.frozen? && !g.framework_gem?}.map do |gem|
       hash = { :name => gem.name }
       hash.merge!(:source => gem.source) if gem.source
       hash.merge!(:version => gem.requirement.to_s) if gem.requirement
