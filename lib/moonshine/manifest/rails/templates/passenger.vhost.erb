@@ -102,7 +102,7 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
   BrowserMatch ^Mozilla/4 gzip-only-text/html
   BrowserMatch ^Mozilla/4\.0[678] no-gzip
   BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
@@ -131,6 +131,7 @@
   # Rewrite to check for Rails cached html page
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI}.html -f
   RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1.html [QSA,L]
+
 <% end %>
 </VirtualHost>
 
@@ -247,7 +248,7 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
   BrowserMatch ^Mozilla/4 gzip-only-text/html
   BrowserMatch ^Mozilla/4\.0[678] no-gzip
   BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
