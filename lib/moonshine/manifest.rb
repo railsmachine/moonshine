@@ -136,6 +136,12 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   # config/moonshine.yml
   configure(YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'moonshine.yml'))).result))
 
+  # config/moonshine/#{rails_env}.yml
+  env_config = File.join(rails_root, 'config', 'moonshine', rails_env + ".yml")
+  if File.exist?(env_config)
+    configure(YAML::load(ERB.new(IO.read(env_config)).result))
+  end
+
   # database config
   configure(:database => YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'database.yml'))).result))
 

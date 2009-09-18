@@ -9,6 +9,10 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     assert_not_nil Moonshine::Manifest.configuration[:application]
   end
 
+  def test_loads_environment_specific_configuration
+    assert_not_nil Moonshine::Manifest.configuration[:test_yaml]
+  end
+
   def test_provides_template_helper
     @manifest = Moonshine::Manifest.new
     @manifest.configure(:application => 'bar')
