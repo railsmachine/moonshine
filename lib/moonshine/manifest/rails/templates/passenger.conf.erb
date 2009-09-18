@@ -104,3 +104,22 @@ PassengerMaxInstancesPerApp <%= configuration[:passenger][:max_instances_per_app
 # that a visitor spends on a single web page. But your mileage may vary.
 
 PassengerPoolIdleTime <%= configuration[:passenger][:pool_idle_time] || 300 %>
+
+## PassengerMaxRequests
+#
+# The maximum number of requests an application instance will process. After
+# serving that many requests, the application instance will be shut down and
+# Phusion Passenger will restart it. A value of 0 means that there is no
+# maximum: an application instance will thus be shut down when its idle timeout
+# has been reached.
+#
+# This option is useful if your application is leaking memory. By shutting it
+# down after a certain number of requests, all of its memory is guaranteed to be
+# freed by the operating system.
+#
+# The PassengerMaxRequests directive should be considered as a workaround for
+# misbehaving applications. It is advised that you fix the problem in your
+# application rather than relying on these directives as a measure to avoid
+# memory leaks.
+
+PassengerMaxRequests <%= configuration[:passenger][:max_requests] || 0 %>
