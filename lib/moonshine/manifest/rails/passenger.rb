@@ -80,13 +80,11 @@ module Moonshine::Manifest::Rails::Passenger
 
 private
 
-  def passenger_config_boolean(key)
+  def passenger_config_boolean(key, default = true)
     if key.nil?
-      nil
-    elsif key == 'Off' || (!!key) == false
-      'Off'
+      default ? 'On' : 'Off'
     else
-      'On'
+      ((!!key) == true) ? 'On' : 'Off'
     end
   end
 

@@ -37,7 +37,6 @@
 # respective templates: moonshine/lib/moonshine/manifest/rails/templates
 :passenger:
   :max_pool_size: 3
-  :use_global_queue: true
 :mysql:
   :innodb_buffer_pool_size: 128M
   

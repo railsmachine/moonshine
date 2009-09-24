@@ -40,7 +40,7 @@ PassengerLogLevel <%= configuration[:passenger][:log_level] || 0 %>
 #
 # Options: <on|off>
 
-PassengerUseGlobalQueue <%= passenger_config_boolean(configuration[:passenger][:use_global_queue] || true) %>
+PassengerUseGlobalQueue <%= passenger_config_boolean(configuration[:passenger][:use_global_queue]) %>
 
 ## PassengerUserSwitching
 #
@@ -52,7 +52,7 @@ PassengerUseGlobalQueue <%= passenger_config_boolean(configuration[:passenger][:
 #
 # Options: <on|off>
 
-PassengerUserSwitching <%= passenger_config_boolean(configuration[:passenger][:user_switching] || true) %>
+PassengerUserSwitching <%= passenger_config_boolean(configuration[:passenger][:user_switching]) %>
 
 ## PassengerDefaultUser
 #

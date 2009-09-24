@@ -160,8 +160,16 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_not_nil @manifest.packages['apache2-threaded-dev']
     assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.load']
     assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.conf']
+    assert_match /PassengerUseGlobalQueue On/, @manifest.files['/etc/apache2/mods-available/passenger.conf'].content
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2enmod passenger' }
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/ruby -S rake clean apache2' }
+  end
+
+  def test_setting_passenger_booleans_to_false
+    @manifest.configure(:passenger => { :use_global_queue => false })
+    @manifest.passenger_configure_gem_path
+    @manifest.passenger_apache_module
+    assert_match /PassengerUseGlobalQueue Off/, @manifest.files['/etc/apache2/mods-available/passenger.conf'].content
   end
 
   def test_configures_passenger_vhost
