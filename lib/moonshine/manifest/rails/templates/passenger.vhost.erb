@@ -122,7 +122,7 @@
 
   # Rewrite index to check for static
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
-  RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [L]
+  RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
 
   # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
@@ -272,7 +272,7 @@
 
   # Rewrite index to check for static
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
-  RewriteRule  ^([^.]+)$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
+  RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
 
   # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
