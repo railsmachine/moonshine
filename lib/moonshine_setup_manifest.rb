@@ -1,5 +1,5 @@
 # Running <tt>cap deploy:setup</tt> or <tt>cap moonshine:bootstrap</tt>
-# in uploads your <p>config/moonshine.yml</p> to <tt>/tmp/moonshine.yml</tt>
+# in uploads your <tt>config/moonshine.yml</tt> to <tt>/tmp/moonshine.yml</tt>
 # on your server and applies this manifest.
 #
 # Requires these three variables in a YAML <tt>config/moonshine.yml</tt>:
