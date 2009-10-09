@@ -72,7 +72,8 @@
   ## RailsAllowModRewrite
   #
   # Passenger will not override mod_rewrite rules if this option
-  # is enabled.
+  # is enabled. This option is deprecated and ignored in recent versions
+  # of Passenger.
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
@@ -121,14 +122,17 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
   RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
 
   # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
   RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1 [QSA,L]
 
   # Rewrite to check for Rails cached html page
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI}.html -f
   RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1.html [QSA,L]
 
@@ -218,7 +222,8 @@
   ## RailsAllowModRewrite
   #
   # Passenger will not override mod_rewrite rules if this option
-  # is enabled.
+  # is enabled. This option is deprecated and ignored in recent versions
+  # of Passenger.
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
@@ -271,14 +276,17 @@
   RewriteRule ^.*$ /system/maintenance.html [L]
 
   # Rewrite index to check for static
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>/index.html -f
   RewriteRule  ^/?$ <%= configuration[:passenger][:page_cache_directory] %>/index.html [QSA,L]
 
   # Rewrite to check for Rails non-html cached pages (i.e. xml, json, atom, etc)
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI} -f
   RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1 [QSA,L]
 
   # Rewrite to check for Rails cached html page
+  RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
   RewriteCond  %{DOCUMENT_ROOT}<%= configuration[:passenger][:page_cache_directory] %>%{REQUEST_URI}.html -f
   RewriteRule  ^(.*)$ <%= configuration[:passenger][:page_cache_directory] %>$1.html [QSA,L]
 
