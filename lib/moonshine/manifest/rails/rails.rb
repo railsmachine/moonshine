@@ -87,8 +87,9 @@ module Moonshine::Manifest::Rails::Rails
       :gem => "--no-ri --no-rdoc",
       :update_sources => true,
       :sources => [
+        'http://gemcutter.org',
         'http://gems.rubyforge.org',
-        'http://gems.github.com',
+        'http://gems.github.com'
       ]
     }
     gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
