@@ -103,7 +103,7 @@ module Moonshine::Manifest::Rails::Rails
     exec 'rails_gems', :command => 'true'
     return unless configuration[:gems]
     configuration[:gems].each do |gem|
-      gem.delete(:source) if gem[:source] && gem[:source] =~ /gems.github.com/
+      gem.delete(:source) if gem[:source] && gemrc[:sources].include? gem[:source]
       gem(gem[:name], {
         :version => gem[:version],
         :source => gem[:source]
