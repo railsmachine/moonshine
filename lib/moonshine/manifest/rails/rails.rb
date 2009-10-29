@@ -18,7 +18,7 @@ module Moonshine::Manifest::Rails::Rails
   #   rake moonshine:app:bootstrap
   #
   # The <tt>moonshine:app:bootstrap</tt> task does nothing by default. If
-  # you'd like to have your application preform any logic on it's first deploy,
+  # you'd like to have your application perform any logic on its first deploy,
   # overwrite this task in your <tt>Rakefile</tt>:
   #
   #   namespace :moonshine do
@@ -30,9 +30,9 @@ module Moonshine::Manifest::Rails::Rails
   #     end
   #   end
   #
-  # All of this assumes one things. That your application can run 'rake
-  # environment' with an empty database. Please ensure your application can do
-  # so!
+  # All of this assumes one thing: that your application can run <tt>rake
+  # environment</tt> with an empty database. Please ensure your application can
+  # do so!
   def rails_bootstrap
     rake 'moonshine:bootstrap',
       :alias => 'rails_bootstrap',
