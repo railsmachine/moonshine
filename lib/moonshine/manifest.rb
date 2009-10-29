@@ -13,7 +13,7 @@
 # The contents of your database config are parsed and are available at
 # <tt>configuration[:database]</tt>.
 #
-# If you'd like to create another 'default rails stack' using other tools that
+# If you'd like to create another 'default rails stack' using other tools than
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
 
