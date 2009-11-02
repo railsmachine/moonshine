@@ -40,7 +40,7 @@ namespace :moonshine do
       puts "Please make sure the settings in moonshine.yml are valid and that the target hostname is correct."
       exit(0)
     end
-    put(File.read(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb')),"/tmp/moonshine_setup_manifest.rb")
+    upload(File.join(File.dirname(__FILE__), '..', 'lib', 'moonshine_setup_manifest.rb'), "/tmp/moonshine_setup_manifest.rb")
     sudo "shadow_puppet /tmp/moonshine_setup_manifest.rb"
     sudo 'rm /tmp/moonshine_setup_manifest.rb'
     sudo 'rm /tmp/moonshine.yml'
@@ -148,7 +148,7 @@ namespace :local_config do
     fetch(:local_config,[]).each do |file|
       filename = File.split(file).last
       if File.exist?( file )
-        put(File.read( file ),"#{shared_path}/config/#{filename}")
+        parent.upload(file, "#{shared_path}/config/#{filename}")
       end
     end
   end
