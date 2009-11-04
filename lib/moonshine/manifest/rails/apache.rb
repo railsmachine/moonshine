@@ -7,6 +7,7 @@ module Moonshine::Manifest::Rails::Apache
     service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
     a2enmod('rewrite')
     a2enmod('status')
+    a2enmod('expires')
     if configuration[:ssl]
       a2enmod('headers')
       a2enmod('ssl')
