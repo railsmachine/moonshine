@@ -32,6 +32,14 @@ namespace :moonshine do
   task :bootstrap do
     ruby.install
     vcs.install
+    moonshine.setup_directories
+  end
+
+  desc <<-DESC
+  Applies the lib/moonshine_setup_manifest.rb manifest, which replicates the old
+  capistrano deploy:setup behavior.
+  DESC
+  task :setup_directories do
     begin
       config = YAML.load_file(File.join(Dir.pwd, 'config', 'moonshine.yml'))
       put(YAML.dump(config),"/tmp/moonshine.yml")
