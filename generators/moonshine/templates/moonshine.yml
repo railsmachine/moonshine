@@ -14,9 +14,9 @@
 #:app_symlinks:
 #  - uploads
 #
-# Use :local_config to copy directories straight from your local project directory
+# Use :shared_config to copy directories straight from your local project directory
 # to the server: these are files that you don't have/want in scm.
-#:local_config:
+#:shared_config:
 #  - config/database.yml
 #
 # The entries in shared_children are created in #{application}/shared

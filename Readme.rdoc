@@ -60,19 +60,29 @@ any reason:
 
     set :moonshine_apply, false
 
-=== Local Config
+=== Shared Config
 
 Often, certain files (<tt>config/database.yml</tt>, etc) are excluded from an
 application's SCM, but required to be present for deploy. We've abstracted
 this pattern with some Capistrano automation that goes great with Moonshine.
 
 For example, if you keep <tt>config/database.yml</tt> out of your SCM, add the
-following line to your config/deploy.rb:
+following line to your <tt>config/moonshine.yml</tt>:
 
-    set :local_config, %w(config/database.yml)
+    :shared_config:
+      - config/database.yml
 
-This file will then be automatically uploaded and symlinked to
-<tt>current/config/database.yml</tt> on each deploy. 
+This file will then be automatically uploaded when you run <tt>deploy:setup</tt>
+and symlinked to <tt>current/config/database.yml</tt> on each deploy.
+
+There are some extra cap tasks for working with these files manually, if needed:
+
+* cap shared_config:upload
+* cap shared_config:download
+* cap shared_config:symlink
+
+The old <tt>local_config</tt> functionality is still supported, but
+<tt>shared_config</tt> is recommended.
 
 === Running Tests
 
