@@ -75,7 +75,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_loads_gems_from_config_hash
-    @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://gems.github.com/' } ])
+    @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://gems.github.com' } ])
     @manifest.rails_gems
     assert_not_nil Moonshine::Manifest::Rails.configuration[:gems]
     Moonshine::Manifest::Rails.configuration[:gems].each do |gem|
@@ -88,7 +88,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_magically_loads_gem_dependencies
     @manifest.configure(:gems => [
       { :name => 'webrat' },
-      { :name => 'thoughtbot-paperclip', :source => 'http://gems.github.com/' }
+      { :name => 'thoughtbot-paperclip', :source => 'http://gems.github.com' }
     ])
     @manifest.rails_gems
     assert_not_nil @manifest.packages['webrat']
