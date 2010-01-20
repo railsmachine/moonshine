@@ -1,29 +1,37 @@
+# these are required at load time by capistrano, we'll set them later
+set :application, ''
+set :repository, ''
+
+# sane defaults
 set :branch, 'master'
 set :scm, :git
 set :git_enable_submodules, 1
+set :keep_releases, 2
 ssh_options[:paranoid] = false
 ssh_options[:forward_agent] = true
 default_run_options[:pty] = true
-set :keep_releases, 2
 
-after 'deploy:restart', 'deploy:cleanup'
-
-#load the moonshine configuration into
-require 'yaml'
-begin
-  hash = YAML.load_file(File.join((ENV['RAILS_ROOT'] || Dir.pwd), 'config', 'moonshine.yml'))
-  hash.each do |key, value|
-    set(key.to_sym, value)
-  end
-rescue Exception
-  puts "To use Capistrano with Moonshine, please run 'ruby script/generate moonshine',"
-  puts "edit config/moonshine.yml, then re-run capistrano."
-  exit(1)
-end
-
+#fix common svn error
 set :scm, :svn if !! repository =~ /^svn/
 
+# callbacks
+on :start, 'moonshine:configure'
+after 'deploy:restart', 'deploy:cleanup'
+
 namespace :moonshine do
+  task :configure do
+    require 'yaml'
+    begin
+      hash = YAML::load(ERB.new(IO.read(File.join(ENV['RAILS_ROOT'] || Dir.pwd, 'config', 'moonshine.yml'))).result)
+      hash.each do |key, value|
+        set(key.to_sym, value)
+      end
+    rescue Exception
+      puts "To use Capistrano with Moonshine, please run 'ruby script/generate moonshine',"
+      puts "edit config/moonshine.yml, then re-run capistrano."
+      raise
+    end
+  end
 
   desc <<-DESC
   Bootstrap a barebones Ubuntu system with Git, Ruby, RubyGems, and Moonshine
