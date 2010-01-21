@@ -13,7 +13,7 @@
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
     Options FollowSymLinks
-    AllowOverride None
+    AllowOverride <%= configuration[:apache][:allow_override] || 'None' %>
     Order allow,deny
     Allow from all
   </Directory>
