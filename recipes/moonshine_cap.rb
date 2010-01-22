@@ -64,7 +64,7 @@ namespace :moonshine do
   end
 
   desc 'Apply the Moonshine manifest for this application'
-  task :apply do
+  task :apply, :except => { :no_release => true } do
     sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE']||fetch(:stage,'undefined')} RAILS_ENV=#{fetch(:rails_env, 'production')} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest, 'application_manifest')}.rb"
   end
 
