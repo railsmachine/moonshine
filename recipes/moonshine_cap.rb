@@ -289,10 +289,10 @@ namespace :ruby do
     remove_ruby_from_apt
     run [
       'cd /tmp',
-      'rm -rf ruby-enterprise-1.8.7-2009.10.tar.gz* || true',
-      'wget -q http://rubyforge.org/frs/download.php/66162/ruby-enterprise-1.8.7-2009.10.tar.gz',
-      'tar xzf ruby-enterprise-1.8.7-2009.10.tar.gz',
-      'sudo /tmp/ruby-enterprise-1.8.7-2009.10/installer --dont-install-useful-gems -a /usr'
+      'rm -rf ruby-enterprise-1.8.7-2010.01* || true',
+      'wget -q http://rubyforge.org/frs/download.php/68719/ruby-enterprise-1.8.7-2010.01.tar.gz',
+      'tar xzf ruby-enterprise-1.8.7-2010.01.tar.gz',
+      'sudo /tmp/ruby-enterprise-1.8.7-2010.01/installer --dont-install-useful-gems -a /usr'
     ].join(" && ")
   end
 
@@ -300,10 +300,10 @@ namespace :ruby do
     remove_ruby_from_apt
     run [
       'cd /tmp',
-      'rm -rf ruby-1.8.7-p174* || true',
-      'wget -q ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p174.tar.bz2',
-      'tar xjf ruby-1.8.7-p174.tar.bz2',
-      'cd /tmp/ruby-1.8.7-p174',
+      'rm -rf ruby-1.8.7-p249* || true',
+      'wget -q ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p249.tar.bz2',
+      'tar xjf ruby-1.8.7-p249.tar.bz2',
+      'cd /tmp/ruby-1.8.7-p249',
       './configure --prefix=/usr',
       'make',
       'sudo make install'
