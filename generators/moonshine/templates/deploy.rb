@@ -1,1 +1,1 @@
-server "<%= options[:domain] %>", :app, :web, :db, :primary => true
+server "<%= domain %>", :app, :web, :db, :primary => true

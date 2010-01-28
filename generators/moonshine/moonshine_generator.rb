@@ -4,7 +4,8 @@ class MoonshineGenerator < Rails::Generator::Base
   attr_reader :file_name, :klass_name
 
   default_options :user => 'rails',
-                  :domain => 'yourapp.com'
+                  :domain => 'yourapp.com',
+                  :repository => 
 
   def initialize(runtime_args, runtime_options = {})
     name = runtime_args.shift || 'application'
@@ -66,6 +67,13 @@ define the server 'stack', cron jobs, mail aliases, configuration files
     File.basename(RAILS_ROOT)
   end
 
+  def repository
+    options[:repository] ||= begin
+                               detected_repo = `git config remote.origin.url`.chomp
+                               detected_repo.present? ? detected_repo : 'git@github.com:username/your_app_name.git'
+                             end
+  end
+
   def user
     options[:user]
   end
@@ -83,6 +91,8 @@ define the server 'stack', cron jobs, mail aliases, configuration files
              "User to use on remote server") { |user| options[:user] = user }
       opt.on("--domain DOMAIN",
              "Domain name of your application") { |domain| options[:domain] = domain }
+      opt.on("--repository REPOSITORY",
+             "git or subversion repository to deploy from") { |repository| options[:repository] = repository }
       
     end
   
