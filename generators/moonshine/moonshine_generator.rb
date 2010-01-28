@@ -3,7 +3,8 @@ require 'rbconfig'
 class MoonshineGenerator < Rails::Generator::Base
   attr_reader :file_name, :klass_name
 
-  default_options :user => 'rails'
+  default_options :user => 'rails',
+                  :domain => 'yourapp.com'
 
   def initialize(runtime_args, runtime_options = {})
     name = runtime_args.shift || 'application'
@@ -61,11 +62,23 @@ define the server 'stack', cron jobs, mail aliases, configuration files
     recorded_session
   end
 
+  def user
+    options[:user]
+  end
+
+  def domain
+    options[:domain]
+  end
+
+  protected
+
     def add_options!(opt)
       opt.separator ''
       opt.separator 'Options:'
       opt.on("--user USER",
              "User to use on remote server") { |user| options[:user] = user }
+      opt.on("--domain DOMAIN",
+             "Domain name of your application") { |domain| options[:domain] = domain }
       
     end
   

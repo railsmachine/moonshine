@@ -1,12 +1,12 @@
 :ruby: ree
 :application: your_app_name
-:user: <%= options[:user] %>
+:user: <%= user %>
 #:time_zone: UTC
 :deploy_to: /srv/your_app_name
-:domain: yourapp.com
+:domain: <%= domain %>
 #:domain_aliases:
-#  - assets1.yourapp.com
-#  - assets2.yourapp.com
+#  - assets1.<%= domain %>
+#  - assets2.<%= domain %>
 #:scm: git
 :repository: git@github.com:username/your_app_name.git
 # Use :app_symlinks to setup directories under public/ that you want to persist

@@ -1,1 +1,1 @@
-server "yourapp.com", :app, :web, :db, :primary => true
+server "<%= options[:domain] %>", :app, :web, :db, :primary => true
