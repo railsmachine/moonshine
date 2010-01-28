@@ -29,14 +29,16 @@ class MoonshineGenerator < Rails::Generator::Base
 
   def manifest
     recorded_session = record do |m|
+      m.template  'Capfile', 'Capfile'
       m.directory 'app/manifests'
       m.directory 'app/manifests/templates'
       m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
       m.directory 'app/manifests/templates'
       m.template  'readme.templates', 'app/manifests/templates/README'
       m.directory 'config'
-      m.template  'moonshine.yml', "config/moonshine.yml"
-      m.template  'gems.yml', "config/gems.yml", :assigns => { :gems => gems }
+      m.template  'moonshine.yml', 'config/moonshine.yml'
+      m.template  'gems.yml', 'config/gems.yml', :assigns => { :gems => gems }
+      m.template  'deploy.rb', 'config/deploy.rb'
     end
     
     intro = <<-INTRO
