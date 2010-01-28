@@ -1,6 +1,6 @@
 :ruby: ree
 :application: your_app_name
-:user: rails
+:user: <%= options[:user] %>
 #:time_zone: UTC
 :deploy_to: /srv/your_app_name
 :domain: yourapp.com
