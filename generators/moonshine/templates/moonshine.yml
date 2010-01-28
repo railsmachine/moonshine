@@ -1,8 +1,8 @@
 :ruby: ree
-:application: your_app_name
+:application: <%= application %>
 :user: <%= user %>
 #:time_zone: UTC
-:deploy_to: /srv/your_app_name
+:deploy_to: /srv/<%= application %>
 :domain: <%= domain %>
 #:domain_aliases:
 #  - assets1.<%= domain %>

@@ -62,6 +62,10 @@ define the server 'stack', cron jobs, mail aliases, configuration files
     recorded_session
   end
 
+  def application
+    File.basename(RAILS_ROOT)
+  end
+
   def user
     options[:user]
   end
