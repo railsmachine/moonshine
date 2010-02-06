@@ -4,16 +4,18 @@ class MoonshineGenerator < Rails::Generators::Base
   class_option :user, :default => 'rails', :banner => 'User to use on remote server', :type => :string
   class_option :domain, :default => 'yourapp.com', :banner => 'Domain name of your application', :type => :string
   class_option :repository, :default => 'git@github.com:username/your_app_name.git', :banner => 'git or subversion repository to deploy from', :type => :string
-  class_option :ruby, :default => 'ree', :banner => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
+  class_option :ruby, :default => 'ree187', :banner => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
 
   def self.source_root
     @_moonshine_source_root ||= Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'templates')
   end
   
   def manifest
+    template "Capfile", "Capfile"
     template "readme.templates", "app/manifests/templates/README"
     template "moonshine.rb", "app/manifests/#{file_name}.rb"
     template "moonshine.yml", "config/moonshine.yml"
+    template "deploy.rb", "config/deploy.rb"
     
     intro = <<-INTRO
     
