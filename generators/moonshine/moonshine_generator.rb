@@ -5,7 +5,7 @@ class MoonshineGenerator < Rails::Generator::Base
 
   default_options :user => 'rails',
                   :domain => 'yourapp.com',
-                  :repository => 
+                  :ruby => 'ree'
 
   def initialize(runtime_args, runtime_options = {})
     name = runtime_args.shift || 'application'
@@ -93,8 +93,13 @@ define the server 'stack', cron jobs, mail aliases, configuration files
              "Domain name of your application") { |domain| options[:domain] = domain }
       opt.on("--repository REPOSITORY",
              "git or subversion repository to deploy from") { |repository| options[:repository] = repository }
+      opt.on("--ruby RUBY",
+             "Ruby version to install. Currently supports: mri, ree (default), ree187, src187") { |ruby| options[:ruby] = ruby }
       
     end
   
+    def ruby
+      options[:ruby]
+    end
   
 end

@@ -1,6 +1,11 @@
 class MoonshineGenerator < Rails::Generators::Base
-  argument :name, :optional => true, :default => 'application'
+  argument :name, :optional => true, :default => Rails.root.basename.to_s
  
+  class_option :user, :default => 'rails', :banner => 'User to use on remote server', :type => :string
+  class_option :domain, :default => 'yourapp.com', :banner => 'Domain name of your application', :type => :string
+  class_option :repository, :default => 'git@github.com:username/your_app_name.git', :banner => 'git or subversion repository to deploy from', :type => :string
+  class_option :ruby, :default => 'ree', :banner => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
+
   def self.source_root
     @_moonshine_source_root ||= Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'templates')
   end
@@ -35,12 +40,27 @@ protected
     @klass_name ||= file_name.classify
   end
 
-  def ruby_version
-    @ruby_version = if Rails::VERSION::MAJOR >= 3
-                      "ree187"
-                    else
-                      "ree"
-                    end
+  def ruby
+    options[:ruby] ||= "ree187"
   end
-end
 
+  def user
+    options[:user]
+  end
+
+  def domain
+    options[:domain]
+  end
+
+  def repository
+    options[:repository] ||= begin
+                               detected_repo = `git config remote.origin.url`.chomp
+                               detected_repo.present? ? detected_repo : 'git@github.com:username/your_app_name.git'
+                             end
+  end
+
+  def application
+    @application ||= name
+  end
+  
+end

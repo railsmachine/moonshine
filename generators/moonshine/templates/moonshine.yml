@@ -1,4 +1,4 @@
-:ruby: ree
+:ruby: <%= ruby %>
 :application: <%= application %>
 :user: <%= user %>
 #:time_zone: UTC
