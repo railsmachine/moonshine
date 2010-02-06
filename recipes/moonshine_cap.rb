@@ -332,6 +332,7 @@ namespace :ruby do
     sudo "gem install rake --no-rdoc --no-ri"
     sudo "gem install puppet -v 0.24.8 --no-rdoc --no-ri"
     sudo "gem install shadow_puppet --no-rdoc --no-ri"
+    sudo "gem install bundler --no-rdoc --no-ri"
   end
 end
 

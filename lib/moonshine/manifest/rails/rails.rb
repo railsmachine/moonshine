@@ -1,3 +1,4 @@
+require 'pathname'
 module Moonshine::Manifest::Rails::Rails
 
   # Attempt to bootstrap your application. Calls <tt>rake moonshine:bootstrap</tt>
@@ -102,15 +103,26 @@ module Moonshine::Manifest::Rails::Rails
       :owner    => 'root',
       :group    => 'root',
       :content  => gemrc.to_yaml
-    #stub for dependencies
+
+    # stub for dependencies
     exec 'rails_gems', :command => 'true'
-    return unless configuration[:gems]
-    configuration[:gems].each do |gem|
-      gem.delete(:source) if gem[:source] && gemrc[:sources].include?(gem[:source])
-      gem(gem[:name], {
-        :version => gem[:version],
-        :source => gem[:source]
-      })
+
+    if ! Pathname.new(rails_root).join('Gemfile').exist?
+      return unless configuration[:gems]
+      configuration[:gems].each do |gem|
+        gem.delete(:source) if gem[:source] && gemrc[:sources].include?(gem[:source])
+        gem(gem[:name], {
+          :version => gem[:version],
+          :source => gem[:source]
+        })
+      end
+    else
+      exec "bundle install",
+        :command => "bundle install",
+        :cwd => rails_root,
+        :before => exec('rails_gems'),
+        :require => file('/etc/gemrc'),
+        :user => configuration[:user]
     end
   end
 

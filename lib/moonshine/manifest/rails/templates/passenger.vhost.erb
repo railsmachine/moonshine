@@ -85,6 +85,13 @@
 
   RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
 
+  ## RackEnv
+  #
+  # Use this option to specify the default RACK_ENV value. The default
+  # setting is production.
+
+  RackEnv <%= configuration[:passenger][:rack_env] || ENV['RACK_ENV'] || 'production' %>
+
   ## RailsSpawnMethod
   #
   # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
