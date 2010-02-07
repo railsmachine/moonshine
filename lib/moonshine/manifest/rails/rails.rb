@@ -107,7 +107,22 @@ module Moonshine::Manifest::Rails::Rails
     # stub for dependencies
     exec 'rails_gems', :command => 'true'
 
-    if ! Pathname.new(rails_root).join('Gemfile').exist?
+    gemfile_path = Pathname.new(rails_root).join('Gemfile')
+    if gemfile_path.exist?
+      require 'bundler'
+      puts "Attempting to load #{gemfile_path}"
+      ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
+      Bundler.load.dependencies_for(:default, rails_env).each do |dependency|
+        gem(dependency.name, :version => dependency.version_requirements)
+      end
+
+      exec "bundle install",
+        :command => "bundle install",
+        :cwd => rails_root,
+        :before => exec('rails_gems'),
+        :require => file('/etc/gemrc'),
+        :user => configuration[:user]
+    else
       return unless configuration[:gems]
       configuration[:gems].each do |gem|
         gem.delete(:source) if gem[:source] && gemrc[:sources].include?(gem[:source])
@@ -116,13 +131,6 @@ module Moonshine::Manifest::Rails::Rails
           :source => gem[:source]
         })
       end
-    else
-      exec "bundle install",
-        :command => "bundle install",
-        :cwd => rails_root,
-        :before => exec('rails_gems'),
-        :require => file('/etc/gemrc'),
-        :user => configuration[:user]
     end
   end
 
