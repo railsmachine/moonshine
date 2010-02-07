@@ -8,7 +8,11 @@ class MoonshineGenerator < Rails::Generator::Base
                   :ruby => 'ree'
 
   def initialize(runtime_args, runtime_options = {})
-    name = runtime_args.shift || 'application'
+    name = if runtime_args.first && runtime_args.first !~ /^--/
+             runtime_args.shift
+           else
+             'application'
+           end
     @file_name = name.downcase.underscore + "_manifest"
     @klass_name = @file_name.classify
     super
