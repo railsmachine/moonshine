@@ -109,12 +109,16 @@ module Moonshine::Manifest::Rails::Rails
 
     gemfile_path = Pathname.new(rails_root).join('Gemfile')
     if gemfile_path.exist?
-      require 'bundler'
-      puts "Attempting to load #{gemfile_path}"
-      ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
-      Bundler.load.dependencies_for(:default, rails_env).each do |dependency|
-        gem(dependency.name, :version => dependency.version_requirements)
-      end
+      #require 'bundler'
+      # FIXME waiting on a bugfix in rubygems 1.3.6 which lets
+      # prerelease gems depend on non-prerelease gems, enabling
+      # rails 3 beta to be installed
+      #ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
+      #Bundler.load.dependencies_for(:default, rails_env).each do |dependency|
+      #  gem dependency.name,
+      #      :version => dependency.version_requirements,
+      #      :before => exec("bundle install")
+      #end
 
       exec "bundle install",
         :command => "bundle install",
