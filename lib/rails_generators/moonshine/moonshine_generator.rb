@@ -1,10 +1,11 @@
 class MoonshineGenerator < Rails::Generators::Base
+  desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
   argument :name, :optional => true, :default => Rails.root.basename.to_s
  
-  class_option :user, :default => 'rails', :banner => 'User to use on remote server', :type => :string
-  class_option :domain, :default => 'yourapp.com', :banner => 'Domain name of your application', :type => :string
-  class_option :repository, :default => 'git@github.com:username/your_app_name.git', :banner => 'git or subversion repository to deploy from', :type => :string
-  class_option :ruby, :default => 'ree187', :banner => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
+  class_option :user, :default => 'rails', :desc => 'User to use on remote server', :type => :string
+  class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
+  class_option :repository, :default => 'git@github.com:username/your_app_name.git', :desc => 'git or subversion repository to deploy from', :type => :string
+  class_option :ruby, :default => 'ree187', :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
 
   def self.source_root
     @_moonshine_source_root ||= Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'templates')
