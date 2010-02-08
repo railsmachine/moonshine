@@ -1,7 +1,8 @@
 class MoonshineGenerator < Rails::Generators::Base
   desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
-  argument :name, :optional => true, :default => Rails.root.basename.to_s
+  argument :name, :optional => true, :default => 'application'
  
+  class_option :application, :default => Rails.root.basename.to_s, :desc => 'name of your application'
   class_option :user, :default => 'rails', :desc => 'User to use on remote server', :type => :string
   class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
   class_option :repository, :default => 'git@github.com:username/your_app_name.git', :desc => 'git or subversion repository to deploy from', :type => :string
@@ -63,7 +64,7 @@ protected
   end
 
   def application
-    @application ||= name
+    @application ||= File.basename(RAILS_ROOT)
   end
   
 end
