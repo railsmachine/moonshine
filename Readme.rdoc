@@ -14,27 +14,20 @@ Moonshine is Rails deployment and configuration management done right.
 
 ==== Instructions
 
-* <tt>ruby script/plugin install git://github.com/railsmachine/moonshine.git</tt>
+* Install the plugin: <tt>ruby script/plugin install git://github.com/railsmachine/moonshine.git</tt>
 * Ensure all required gems are declared using <tt>config.gem</tt> calls in
   <tt>config/environment.rb</tt>.
-* <tt>ruby script/generate moonshine</tt>
-* Edit the configuration file at <tt>config/moonshine.yml</tt> with your
-  apps's details. (If you're using a user other than <tt>rails</tt>, specify
-  this here)
-* Edit the Moonshine::Manifest::Rails manifest generated for your application
-  at <tt>app/manifests/application_manifest.rb</tt> to declare other packages,
+* Review generator options: <tt>ruby script/generate moonshine --help</tt>
+* Run the generator: <tt>ruby script/generate moonshine</tt>
+* Review and edit <tt>config/moonshine.yml</tt> to reflect your application's details.
+  For example, if you're using a user other than <tt>rails</tt>, include a line like <tt>:user: myawesomeuser</tt>
+* Review and edit <tt>app/manifests/application_manifest.rb</tt> to declare other packages,
   services, or files your application depends on (memcached, sphinx, etc).
-* <tt>capify</tt> your application
-  * Your <tt>config/deploy.rb</tt> can be super barebones, as Moonshine loads
-    the contents of <tt>config/moonshine.yml</tt> in as Cap variables and sets
-    some sane defaults. Here's what I use:
-
-     server "myubuntuserver.com", :app, :web, :db, :primary => true
-
-* <tt>git add . && git commit -am "added moonshine" && git push</tt>
-* <tt>cap deploy:setup</tt>
-  * This will bootstrap your Ubuntu server with Ruby Enterprise Edition.
-* <tt>cap deploy</tt>
+* Review and edit your <tt>config/deploy.rb</tt> as necessary. In particular, you must make sure the correct <tt>server</tt> is defined. 
+* Commit it to git: <tt>git add . && git commit -am "added moonshine" && git push</tt>
+* Run <tt>cap deploy:setup</tt>
+  * This will bootstrap your Ubuntu server with Ruby Enterprise Edition and shadow_puppet.
+* Run <tt>cap deploy</tt>
   * This will install all needed dependencies for your application and deploy
     it for the first time. The initial deploy will take awhile, as things such
     as MySQL, etc, are being installed. It's worth the wait though, because
@@ -60,6 +53,7 @@ any reason:
 
     set :moonshine_apply, false
 
+
 === Shared Config
 
 Often, certain files (<tt>config/database.yml</tt>, etc) are excluded from an
@@ -84,7 +78,45 @@ There are some extra cap tasks for working with these files manually, if needed:
 The old <tt>local_config</tt> functionality is still supported, but
 <tt>shared_config</tt> is recommended.
 
-=== Running Tests
+== Managing gem dependencies
+
+Moonshine can handle installing your gem dependencies, as well as automatically installing any system dependencies for them. All you need to do is:
+
+* Specify them in <tt>config/environment.rb</tt>
+* Run <tt>rake moonshine:gems</tt> to regenerate <tt>config/gems.yml</tt> and commit and push the 
+* Deploy
+
+For example, if you specify nokogiri as a dependency, both the nokogiri gem and the libxml dependency will be installed.
+
+=== Gem bundler
+
+If you have a Gemfile in your app, then <tt>bundle install</tt> is run for you automatically during deploy. It will also take care of system dependencies of these gems.
+
+Currently, the bundler support will not install system dependencies, pending a rubygems 1.3.6 release. In the interim, you will need to manually specify these in your <tt>application_manifest.rb</tt>. For nokogiri, for example, you'd need this:
+
+    def application_packages
+      package 'libxml2-dev', :before => exec('rails_gems')
+      package 'libxslt1-dev', :before => exec('rails_gems')
+    end
+    recipe :application_packages
+
+== Rails 3
+
+Moonshine does indeed work with Rails 3. There a few points worth mentioning:
+
+* The generator call would be <tt>rails generate moonshine</tt> instead of <tt>ruby script/generate moonshine</tt>
+* Gem bundler is required by Rails 3, so moonshine's gem bundler support will be used
+* Rails 3 requires ruby 1.8.7, so Ruby Enterprise Edition 1.8.7 is setup by default
+* Rails 3 is Rack based, so Passenger's Rack support is used. Passenger does not support it's smart spawn mode for rack applications yet though. Contrary to some reports, removing <tt>config.ru</tt> will not allow Passenger's Rails support to be used instead of its Rack support, because your application won't be bootable.
+
+If you are upgrading an application to Rails 3, and it is already deployed using moonshine, there are a couple manual things you will need to do:
+
+ * Edit <tt>config/moonshine.yml</tt> to use ree187, ie <tt>:ruby: ree187</tt>
+ * Run <tt>cap ruby:upgrade</tt>
+
+At this point, you should be able to do your usual <tt>cap deploy</tt>
+
+== Running Tests
 
 To run the test suite, follow these steps to create a testbed app:
 
@@ -95,7 +127,7 @@ To run the test suite, follow these steps to create a testbed app:
     cd vendor/plugins/moonshine
     rake test
     
-=== Getting Help
+== Getting Help
 
 You can find more examples in the documentation[http://railsmachine.github.com/moonshine] and on the Wiki[http://wiki.github.com/railsmachine/moonshine].
 
