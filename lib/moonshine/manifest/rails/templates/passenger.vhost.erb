@@ -77,21 +77,21 @@
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
-
-  ## RailsEnv
-  #
-  # Use this option to specify the default RAILS_ENV value. The default
-  # setting is production.
-
-  RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
-
+<% if Pathname.new(rails_root).join('config.ru').exist? %>
   ## RackEnv
   #
   # Use this option to specify the default RACK_ENV value. The default
   # setting is production.
 
   RackEnv <%= configuration[:passenger][:rack_env] || ENV['RACK_ENV'] || 'production' %>
+<% else %>
+  ## RailsEnv
+  #
+  # Use this option to specify the default RAILS_ENV value. The default
+  # setting is production.
 
+  RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
+<% end %>
   ## RailsSpawnMethod
   #
   # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
