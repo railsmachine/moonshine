@@ -19,8 +19,8 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #
   #   class MyManifest < Moonshine::Manifest
   #
-  #     # Evals vendor/plugins/moonshine_my_app/moonshine/init.rb
-  #     plugin :moonshine_my_app
+  #     # Evals vendor/plugins/moonshine_awesome/moonshine/init.rb
+  #     plugin :awesome
   #
   #     # Evals lib/my_recipe.rb
   #     plugin 'lib/my_recipe.rb'
