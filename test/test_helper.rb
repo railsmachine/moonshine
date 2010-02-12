@@ -1,12 +1,13 @@
 require 'rubygems'
 require 'test/unit'
-#require File.expand_path(File.join(ENV['RAILS_ROOT'], 'config/environment.rb'))
+require 'ginger'
+require 'rails/version'
+
 require 'moonshine'
 require 'shadow_puppet/test'
 require 'mocha'
 
 Test::Unit::TestCase.class_eval do
-  require 'rails/version'
   if Rails::VERSION::MAJOR < 3
     ENV['RAILS_ENV'] = 'test'
     ENV['RAILS_ROOT'] ||= File.join(File.dirname(__FILE__), 'rails_root')
