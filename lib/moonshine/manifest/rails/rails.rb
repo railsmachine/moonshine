@@ -71,7 +71,7 @@ module Moonshine::Manifest::Rails::Rails
     exec 'rake tasks',
       :command => 'rake environment 2>&1 | tee -a /var/log/moonshine_rake.log',
       :user => configuration[:user],
-      :cwd => rails_root,
+      :cwd => rails_root.to_s,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :logoutput => true,
       :require => [
@@ -107,7 +107,8 @@ module Moonshine::Manifest::Rails::Rails
     # stub for dependencies
     exec 'rails_gems', :command => 'true'
 
-    gemfile_path = Pathname.new(rails_root).join('Gemfile')
+    gemfile_path = rails_root.join('Gemfile')
+    gemfile_lock_path = rails_root.join('Gemfile.lock')
     if gemfile_path.exist?
       #require 'bundler'
       # FIXME waiting on a bugfix in rubygems 1.3.6 which lets
@@ -122,10 +123,16 @@ module Moonshine::Manifest::Rails::Rails
 
       exec "bundle install",
         :command => "bundle install",
-        :cwd => rails_root,
+        :cwd => rails_root.to_s,
         :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
         :user => configuration[:user]
+      unless gemfile_lock_path.exist?
+        exec "bundle lock",
+          :command => "bundle lock",
+          :cwd => rails_root.to_s,
+          :before => exec("bundle install")
+      end
     else
       return unless configuration[:gems]
       configuration[:gems].each do |gem|
@@ -255,7 +262,7 @@ private
     exec("rake #{name}", {
       :command => "rake #{name} 2>&1 | tee -a /var/log/moonshine_rake.log",
       :user => configuration[:user],
-      :cwd => rails_root,
+      :cwd => rails_root.to_s,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => exec('rake tasks'),
       :logoutput => true,

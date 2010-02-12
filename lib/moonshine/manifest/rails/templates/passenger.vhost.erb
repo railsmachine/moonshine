@@ -77,7 +77,7 @@
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
-<% if Pathname.new(rails_root).join('config.ru').exist? %>
+<% if rails_root.join('config.ru').exist? %>
   ## RackEnv
   #
   # Use this option to specify the default RACK_ENV value. The default

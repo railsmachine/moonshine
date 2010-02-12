@@ -29,7 +29,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #   end
   def self.plugin(name = nil)
     if name.is_a?(Symbol)
-      path = File.join(rails_root, 'vendor', 'plugins', 'moonshine_' + name.to_s, 'moonshine', 'init.rb')
+      path = rails_root.join('vendor', 'plugins', 'moonshine_' + name.to_s, 'moonshine', 'init.rb').to_s
     else
       path = name
     end
@@ -163,5 +163,8 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   # gems
-  configure(:gems => (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil))
+  gems_yml = rails_root.join('config', 'gems.yml')
+  if gems_yml.exist?
+    configure(:gems => (YAML.load_file(gems_yml) rescue nil))
+  end
 end
