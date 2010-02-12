@@ -5,12 +5,20 @@ end
 
 class Moonshine::ManifestTest < Test::Unit::TestCase
 
+  def setup
+    fake_rails_root.rmtree
+
+    create_database_yml
+    create_moonshine_test_yml
+  end
+
   def test_loads_configuration
+    assert_not_nil Moonshine::Manifest.configuration
     assert_not_nil Moonshine::Manifest.configuration[:application]
   end
 
   def test_loads_environment_specific_configuration
-    assert_not_nil Moonshine::Manifest.configuration[:test_yaml]
+    assert_equal 'what what what', Moonshine::Manifest.configuration[:test_yaml]
   end
 
   def test_provides_template_helper
@@ -57,7 +65,8 @@ recipe :foo
   end
 
   def test_loads_database_config
-    assert_not_nil 'utf8', Moonshine::Manifest.configuration[:database][:production]
+    assert_not_equal nil, Moonshine::Manifest.configuration[:database]
+    assert_equal 'production', Moonshine::Manifest.configuration[:database][:production]
   end
 
   def test_on_stage_runs_when_string_stage_matches
