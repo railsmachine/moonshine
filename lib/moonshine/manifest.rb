@@ -39,11 +39,23 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
 
   # The working directory of the Rails application this manifests describes.
   def self.rails_root
-   @rails_root ||= File.expand_path(ENV["RAILS_ROOT"] || Dir.getwd)
+   @rails_root ||= Pathname.new(ENV["RAILS_ROOT"] || Dir.getwd).expand_path
   end
 
   def rails_root
    self.class.rails_root
+  end
+
+  def self.moonshine_yml
+    rails_root.join('config', 'moonshine.yml')
+  end
+
+  def self.database_yml
+    rails_root.join('config', 'database.yml')
+  end
+
+  def moonshine_yml
+    self.class.moonshine_yml
   end
 
   # The current Rails environment
@@ -134,7 +146,9 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   # config/moonshine.yml
-  configure(YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'moonshine.yml'))).result))
+  if moonshine_yml.exist?
+    configure(YAML::load(ERB.new(moonshine_yml.read).result))
+  end
 
   # config/moonshine/#{rails_env}.yml
   env_config = File.join(rails_root, 'config', 'moonshine', rails_env + ".yml")
@@ -143,7 +157,9 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   end
 
   # database config
-  configure(:database => YAML::load(ERB.new(IO.read(File.join(rails_root, 'config', 'database.yml'))).result))
+  if database_yml.exist?
+    configure(:database => YAML::load(ERB.new(database_yml.read).result))
+  end
 
   # gems
   configure(:gems => (YAML.load_file(File.join(rails_root, 'config', 'gems.yml')) rescue nil))

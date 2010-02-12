@@ -1,7 +1,4 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
-require 'rails_generator'
-require 'rails_generator/scripts/generate'
-
 class MoonshinePluginGeneratorTest < Test::Unit::TestCase
 
   def setup
@@ -32,15 +29,11 @@ class MoonshinePluginGeneratorTest < Test::Unit::TestCase
   private
 
     def module_path
-      './test/rails_root/vendor/plugins/moonshine_iptables/lib/iptables.rb'
+      "#{fake_rails_root}/vendor/plugins/moonshine_iptables/lib/iptables.rb"
     end
 
     def init_path
-      './test/rails_root/vendor/plugins/moonshine_iptables/moonshine/init.rb'
-    end
-
-    def fake_rails_root
-      File.join(File.dirname(__FILE__), 'rails_root')
+      "#{fake_rails_root}/vendor/plugins/moonshine_iptables/moonshine/init.rb"
     end
 
     def file_list
