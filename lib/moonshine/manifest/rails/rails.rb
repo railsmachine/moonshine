@@ -124,15 +124,13 @@ module Moonshine::Manifest::Rails::Rails
       exec "bundle install",
         :command => "bundle install",
         :cwd => rails_root.to_s,
-        :before => exec('rails_gems'),
+        :before => [exec('rails_gems'), exec('bundle lock')],
         :require => file('/etc/gemrc'),
         :user => configuration[:user]
-      unless gemfile_lock_path.exist?
-        exec "bundle lock",
-          :command => "bundle lock",
-          :cwd => rails_root.to_s,
-          :before => exec("bundle install")
-      end
+      exec "bundle lock",
+        :command => "bundle lock",
+        :cwd => rails_root.to_s,
+        :creates => file(gemfile_lock_path.to_s)
     else
       return unless configuration[:gems]
       configuration[:gems].each do |gem|
