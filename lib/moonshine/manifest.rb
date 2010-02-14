@@ -1,8 +1,9 @@
 # This is the base Moonshine Manifest class, which provides a simple system
-# for loading moonshine recpies from plugins, a template helper, and parses
+# for loading moonshine recipes from plugins, a template helper, and parses
 # several configuration files:
 #
 #   config/moonshine.yml
+#   config/moonshine/<rails_env>.yml
 #
 # The contents of <tt>config/moonshine.yml</tt> are expected to serialize into
 # a hash, and are loaded into the manifest's Configatron::Store.
@@ -15,6 +16,7 @@
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
+
   # Load a Moonshine Plugin
   #
   #   class MyManifest < Moonshine::Manifest

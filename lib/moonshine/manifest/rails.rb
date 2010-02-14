@@ -15,7 +15,10 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   end
   recipe :validate_platform
 
-  configure(:apt_gems => YAML.load_file(File.join(File.dirname(__FILE__), 'rails', 'apt_gems.yml')))
+  def apt_gems_path
+    Pathname.new(__FILE__).dirname + 'rails/apt_gems.yml'
+  end
+  configure(:apt_gems => YAML.load_file(apt_gems_path.to_s))
 
   require 'moonshine/manifest/rails/passenger'
   require 'moonshine/manifest/rails/mysql'
@@ -39,17 +42,17 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   #
   # default_stack installs the database based on the adapter in database.yml for the rails environment
   def default_stack
-    self.class.recipe :apache_server
-    self.class.recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
+    recipe :apache_server
+    recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
     case database_environment[:adapter]
     when 'mysql'
-      self.class.recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
+      recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
     when 'postgresql'
-      self.class.recipe :postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database
+      recipe :postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database
     when 'sqlite' || 'sqlite3'
       self.class.recipe :sqlite3
     end
-    self.class.recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
-    self.class.recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates
+    recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
+    recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates
   end
 end
