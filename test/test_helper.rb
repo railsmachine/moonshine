@@ -1,53 +1,47 @@
 require 'rubygems'
 require 'test/unit'
 require 'ginger'
-require 'rails/version'
-
 
 require 'pathname'
 $here = Pathname.new(__FILE__).dirname
 
+# hold off requiring moonshine for a second...
+
 Test::Unit::TestCase.class_eval do
-  if Rails::VERSION::MAJOR < 3
-    ENV['RAILS_ENV'] = 'test'
-    ENV['RAILS_ROOT'] = fake_rails_root = $here.join('rails_root')
-    if defined?(RAILS_ROOT)
-      RAILS_ROOT.replace(fake_rails_root.to_s)
-    else
-      RAILS_ROOT = fake_rails_root.to_s
-    end
-    FileUtils.mkdir_p RAILS_ROOT
-
-    FileUtils.mkdir_p fake_rails_root.join('config')
-    FileUtils.cp $here.join('moonshine.yml'), fake_rails_root.join('config', 'moonshine.yml')
-
-    FileUtils.mkdir_p fake_rails_root.join('config', 'moonshine')
-    FileUtils.cp $here.join('moonshine-test.yml'), fake_rails_root.join('config', 'moonshine', 'test.yml')
-
-    FileUtils.mkdir_p fake_rails_root.join('config')
-    FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
-
-    require 'logger'
-    if !defined?(RAILS_DEFAULT_LOGGER)
-      RAILS_DEFAULT_LOGGER = Logger.new($stdout)
-    end
-
-    require 'initializer'
-    Rails.configuration = Rails::Configuration.new
-
-    require 'rails_generator'
-    require 'rails_generator/scripts/generate'
-    Rails::Generator::Base.sources << Rails::Generator::PathSource.new(:moonshine, Pathname.new(__FILE__).dirname.join('..', 'generators'))
+  def fake_rails_root
+    self.class.fake_rails_root
   end
 
+  def self.fake_rails_root
+    Pathname.new($here).join('rails_root')
+  end
+
+  # rails version specific kludge to get 
+  require 'rails/version'
+  if Rails::VERSION::MAJOR == 2
+    require 'support/rails_2_generator_kludge'
+  end
+
+  # Need to generate our scaffold configuration _BEFORE_ requiring moonshine
+  # because a manifest configures itself when moonshine is required the first time
+  fake_rails_root = $here.join('rails_root')
+  FileUtils.mkdir_p fake_rails_root.join('config')
+  FileUtils.cp $here.join('moonshine.yml'), fake_rails_root.join('config', 'moonshine.yml')
+
+  FileUtils.mkdir_p fake_rails_root.join('config', 'moonshine')
+  FileUtils.cp $here.join('moonshine-test.yml'), fake_rails_root.join('config', 'moonshine', 'test.yml')
+
+  FileUtils.mkdir_p fake_rails_root.join('config')
+  FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
+
+  # it's ok to require now
   require 'moonshine'
   require 'shadow_puppet/test'
   require 'mocha'
 
-  def fake_rails_root
-    Pathname.new($here).join('rails_root')
+  def self.create_database_yml
+    
   end
-
   def create_database_yml
     FileUtils.mkdir_p fake_rails_root.join('config')
     FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
