@@ -12,4 +12,5 @@ Rails.configuration = Rails::Configuration.new
 
 require 'rails_generator'
 require 'rails_generator/scripts/generate'
-Rails::Generator::Base.sources << Rails::Generator::PathSource.new(:moonshine, Pathname.new(__FILE__).dirname.join('..', 'generators'))
+Rails::Generator::Base.sources << Rails::Generator::PathSource.new(:moonshine, $here.join('..', 'generators'))
+Rails::Generator::Base.logger = Rails::Generator::SimpleLogger.new(File.new($here.join('generator.log').to_s, 'w'))

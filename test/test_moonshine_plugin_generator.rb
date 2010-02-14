@@ -2,19 +2,19 @@ require 'test_helper'
 class MoonshinePluginGeneratorTest < Test::Unit::TestCase
 
   def setup
-    FileUtils.mkdir_p(fake_rails_root)
+    FileUtils.mkdir_p(generator_rails_root)
     @original_files = file_list
-    Rails::Generator::Scripts::Generate.new.run(["moonshine_plugin","iptables"], :destination => fake_rails_root)
+    Rails::Generator::Scripts::Generate.new.run(["moonshine_plugin","iptables"], :destination => generator_rails_root)
     @new_files = (file_list - @original_files)
   end
 
   def teardown
-    FileUtils.rm_r(fake_rails_root)
+    FileUtils.rm_r(generator_rails_root)
   end
 
   def test_generates_correct_files
-    assert @new_files.include?(init_path)
-    assert @new_files.include?(module_path)
+    assert File.exist?(init_path)
+    assert File.exist?(module_path)
   end
 
   def test_generates_plugin_module
@@ -29,17 +29,15 @@ class MoonshinePluginGeneratorTest < Test::Unit::TestCase
   private
 
     def module_path
-      "#{fake_rails_root}/vendor/plugins/moonshine_iptables/lib/iptables.rb"
+      "#{generator_rails_root}/vendor/plugins/moonshine_iptables/lib/iptables.rb"
     end
 
     def init_path
-      "#{fake_rails_root}/vendor/plugins/moonshine_iptables/moonshine/init.rb"
+      "#{generator_rails_root}/vendor/plugins/moonshine_iptables/moonshine/init.rb"
     end
 
     def file_list
-      Dir.glob(File.join(fake_rails_root, "vendor/plugins/moonshine_iptables/*")) + 
-      Dir.glob(File.join(fake_rails_root, "vendor/plugins/moonshine_iptables/moonshine/*")) + 
-      Dir.glob(File.join(fake_rails_root, "vendor/plugins/moonshine_iptables/lib/*"))
+      Dir.glob("#{generator_rails_root}/*")
     end
 
 end

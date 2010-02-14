@@ -13,7 +13,16 @@ Test::Unit::TestCase.class_eval do
   end
 
   def self.fake_rails_root
-    Pathname.new($here).join('rails_root')
+    $here.join('rails_root')
+  end
+
+  def generator_rails_root
+    self.class.generator_rails_root
+  end
+
+  def self.generator_rails_root
+    breakpoint
+    $here.join('generator_rails_root')
   end
 
   # rails version specific kludge to get 
@@ -39,9 +48,6 @@ Test::Unit::TestCase.class_eval do
   require 'shadow_puppet/test'
   require 'mocha'
 
-  def self.create_database_yml
-    
-  end
   def create_database_yml
     FileUtils.mkdir_p fake_rails_root.join('config')
     FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
