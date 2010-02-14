@@ -22,18 +22,22 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   end
 
   def test_default_stack
-    @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'mysql' })
+    @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'mysql'})
+
     @manifest.default_stack
+
     assert @manifest.recipes.map(&:first).include?(:apache_server), 'apache_server'
     [:passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site].each do |passenger_stack|
       assert @manifest.recipes.map(&:first).include?(passenger_stack), passenger_stack.to_s
     end
+
     [:mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start].each do |mysql_stack|
       assert @manifest.recipes.map(&:first).include?(mysql_stack), mysql_stack.to_s
     end
     [:rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate].each do |rails_stack|
       assert @manifest.recipes.map(&:first).include?(rails_stack), rails_stack.to_s
     end
+
     [:ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates].each do |os_stack|
       assert @manifest.recipes.map(&:first).include?(os_stack), os_stack.to_s
     end
@@ -41,7 +45,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   
   def test_default_stack_with_postgresql
     @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'postgresql' })
+
     @manifest.default_stack
+
     [:postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database].each do |pgsql_stack|
       assert @manifest.recipes.map(&:first).include?(pgsql_stack), pgsql_stack.to_s
     end
@@ -49,14 +55,18 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_default_stack_with_sqlite
     @manifest.expects(:database_environment).at_least_once.returns({:adapter => 'sqlite' })
+
     @manifest.default_stack
+
     assert @manifest.recipes.map(&:first).include?(:sqlite3), 'sqlite3'
   end
 
   def test_automatic_security_updates
     @manifest.configure(:unattended_upgrade => { :package_blacklist => ['foo', 'bar', 'widget']})
     @manifest.configure(:user => 'rails')
+
     @manifest.security_updates
+
     assert_not_nil @manifest.packages["unattended-upgrades"]
     assert_not_nil @manifest.files["/etc/apt/apt.conf.d/10periodic"]
     assert_not_nil @manifest.files["/etc/apt/apt.conf.d/50unattended-upgrades"]
@@ -104,7 +114,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :deploy_to => '/srv/foo'
     }
     @manifest.configure(config)
+
     @manifest.rails_directories
+
     assert_not_nil shared_dir = @manifest.files["/srv/foo/shared"]
     assert_equal :directory, shared_dir.ensure
     assert_equal 'foo', shared_dir.owner
@@ -113,6 +125,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_installs_apache
     @manifest.apache_server
+
     assert_not_nil apache = @manifest.services["apache2"]
     assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.require.to_s
   end
@@ -123,25 +136,31 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_key_file => 'cert_key_file',
       :certificate_chain_file => 'cert_chain_file'
     })
+
     @manifest.apache_server
+
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2enmod ssl' }
   end
 
   def test_enables_mod_rewrite
     @manifest.apache_server
+
     assert_not_nil apache = @manifest.execs["a2enmod rewrite"]
   end
 
   def test_enables_mod_status
     @manifest.apache_server
+
     assert_not_nil apache = @manifest.execs["a2enmod status"]
     assert_match /127.0.0.1/, @manifest.files["/etc/apache2/mods-available/status.conf"].content
   end
 
   def test_installs_passenger_gem
     @manifest.configure(:passenger => { :version => nil })
+
     @manifest.passenger_configure_gem_path
     @manifest.passenger_gem
+
     assert_not_nil @manifest.packages["passenger"]
     assert_equal :latest, @manifest.packages["passenger"].ensure
   end
@@ -175,6 +194,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_configures_passenger_vhost
     @manifest.passenger_configure_gem_path
     @manifest.passenger_site
+
     assert_not_nil @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"]
     assert_match /RailsAllowModRewrite On/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2dissite 000-default' }

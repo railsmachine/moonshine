@@ -31,32 +31,8 @@ Test::Unit::TestCase.class_eval do
     require 'support/rails_2_generator_kludge'
   end
 
-  # Need to generate our scaffold configuration _BEFORE_ requiring moonshine
-  # because a manifest configures itself when moonshine is required the first time
-  fake_rails_root = $here.join('rails_root')
-  FileUtils.mkdir_p fake_rails_root.join('config')
-  FileUtils.cp $here.join('moonshine.yml'), fake_rails_root.join('config', 'moonshine.yml')
-
-  FileUtils.mkdir_p fake_rails_root.join('config', 'moonshine')
-  FileUtils.cp $here.join('moonshine-test.yml'), fake_rails_root.join('config', 'moonshine', 'test.yml')
-
-  FileUtils.mkdir_p fake_rails_root.join('config')
-  FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
-
-  # it's ok to require now
   require 'moonshine'
   require 'shadow_puppet/test'
   require 'mocha'
-
-  def create_database_yml
-    FileUtils.mkdir_p fake_rails_root.join('config')
-    FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
-  end
-
-  def create_moonshine_test_yml
-    FileUtils.mkdir_p fake_rails_root.join('config', 'moonshine')
-    FileUtils.cp $here.join('moonshine-test.yml'), fake_rails_root.join('config', 'moonshine', 'test.yml')
-  end
-
 
 end

@@ -5,13 +5,6 @@ end
 
 class Moonshine::ManifestTest < Test::Unit::TestCase
 
-  def setup
-    fake_rails_root.rmtree
-
-    create_database_yml
-    create_moonshine_test_yml
-  end
-
   def test_loads_configuration
     assert_not_nil Moonshine::Manifest.configuration
     assert_not_nil Moonshine::Manifest.configuration[:application]
