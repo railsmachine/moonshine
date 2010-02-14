@@ -15,6 +15,7 @@
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
+
   # Load a Moonshine Plugin
   #
   #   class MyManifest < Moonshine::Manifest
@@ -42,10 +43,6 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
    @rails_root ||= Pathname.new(ENV["RAILS_ROOT"] || Dir.getwd).expand_path
   end
 
-  def rails_root
-   self.class.rails_root
-  end
-
   def self.moonshine_yml
     rails_root.join('config', 'moonshine.yml')
   end
@@ -54,18 +51,9 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     rails_root.join('config', 'database.yml')
   end
 
-  def moonshine_yml
-    self.class.moonshine_yml
-  end
-
   # The current Rails environment
   def self.rails_env
     ENV["RAILS_ENV"] || 'production'
-  end
-
-  # The current Rails environment
-  def rails_env
-    self.class.rails_env
   end
 
   # The current environment's database configuration
@@ -78,9 +66,17 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
 
-  # The current deployment target. Best when used with capistrano-ext's multistage settings.
-  def deploy_stage
-    self.class.deploy_stage
+  # Delegate missing methods to class, so we don't have to have so many convience methods
+  def method_missing(method, *args, &block)
+    if self.class.respond_to?(method)
+      self.class.send(method, *args, &block)
+    else
+      super
+    end
+  end
+
+  def respond_to?(method, include_private = false)
+    super || self.class.respond_to?(method, include_private)
   end
 
   # Only run tasks on the specified deploy_stage.
