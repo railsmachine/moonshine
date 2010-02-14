@@ -5,7 +5,16 @@ require 'ginger'
 require 'pathname'
 $here = Pathname.new(__FILE__).dirname
 
-# hold off requiring moonshine for a second...
+# rails version specific kludge to get generator tests working
+require 'rails/version'
+if Rails::VERSION::MAJOR == 2
+  require 'support/rails_2_generator_kludge'
+end
+
+require 'moonshine'
+require 'shadow_puppet/test'
+require 'mocha'
+
 
 Test::Unit::TestCase.class_eval do
   def fake_rails_root
@@ -25,14 +34,5 @@ Test::Unit::TestCase.class_eval do
     $here.join('generator_rails_root')
   end
 
-  # rails version specific kludge to get 
-  require 'rails/version'
-  if Rails::VERSION::MAJOR == 2
-    require 'support/rails_2_generator_kludge'
-  end
-
-  require 'moonshine'
-  require 'shadow_puppet/test'
-  require 'mocha'
 
 end
