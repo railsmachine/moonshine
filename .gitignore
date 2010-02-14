@@ -4,3 +4,5 @@ rdoc
 doc
 coverage
 .autotest
+test/test.log
+test/rails_root
