@@ -88,7 +88,7 @@ module Moonshine::Manifest::Rails::Rails
   def rails_gems
     gemrc = {
       :verbose => true,
-      :gem => "--no-ri --no-rdoc",
+      :gem => '--no-ri --no-rdoc',
       :update_sources => true,
       :sources => [
         'http://gemcutter.org',
@@ -104,12 +104,13 @@ module Moonshine::Manifest::Rails::Rails
       :group    => 'root',
       :content  => gemrc.to_yaml
 
-    # stub for dependencies
+    # stub for puppet dependencies
     exec 'rails_gems', :command => 'true'
 
     gemfile_path = rails_root.join('Gemfile')
     gemfile_lock_path = rails_root.join('Gemfile.lock')
     if gemfile_path.exist?
+      gem 'bundler', :before => exec('bundle install')
       #require 'bundler'
       # FIXME waiting on a bugfix in rubygems 1.3.6 which lets
       # prerelease gems depend on non-prerelease gems, enabling
@@ -126,14 +127,16 @@ module Moonshine::Manifest::Rails::Rails
         :before => exec("bundle install"),
         :creates => rails_root.join('.bundle').to_s,
         :user => configuration[:user]
-      exec "bundle install",
-        :command => "bundle install",
+      exec 'bundle install',
+        :command => 'bundle install',
         :cwd => rails_root.to_s,
         :before => [exec('rails_gems'), exec('bundle lock')],
         :require => file('/etc/gemrc'),
         :user => configuration[:user]
-      exec "bundle lock",
-        :command => "bundle lock",
+      # this is a hack for getting passenger to load the bundler load path
+      # http://groups.google.com/group/phusion-passenger/browse_thread/thread/6642823360242cab/b75495c82b565fb1?#b75495c82b565fb1
+      exec 'bundle lock',
+        :command => 'bundle lock',
         :cwd => rails_root.to_s,
         :creates => gemfile_lock_path.to_s,
         :user => configuration[:user]
