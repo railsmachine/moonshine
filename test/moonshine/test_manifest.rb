@@ -40,20 +40,8 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
 
   def test_loads_plugins
     @manifest = Moonshine::Manifest.new
-    File.expects(:read).with(File.expand_path(File.join(@manifest.rails_root, 'vendor', 'plugins', 'moonshine_iptables', 'moonshine','init.rb'))).returns("""
-configure(:eval => true)
-
-module EvalTest
-  def foo
-
-  end
-end
-
-include EvalTest
-recipe :foo
-""")
-
     assert Moonshine::Manifest.plugin(:iptables)
+    # eval is configured in test/rails_root/vendor/plugins/moonshine_eval_test/moonshine/init.rb
     assert Moonshine::Manifest.configuration[:eval]
     @manifest = Moonshine::Manifest.new
     assert @manifest.respond_to?(:foo)

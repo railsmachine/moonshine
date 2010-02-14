@@ -15,7 +15,6 @@
 # If you'd like to create another 'default rails stack' using other tools that
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
-
   # Load a Moonshine Plugin
   #
   #   class MyManifest < Moonshine::Manifest
@@ -29,12 +28,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #     ...
   #   end
   def self.plugin(name = nil)
-    if name.is_a?(Symbol)
-      path = rails_root.join('vendor', 'plugins', 'moonshine_' + name.to_s, 'moonshine', 'init.rb').to_s
-    else
-      path = name
-    end
-    Kernel.eval(File.read(path), binding, path)
+    ActiveSupport::Deprecation.warn("explicitly using plugins are now deprecated, as they are automatically loaded now", caller)
     true
   end
 
@@ -163,4 +157,10 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   if gems_yml.exist?
     configure(:gems => (YAML.load_file(gems_yml) rescue nil))
   end
+  
+  # autoload plugins
+  Dir.glob(rails_root + 'vendor/plugins/*/moonshine/init.rb').each do |path|
+    Kernel.eval(File.read(path), binding, path)
+  end
+
 end
