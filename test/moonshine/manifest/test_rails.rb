@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../test_helper.rb'
+require 'test_helper'
 
 #mock out the gem source index to fake like passenger is installed, but
 #nothing else

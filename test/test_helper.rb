@@ -11,7 +11,11 @@ Test::Unit::TestCase.class_eval do
   if Rails::VERSION::MAJOR < 3
     ENV['RAILS_ENV'] = 'test'
     ENV['RAILS_ROOT'] = fake_rails_root = $here.join('rails_root')
-    RAILS_ROOT = fake_rails_root.to_s
+    if defined?(RAILS_ROOT)
+      RAILS_ROOT.replace(fake_rails_root.to_s)
+    else
+      RAILS_ROOT = fake_rails_root.to_s
+    end
     FileUtils.mkdir_p RAILS_ROOT
 
     FileUtils.mkdir_p fake_rails_root.join('config')
@@ -24,7 +28,10 @@ Test::Unit::TestCase.class_eval do
     FileUtils.cp $here.join('database.yml'), fake_rails_root.join('config', 'database.yml')
 
     require 'logger'
-    RAILS_DEFAULT_LOGGER = Logger.new($stdout)
+    if !defined?(RAILS_DEFAULT_LOGGER)
+      RAILS_DEFAULT_LOGGER = Logger.new($stdout)
+    end
+
     require 'initializer'
     Rails.configuration = Rails::Configuration.new
 
