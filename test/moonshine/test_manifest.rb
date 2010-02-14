@@ -23,6 +23,7 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     File.expects(:exist?).with(app_template_path).returns(false)
     File.expects(:exist?).with(plugin_template_path).returns(true)
     File.expects(:read).with(plugin_template_path).returns(template)
+
     assert_equal 'template: bar', @manifest.template(plugin_template_path)
   end
 
@@ -33,6 +34,7 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     app_template_path = File.expand_path(File.join(@manifest.rails_root, 'app', 'manifests', 'templates', 'passenger.conf.erb'))
     File.expects(:exist?).with(app_template_path).returns(true)
     File.expects(:read).with(app_template_path).returns(template)
+
     assert_equal 'app_template: bar', @manifest.template(app_template_path)
   end
 
@@ -50,6 +52,7 @@ end
 include EvalTest
 recipe :foo
 """)
+
     assert Moonshine::Manifest.plugin(:iptables)
     assert Moonshine::Manifest.configuration[:eval]
     @manifest = Moonshine::Manifest.new
@@ -72,25 +75,30 @@ recipe :foo
   def test_on_stage_runs_when_symbol_stage_matches
     @manifest = Moonshine::Manifest.new
     @manifest.expects(:deploy_stage).returns("my_stage")
+
     assert_equal 'on my_stage', @manifest.on_stage(:my_stage) { "on my_stage" }
   end
 
   def test_on_stage_does_not_run_when_string_stage_does_not_match
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("not_my_stage")
+
     assert_nil @manifest.on_stage("my_stage") { "on my_stage" }
   end
 
   def test_on_stage_does_not_run_when_symbol_stage_does_not_match
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("not_my_stage")
+
     assert_nil @manifest.on_stage(:my_stage) { "on my_stage" }
   end
 
   def test_on_stage_runs_when_stage_included_in_string_array
     @manifest = Moonshine::Manifest.new
+
     @manifest.stubs(:deploy_stage).returns("my_stage")
     assert_equal 'on one of my stages', @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }
+
     @manifest.expects(:deploy_stage).returns("my_other_stage")
     assert_equal 'on one of my stages', @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }
   end
@@ -98,7 +106,9 @@ recipe :foo
   def test_on_stage_runs_when_stage_included_in_symbol_array
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("my_stage")
+
     assert_equal 'on one of my stages', @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }
+
     @manifest.expects(:deploy_stage).returns("my_other_stage")
     assert_equal 'on one of my stages', @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }
   end
@@ -106,36 +116,42 @@ recipe :foo
   def test_on_stage_does_not_run_when_stage_not_in_string_array
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("not_my_stage")
+
     assert_nil @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }
   end
 
   def test_on_stage_does_not_run_when_stage_not_in_symbol_array
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("not_my_stage")
+
     assert_nil @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }
   end
 
   def test_on_stage_unless_does_not_run_when_string_stage_matches
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("my_stage")
+
     assert_nil @manifest.on_stage(:unless => "my_stage") { "not on one of my stages" }
   end
 
   def test_on_stage_unless_does_not_run_when_symbol_stage_matches
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("my_stage")
+
     assert_nil @manifest.on_stage(:unless => :my_stage) { "not on one of my stages" }
   end
 
   def test_on_stage_unless_runs_when_string_stage_does_not_match
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("my_stage")
+
     assert_equal 'not on one of my stages', @manifest.on_stage(:unless => "not_my_stage") { "not on one of my stages" }
   end
 
   def test_on_stage_unless_runs_when_symbol_stage_does_not_match
     @manifest = Moonshine::Manifest.new
     @manifest.stubs(:deploy_stage).returns("my_stage")
+
     assert_equal 'not on one of my stages', @manifest.on_stage(:unless => :not_my_stage) { "not on one of my stages" }
   end
 

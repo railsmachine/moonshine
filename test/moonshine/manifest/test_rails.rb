@@ -1,7 +1,7 @@
 require 'test_helper'
 
-#mock out the gem source index to fake like passenger is installed, but
-#nothing else
+# mock out the gem source index to fake like passenger is installed, but
+# nothing else
 module Gem  #:nodoc:
   class SourceIndex  #:nodoc:
     alias_method :orig_search, :search
@@ -176,6 +176,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_installs_passenger_module
     @manifest.passenger_configure_gem_path
     @manifest.passenger_apache_module
+
     assert_not_nil @manifest.packages['apache2-threaded-dev']
     assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.load']
     assert_not_nil @manifest.files['/etc/apache2/mods-available/passenger.conf']
@@ -204,7 +205,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_passenger_vhost_configuration
     @manifest.passenger_configure_gem_path
     @manifest.configure(:passenger => { :rails_base_uri => '/test' })
+
     @manifest.passenger_site
+
     assert_match /RailsBaseURI \/test/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
 
@@ -215,7 +218,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :certificate_key_file => 'cert_key_file',
       :certificate_chain_file => 'cert_chain_file'
     })
+
     @manifest.passenger_site
+
     assert_match /SSLEngine on/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
     assert_match /https/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
   end
@@ -243,6 +248,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
         :joebob => 'jimbo'
       }
     })
+
     @manifest.passenger_site
 
     assert_match /<Location \/ >/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
@@ -257,7 +263,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :deny  => {},
       :allow => ['192.168.1','env=safari_user']
     })
+
     @manifest.passenger_site
+
     vhost = @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
     assert_match /<Location \/ >/, vhost
     assert_match /allow from 192.168.1/, vhost
@@ -271,6 +279,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :allow => {},
       :deny => ['192.168.1','env=safari_user']
     })
+
     @manifest.passenger_site
     
     assert_match /<Location \/ >/, @manifest.files["/etc/apache2/sites-available/#{@manifest.configuration[:application]}"].content
@@ -279,23 +288,27 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_installs_postfix
     @manifest.postfix
+
     assert_not_nil @manifest.packages["postfix"]
   end
 
   def test_installs_ntp
     @manifest.ntp
+
     assert_not_nil @manifest.services["ntp"]
     assert_not_nil @manifest.packages["ntp"]
   end
 
   def test_installs_cron
     @manifest.cron_packages
+
     assert_not_nil @manifest.services["cron"]
     assert_not_nil @manifest.packages["cron"]
   end
 
   def test_sets_default_time_zone
     @manifest.time_zone
+
     assert_not_nil @manifest.files["/etc/timezone"]
     assert_not_nil @manifest.packages["/etc/localtime"]
     assert_equal '/usr/share/zoneinfo/UTC', @manifest.files["/etc/localtime"].ensure
@@ -304,7 +317,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_sets_default_time_zone
     @manifest.configure(:time_zone => nil)
+
     @manifest.time_zone
+
     assert_not_nil @manifest.files["/etc/timezone"]
     assert_equal "UTC\n", @manifest.files["/etc/timezone"].content
     assert_not_nil @manifest.files["/etc/localtime"]
@@ -313,7 +328,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_sets_configured_time_zone
     @manifest.configure(:time_zone => 'America/New_York')
+
     @manifest.time_zone
+
     assert_not_nil @manifest.files["/etc/timezone"]
     assert_equal "America/New_York\n", @manifest.files["/etc/timezone"].content
     assert_not_nil @manifest.files["/etc/localtime"]
@@ -323,6 +340,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
   def test_logroate_helper_generates_config
     @manifest.send(:logrotate, '/srv/theapp/shared/logs/*.log', {:options => %w(daily missingok compress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
     @manifest.send(:logrotate, '/srv/otherapp/shared/logs/*.log', {:options => %w(daily missingok nocompress delaycompress sharedscripts), :postrotate => 'touch /home/deploy/app/current/tmp/restart.txt'})
+
     assert_not_nil @manifest.packages["logrotate"]
     assert_match /compress/, @manifest.files["/etc/logrotate.d/srvtheappsharedlogslog.conf"].content
     assert_match /nocompress/, @manifest.files["/etc/logrotate.d/srvotherappsharedlogslog.conf"].content
@@ -336,7 +354,9 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
         :postrotate => 'do something'
       }
     )
+
     @manifest.send(:rails_logrotate)
+
     assert_not_nil @manifest.packages["logrotate"]
     assert_match /foo/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
     assert_no_match /compress/, @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
@@ -346,6 +366,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_postgresql_server
     @manifest.postgresql_server
+
     assert_not_nil @manifest.services["postgresql-8.3"]
     assert_not_nil @manifest.packages["postgresql-client"]
     assert_not_nil @manifest.packages["postgresql-contrib"]
@@ -355,6 +376,7 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
 
   def test_postgresql_gem
     @manifest.postgresql_gem
+
     assert_not_nil @manifest.packages["postgres"]
     assert_not_nil @manifest.packages["pg"]
     assert_not_nil @manifest.packages["postgresql-client"]
@@ -368,8 +390,10 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
       :database => 'pg_database',
       :password => 'pg_password'
     })
+
     @manifest.postgresql_user
     @manifest.postgresql_database
+
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/psql -c "CREATE USER pg_username WITH PASSWORD \'pg_password\'"' }
     assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/bin/createdb -O pg_username pg_database' }
   end
