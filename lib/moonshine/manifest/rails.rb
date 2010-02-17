@@ -15,7 +15,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   end
   recipe :validate_platform
 
-  def apt_gems_path
+  def self.apt_gems_path
     Pathname.new(__FILE__).dirname + 'rails/apt_gems.yml'
   end
   configure(:apt_gems => YAML.load_file(apt_gems_path.to_s))
