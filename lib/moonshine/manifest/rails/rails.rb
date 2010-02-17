@@ -71,7 +71,7 @@ module Moonshine::Manifest::Rails::Rails
     exec 'rake tasks',
       :command => 'rake environment 2>&1 | tee -a /var/log/moonshine_rake.log',
       :user => configuration[:user],
-      :cwd => rails_root.to_s,
+      :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :logoutput => true,
       :require => [
@@ -129,7 +129,7 @@ module Moonshine::Manifest::Rails::Rails
         :user => configuration[:user]
       exec 'bundle install',
         :command => 'bundle install',
-        :cwd => rails_root.to_s,
+        :cwd => rails_root,
         :before => [exec('rails_gems'), exec('bundle lock')],
         :require => file('/etc/gemrc'),
         :user => configuration[:user]
@@ -137,7 +137,7 @@ module Moonshine::Manifest::Rails::Rails
       # http://groups.google.com/group/phusion-passenger/browse_thread/thread/6642823360242cab/b75495c82b565fb1?#b75495c82b565fb1
       exec 'bundle lock',
         :command => 'bundle lock',
-        :cwd => rails_root.to_s,
+        :cwd => rails_root,
         :creates => gemfile_lock_path.to_s,
         :user => configuration[:user]
     else
@@ -269,7 +269,7 @@ private
     exec("rake #{name}", {
       :command => "rake #{name} 2>&1 | tee -a /var/log/moonshine_rake.log",
       :user => configuration[:user],
-      :cwd => rails_root.to_s,
+      :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => exec('rake tasks'),
       :logoutput => true,

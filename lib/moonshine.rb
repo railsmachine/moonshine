@@ -14,5 +14,6 @@ unless $LOAD_PATH.any? {|path| File.expand_path(path) == here }
   $LOAD_PATH.unshift(here)
 end
 
+require 'moonshine/core_ext'
 require 'moonshine/manifest'
 require 'moonshine/manifest/rails'
