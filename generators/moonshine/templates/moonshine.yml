@@ -1,8 +1,10 @@
-# ruby to install at `cap deploy:setup` time. If you change this value, you need to run `cap ruby:upgrade`
-# Currently allowed values include: mri, src187, ree, ree187
+# ruby to install at `cap deploy:setup` time. If you change this value, you
+# need to run `cap ruby:upgrade`. Currently allowed values include: mri,
+# src187, ree, ree187
 :ruby: <%= ruby %>
 
-# Name of your application. Should be something with only alphanumerics, hypens and underscores.
+# Name of your application. Should be something with only alphanumerics, hypens
+# and underscores.
 :application: <%= application %>
 
 # Deploy user
@@ -33,8 +35,8 @@
 #:app_symlinks:
 #  - system
 
-# Use :shared_config to copy directories straight from your local project directory
-# to the server: these are files that you don't have/want in scm.
+# Use :shared_config to copy directories straight from your local project
+# directory to the server: these are files that you don't have/want in scm.
 #:shared_config:
 #  - config/database.yml
 
@@ -45,20 +47,24 @@
 - pids
 - config
 
-# Specify native dependencies of gems. Moonshine comes with some default values of this, but this allows you to add to thim.
-# Please file an issue at http://github.com/railsmachine/moonshine/issues if there are additional gem dependencies moonshine should know about.
+# Specify native dependencies of gems. Moonshine comes with some preconfigured
+# defaults, but this allows you to add to them. Please file an issue at
+# http://github.com/railsmachine/moonshine/issues if there are additional gem
+# dependencies moonshine should know about.
 #:apt_gems:
 #  :awesomegem:
 #    - awesome
 #    - libawesome-dev
 
-# Passenger-specific options. Refer to the following templates for details about what values are used:
+# Passenger-specific options. Refer to the following templates for details
+# about what values are used:
 # - vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates/passenger.conf.erb 
 # - vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates/passenger.vhost.erb 
 :passenger:
   :max_pool_size: 3
 
-# MySQL-specific options. Refer to the following templates for details about what values are used:
+# MySQL-specific options. Refer to the following templates for details about
+# what values are used:
 # - vendor/plugins/moonshine/lib/moonshine/manifest/rails/templates/moonshine.cnf.erb 
 :mysql:
   :innodb_buffer_pool_size: 128M
