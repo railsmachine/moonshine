@@ -337,7 +337,7 @@ namespace :ruby do
       'cd /tmp/rubygems-1.3.5',
       'sudo ruby setup.rb',
       'sudo ln -s /usr/bin/gem1.8 /usr/bin/gem || true',
-      'gem update --system'
+      'sudo gem update --system'
     ].join(' && ')
   end
 
