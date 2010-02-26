@@ -10,8 +10,10 @@ module Moonshine::Manifest::Rails::Mysql
       package('mysql-server'),
       package('mysql')
     ]
-    #ensure the mysql key is present on the configuration hash
+
+    # ensure the mysql key is present on the configuration hash
     configure(:mysql => {})
+
     file '/etc/mysql', :ensure => :directory
     file '/etc/mysql/conf.d', :ensure => :directory
     file '/etc/mysql/conf.d/innodb.cnf',

@@ -123,38 +123,6 @@ class Moonshine::Manifest::RailsTest < Test::Unit::TestCase
     assert_equal 'foo', shared_dir.group
   end
 
-  def test_installs_apache
-    @manifest.apache_server
-
-    assert_not_nil apache = @manifest.services["apache2"]
-    assert_equal @manifest.package('apache2-mpm-worker').to_s, apache.require.to_s
-  end
-
-  def test_enables_mod_ssl_if_ssl
-    @manifest.configure(:ssl => {
-      :certificate_file => 'cert_file',
-      :certificate_key_file => 'cert_key_file',
-      :certificate_chain_file => 'cert_chain_file'
-    })
-
-    @manifest.apache_server
-
-    assert_not_nil @manifest.execs.find { |n, r| r.command == '/usr/sbin/a2enmod ssl' }
-  end
-
-  def test_enables_mod_rewrite
-    @manifest.apache_server
-
-    assert_not_nil apache = @manifest.execs["a2enmod rewrite"]
-  end
-
-  def test_enables_mod_status
-    @manifest.apache_server
-
-    assert_not_nil apache = @manifest.execs["a2enmod status"]
-    assert_match /127.0.0.1/, @manifest.files["/etc/apache2/mods-available/status.conf"].content
-  end
-
   def test_installs_passenger_gem
     @manifest.configure(:passenger => { :version => nil })
 
