@@ -11,14 +11,13 @@ task :rcov do
   system "rcov --exclude /Library/Ruby/ --exclude ~/ -Itest `find test/ | grep _test`"
 end
 
-desc 'Default: run unit tests.'
-task :default => :test
+desc 'Default: specs'
+task :default => :spec
 
-desc 'Test the moonshine plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.pattern = 'test/**/test_*.rb'
-  t.verbose = true
+require 'spec/rake/spectask'
+desc "Run all specs in spec directory (excluding plugin specs)"
+Spec::Rake::SpecTask.new do |t|
+  t.spec_files = FileList['spec/**/*_spec.rb']
 end
 
 desc 'Generate documentation for the moonshine plugin.'

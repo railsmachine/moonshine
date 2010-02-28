@@ -1,8 +1,7 @@
-require 'test_helper'
+require 'spec_helper'
 
-class MoonshineSetupManifestTest < Test::Unit::TestCase
-
-  def setup
+describe "MoonshineSetupManifest" do
+  before do
     config = YAML.load_file(File.join(File.dirname(__FILE__), '..', 'generators', 'moonshine', 'templates', 'moonshine.yml'))
     @user = 'user_from_capistrano'
     @application = 'app_from_capistrano'
@@ -15,17 +14,21 @@ class MoonshineSetupManifestTest < Test::Unit::TestCase
     @manifest = MoonshineSetupManifest.new
   end
 
-  def teardown
+  after do
     FileUtils.rm_r("/tmp/moonshine.yml") rescue true
   end
 
-  def test_creates_directories
-    assert @manifest.class.recipes.map(&:first).include?(:directories)
+  it "creates deploy_to directory" do
+    @manifest.should use_recipe(:directories)
+    
     @manifest.directories
-    assert_not_nil deploy_to = @manifest.files["#{@manifest.configuration[:deploy_to]}"]
-    assert_equal :directory, deploy_to.ensure
-    assert_equal @user, deploy_to.owner
-    assert_equal @user, deploy_to.group
+
+    deploy_to = @manifest.files["#{@manifest.configuration[:deploy_to]}"]
+
+    deploy_to.should_not == nil
+    deploy_to.ensure.should == :directory
+    deploy_to.owner.should == @user
+    deploy_to.group.should == @user
   end
 
 end
