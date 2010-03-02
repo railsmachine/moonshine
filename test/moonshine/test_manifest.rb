@@ -5,6 +5,12 @@ end
 
 class Moonshine::ManifestTest < Test::Unit::TestCase
 
+  def teardown
+    if @manifest && application_template && application_template.exist?
+      application_template.delete
+    end
+  end
+
   def test_loads_configuration
     assert_not_nil Moonshine::Manifest.configuration
     assert_not_nil Moonshine::Manifest.configuration[:application]
@@ -15,36 +21,33 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
   end
 
   def test_moonshine_templates
-    @manifest = Moonshine::Manifest.new
+    @manifest = Moonshine::Manifest::Rails.new
     @manifest.configure(:application => 'bar')
 
-    moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb')
+    moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger.vhost.erb')
     template_contents = 'moonshine template: <%= configuration[:application] %>'
-    moonshine_template.expects(:exist?).returns(true)
-    moonshine_template.expects(:read).returns(template_contents)
-
-    application_template = @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger.conf.erb')
-    application_template.expects(:exist?).returns(false)
-
     @manifest.stubs(:local_template).returns(application_template)
 
-    assert_equal 'moonshine template: bar', @manifest.template(moonshine_template)
+    assert_match 'ServerName yourapp.com', @manifest.template(moonshine_template)
+  end
+
+  def application_template
+    @application_template ||= @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger.conf.erb')
   end
 
   def test_app_templates_override_moonshine_templates
     @manifest = Moonshine::Manifest.new
     @manifest.configure(:application => 'bar')
 
-    moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'templates', 'passenger.conf.erb')
+    application_template.open('w') {|f| f.write "application template: <%= configuration[:application] %>" }
 
+    moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger.conf.erb')
     application_template = @manifest.rails_root.join('app', 'manifests', 'templates', 'passenger.conf.erb')
-    template_contents = 'application template: <%= configuration[:application] %>'
-    application_template.expects(:exist?).returns(true)
-    application_template.expects(:read).returns(template_contents)
+    assert application_template.exist?, "#{application_template} should exist, but didn't"
+    assert moonshine_template.exist?, "#{moonshine_template} should exist, but didn't"
 
-    @manifest.stubs(:local_template).returns(application_template)
-
-    assert_equal 'application template: bar', @manifest.template(moonshine_template)
+    # should return the output from that existing thing
+    assert_match 'application template: bar', @manifest.template(moonshine_template)
   end
 
   def test_loads_plugins

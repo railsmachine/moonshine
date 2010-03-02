@@ -53,6 +53,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV["RAILS_ENV"] || 'production'
   end
 
+  # HAX for cases where we evaluate ERB that refers to Rails.env
+  def self.env
+    rails_env
+  end
+
   # The current environment's database configuration
   def database_environment
    configuration[:database][rails_env.to_sym]
@@ -121,11 +126,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     end
   end
 
-  def local_template_dir
+  def self.local_template_dir
     @local_template_dir ||= rails_root.join('app/manifests/templates')
   end
 
-  def local_template(pathname)
+  def self.local_template(pathname)
    (local_template_dir + pathname.basename).expand_path
   end
 
@@ -133,7 +138,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   # with the same basename at <tt>RAILS_ROOT/app/manifests/templates</tt>, it
   # is used instead. This is useful to override templates provided by plugins
   # to customize application configuration files.
-  def template(pathname, b = binding)
+  def self.template(pathname, b = binding)
     pathname = Pathname.new(pathname) unless pathname.kind_of?(Pathname)
 
     template_contents = if local_template(pathname).exist?
@@ -144,6 +149,10 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
                           raise LoadError, "Can't find template #{pathname}"
                         end
     ERB.new(template_contents).result(b)
+  end
+
+  def template(pathname, b = binding)
+    self.class.template(pathname, b)
   end
 
   # config/moonshine.yml
