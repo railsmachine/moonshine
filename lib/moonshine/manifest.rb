@@ -60,7 +60,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
 
   # The current environment's database configuration
   def database_environment
-   configuration[:database][rails_env.to_sym]
+   if configuration[:database]
+     configuration[:database][rails_env.to_sym]
+    else
+      {}
+    end
   end
 
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
