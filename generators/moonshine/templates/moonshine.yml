@@ -1,3 +1,7 @@
+# config/moonshine.yml is loaded both by capistrano and moonshine.
+#  The result is the values defined here can be used in `config/deploy.rb` directly
+#  and in `app/manifest/<%=  file_name%>.rb` via `configuration`
+
 # ruby to install at `cap deploy:setup` time. If you change this value, you
 # need to run `cap ruby:upgrade`. Currently allowed values include: mri,
 # src187, ree, ree187
@@ -15,6 +19,7 @@
 
 # Directory where application is deployed to
 :deploy_to: /srv/<%= application %>
+<% unless options[:multistage] -%>
 
 # Primary domain application will be accessed as 
 :domain: <%= domain %>
@@ -23,6 +28,7 @@
 #:domain_aliases:
 #  - assets1.<%= domain %>
 #  - assets2.<%= domain %>
+<% end -%>
 
 # Source control management to use. Defaults to git.
 # If you change this value, you will need to run: cap vcs:install
