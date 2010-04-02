@@ -30,7 +30,10 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #     ...
   #   end
   def self.plugin(name = nil)
+    require 'active_support/core_ext/module/attribute_accessors'
+    require 'active_support/core_ext/kernel/reporting'
     require 'active_support/deprecation'
+
     ActiveSupport::Deprecation.warn("explicitly using plugins are now deprecated, as they are automatically loaded now", caller)
     true
   end
