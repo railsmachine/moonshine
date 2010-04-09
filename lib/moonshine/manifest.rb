@@ -1,5 +1,5 @@
 # This is the base Moonshine Manifest class, which provides a simple system
-# for loading moonshine recipes from plugins, a template helper, and parses
+# for loading Moonshine recipes from plugins, a template helper, and parses
 # several configuration files:
 #
 #   config/moonshine.yml
@@ -19,6 +19,8 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
 
   # Load a Moonshine Plugin
   #
+  # *Deprecated*: plugins are now auto-loaded.
+  #
   #   class MyManifest < Moonshine::Manifest
   #
   #     # Evals vendor/plugins/moonshine_awesome/moonshine/init.rb
@@ -34,11 +36,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     require 'active_support/core_ext/kernel/reporting'
     require 'active_support/deprecation'
 
-    ActiveSupport::Deprecation.warn("explicitly using plugins are now deprecated, as they are automatically loaded now", caller)
+    ActiveSupport::Deprecation.warn("explicitly calling the plugin method is deprecated, as plugins are now automatically loaded", caller)
     true
   end
 
-  # The working directory of the Rails application this manifests describes.
+  # The working directory of the Rails application this manifest describes.
   def self.rails_root
    @rails_root ||= Pathname.new(ENV["RAILS_ROOT"] || Dir.getwd).expand_path
   end
@@ -75,7 +77,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
 
-  # Delegate missing methods to class, so we don't have to have so many convience methods
+  # Delegate missing methods to class, so we don't have to have so many convenience methods
   def method_missing(method, *args, &block)
     if self.class.respond_to?(method)
       self.class.send(method, *args, &block)
