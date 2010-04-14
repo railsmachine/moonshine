@@ -5,4 +5,5 @@ doc
 coverage
 .autotest
 test/test.log
+test/generator.log
 test/rails_root
