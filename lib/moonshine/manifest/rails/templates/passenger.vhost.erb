@@ -233,7 +233,7 @@
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
     Options FollowSymLinks
-    AllowOverride None
+    AllowOverride <%= if configuration[:apache]; configuration[:apache][:allow_override] || 'None'; else 'None'; end %>
     Order allow,deny
     Allow from all
     <%= "FileETag #{configuration[:apache][:file_etag]}" if configuration[:apache][:file_etag] %>
@@ -303,12 +303,21 @@
   # RailsAllowModRewrite is deprecated. Passenger supports mod_rewrite by default now. configure(:passenger => { :allow_mod_rewrite => true/false }) if you still wish to use it.
   <% end %>
 
+<% if rails_root.join('config.ru').exist? %>
+  ## RackEnv
+  #
+  # Use this option to specify the default RACK_ENV value. The default
+  # setting is production.
+
+  RackEnv <%= configuration[:passenger][:rack_env] || ENV['RACK_ENV'] || 'production' %>
+<% else %>
   ## RailsEnv
   #
   # Use this option to specify the default RAILS_ENV value. The default
   # setting is production.
 
   RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
+<% end %>
 
   ## RailsSpawnMethod
   #
