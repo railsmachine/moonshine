@@ -39,6 +39,7 @@ class Moonshine::ManifestTest < Test::Unit::TestCase
     @manifest = Moonshine::Manifest.new
     @manifest.configure(:application => 'bar')
 
+    FileUtils.mkdir_p application_template.dirname
     application_template.open('w') {|f| f.write "application template: <%= configuration[:application] %>" }
 
     moonshine_template = Pathname.new(__FILE__).dirname.join('..', '..', 'lib', 'moonshine', 'manifest', 'rails', 'templates', 'passenger.conf.erb')
