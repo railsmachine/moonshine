@@ -9,10 +9,11 @@ require 'ginger'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'moonshine'
+require 'moonshine/matchers'
 require 'shadow_puppet/test'
 
 Spec::Runner.configure do |config|
+  config.include Moonshine::Matchers
   config.include MoonshineHelpers
   config.extend MoonshineHelpers::ClassMethods
 end
-
