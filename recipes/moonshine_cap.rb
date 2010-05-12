@@ -329,12 +329,13 @@ namespace :ruby do
   end
 
   task :install_rubygems do
+    version = fetch(:rubygems, '1.3.6')
     run [
       'cd /tmp',
-      'sudo rm -rf rubygems-1.3.5* || true',
-      'wget -q http://rubyforge.org/frs/download.php/60718/rubygems-1.3.5.tgz',
-      'tar xfz rubygems-1.3.5.tgz',
-      'cd /tmp/rubygems-1.3.5',
+      "sudo rm -rf rubygems-#{version}* || true",
+      "wget -q http://production.cf.rubygems.org/rubygems/rubygems-#{version}.tgz",
+      "tar xfz rubygems-#{version}.tgz",
+      "cd /tmp/rubygems-#{version}",
       'sudo ruby setup.rb',
       'sudo ln -s /usr/bin/gem1.8 /usr/bin/gem || true',
       'sudo gem update --system'
