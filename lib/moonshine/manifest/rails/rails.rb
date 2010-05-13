@@ -91,8 +91,7 @@ module Moonshine::Manifest::Rails::Rails
       :gem => '--no-ri --no-rdoc',
       :update_sources => true,
       :sources => [
-        'http://gemcutter.org',
-        'http://gems.rubyforge.org',
+        'http://rubygems.org',
         'http://gems.github.com'
       ]
     }

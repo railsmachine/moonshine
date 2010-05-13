@@ -112,4 +112,8 @@ private
       :alias => "logrotate_#{safename}"
   end
 
+  def ubuntu_lucid?
+     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f >= 8.04
+  end
+
 end
