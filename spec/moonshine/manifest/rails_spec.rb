@@ -77,23 +77,6 @@ describe Moonshine::Manifest::Rails do
     end
   end
 
-  specify "#security_update" do
-    @manifest.configure(:unattended_upgrade => { :package_blacklist => ['foo', 'bar', 'widget']})
-    @manifest.configure(:user => 'rails')
-
-    @manifest.security_updates
-
-    @manifest.should have_package("unattended-upgrades")
-    @manifest.should have_file("/etc/apt/apt.conf.d/10periodic").with_content(
-      /APT::Periodic::Unattended-Upgrade "1"/
-    )
-    @manifest.should have_file("/etc/apt/apt.conf.d/50unattended-upgrades").with_content(
-      /Unattended-Upgrade::Mail "rails@localhost";/
-    )
-    @manifest.should have_file("/etc/apt/apt.conf.d/50unattended-upgrades").with_content(
-      /"foo";/
-    )
-  end
 
   describe "#rails_gems" do
     it "configures gem sources" do
