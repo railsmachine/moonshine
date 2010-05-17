@@ -268,6 +268,7 @@ namespace :ruby do
   desc 'Forces a reinstall of Ruby and restarts Apache/Passenger'
   task :upgrade do
     install
+    sudo 'gem pristine --all'
     apache.restart
   end
 
