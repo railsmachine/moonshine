@@ -330,7 +330,7 @@ namespace :ruby do
   end
 
   task :install_rubygems do
-    version = fetch(:rubygems_version, '1.3.6')
+    version = fetch(:rubygems_version, '1.3.7')
     run [
       'cd /tmp',
       "sudo rm -rf rubygems-#{version}* || true",
