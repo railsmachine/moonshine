@@ -24,11 +24,11 @@ By leveraging capistrano and puppet, moonshine allows you have a working applica
 
 It's easy enough:
 
-    rake test
+    rake spec
 
 Ginger[http://github.com/freelancing-god/ginger] is used to test against multiple versions of rails:
 
-   ginger test
+   ginger spec
 
 == Getting Help
 
