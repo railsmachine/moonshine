@@ -94,7 +94,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
   def repository
     options[:repository] ||= begin
                                detected_repo = `git config remote.origin.url`.chomp
-                               detected_repo.present? ? detected_repo : 'git@github.com:username/your_app_name.git'
+                               !detected_repo.blank? ? detected_repo : 'git@github.com:username/your_app_name.git'
                              end
   end
 
