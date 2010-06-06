@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe "MoonshineSetupManifest" do
   before do
-    config = YAML.load_file(File.join(File.dirname(__FILE__), '..', 'generators', 'moonshine', 'templates', 'moonshine.yml'))
     @user = 'user_from_capistrano'
     @application = 'app_from_capistrano'
+
     config = {:user => @user, :application => @application, :deploy_to => '/svr/application'}
     File.open( '/tmp/moonshine.yml', 'w' ) do |out|
       YAML.dump(config, out)
