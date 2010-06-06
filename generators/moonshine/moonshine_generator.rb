@@ -51,8 +51,12 @@ class MoonshineGenerator < Rails::Generator::Base
 
       m.template  'deploy.rb', 'config/deploy.rb'
 
-      unless File.read('config/environments/production.rb').include?('ActionMailer::Base.delivery_method')
-        m.gsub_file 'config/environments/production.rb', /\z/, "\n# Use postfix for mail delivery \nActionMailer::Base.delivery_method = :sendmail "
+      production_env_path = Pathname.new("#{RAILS_ROOT}/config/environments/production.rb")
+      if production_env_path.exist?
+        production_env = production_env_path.read
+        unless production_env.include?('ActionMailer::Base.delivery_method')
+          m.gsub_file 'config/environments/production.rb', /\z/, "\n# Use postfix for mail delivery \nActionMailer::Base.delivery_method = :sendmail "
+        end
       end
 
       if options[:multistage]

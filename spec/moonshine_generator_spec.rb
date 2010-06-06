@@ -7,7 +7,9 @@ describe MoonshineGenerator do
     before do
       FileUtils.mkdir_p(generator_rails_root)
 
-      Rails::Generator::Scripts::Generate.new.run(["moonshine"], :destination => generator_rails_root)
+      lambda {
+        Rails::Generator::Scripts::Generate.new.run(["moonshine"], :destination => generator_rails_root)
+      }.should_not raise_error
     end
 
     after do
