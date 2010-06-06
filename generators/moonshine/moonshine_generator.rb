@@ -40,7 +40,6 @@ class MoonshineGenerator < Rails::Generator::Base
     recorded_session = record do |m|
       m.template  'Capfile', 'Capfile'
       m.directory 'app/manifests'
-      m.directory 'app/manifests/templates'
       m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
       m.directory 'app/manifests/templates'
       m.template  'readme.templates', 'app/manifests/templates/README'
