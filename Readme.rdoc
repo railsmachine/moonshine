@@ -4,7 +4,7 @@ Moonshine is Rails deployment and configuration management done right.
 
 By leveraging capistrano and puppet, moonshine allows you have a working application server in 15 minutes, and be able to sanely manage it's configuration from the comfort of your version control of choice.
 
-* Step-by-step intsturctions for getting started: http://wiki.github.com/railsmachine/moonshine/step-by-step-instructions
+* Step-by-step instructions for getting started: http://wiki.github.com/railsmachine/moonshine/step-by-step-instructions
 * Managing server configuration with ShadowPuppet: http://wiki.github.com/railsmachine/moonshine/shadow-puppet-overview-and-examples
 * Managing gems: http://wiki.github.com/railsmachine/moonshine/add-a-gem
 * Managing moonshine.yml: http://wiki.github.com/railsmachine/moonshine/configuring-moonshineyml
@@ -15,7 +15,8 @@ By leveraging capistrano and puppet, moonshine allows you have a working applica
 
 == Requirements
 
-* A server running Ubuntu 8.10 (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
+* A server running Ubuntu 8.10 or 10.04 LTS (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
+* A Rails 2.3 or Rails 3 app
 * A user on this server that can:
   * Execute commands via sudo
   * Access your application's source code repository

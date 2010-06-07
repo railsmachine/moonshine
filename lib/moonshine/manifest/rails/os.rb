@@ -88,14 +88,18 @@ CONFIG
       :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
   end
 
+private
+
+  def ubuntu_lucid?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
+  end
+
   def distro_unattended_security_origin
     case Facter.lsbdistrelease.to_f
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
     end
   end
-
-private
 
   #Provides a helper for creating logrotate config for various parts of your
   #stack. For example:
@@ -117,10 +121,6 @@ private
       :content => template(File.join(File.dirname(__FILE__), "templates", "logrotate.conf.erb"), binding),
       :notify => service("cron"),
       :alias => "logrotate_#{safename}"
-  end
-
-  def ubuntu_lucid?
-     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
   end
 
 end

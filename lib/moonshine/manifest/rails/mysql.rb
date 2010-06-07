@@ -12,29 +12,16 @@ module Moonshine::Manifest::Rails::Mysql
     ]
 
     # ensure the mysql key is present on the configuration hash
-    configure(:mysql => {})
+    configure(:mysql => { :version => mysql_version })
 
     file '/etc/mysql', :ensure => :directory
     file '/etc/mysql/conf.d', :ensure => :directory
+    
     file '/etc/mysql/conf.d/innodb.cnf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'innodb.cnf.erb')),
       :before => package('mysql-server')
-
-    if distro_uses_mysql51?
-      # TODO consult w/ percona if this reasonable
-      # 
-      # Resources:
-      # * http://github.com/railsmachine/moonshine/issues#issue/43
-      # * http://bugs.mysql.com/bug.php?id=40360
-      # * http://bugs.mysql.com/bug.php?id=39812
-      file '/etc/mysql/conf.d/mixed_binlog_format.cnf',
-        :ensure => :present,
-        :content => template(rails_template_dir.join('mixed_binlog_format.cnf.erb')),
-        :before => package('mysql-server'),
-        :notify => service('mysql')
-    end
-
+    
     file '/etc/mysql/conf.d/moonshine.cnf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
@@ -43,10 +30,6 @@ module Moonshine::Manifest::Rails::Mysql
       :checksum => :md5
 
     file '/etc/logrotate.d/varlogmysql.conf', :ensure => :absent
-  end
-
-  def distro_uses_mysql51?
-    ubuntu_lucid?
   end
 
   # Install the <tt>mysql</tt> rubygem and dependencies
@@ -99,4 +82,7 @@ private
     "su -c \'/usr/bin/mysql -u root -e \"#{sql}\"\'"
   end
 
+  def mysql_version
+    ubuntu_lucid? ? 5.1 : 5
+  end
 end
