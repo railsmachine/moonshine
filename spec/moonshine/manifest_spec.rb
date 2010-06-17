@@ -56,7 +56,6 @@ describe Moonshine::Manifest do
 
   it 'should load plugins' do
     @manifest = Moonshine::Manifest.new
-    Moonshine::Manifest.plugin(:iptables).should be
     # eval is configured in test/rails_root/vendor/plugins/moonshine_eval_test/moonshine/init.rb
     Moonshine::Manifest.configuration[:eval].should be
     @manifest = Moonshine::Manifest.new

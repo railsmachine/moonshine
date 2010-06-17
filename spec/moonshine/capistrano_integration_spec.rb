@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'moonshine/capistrano_integration'
 
-describe Moonshine::CapistranoIntegration, "loaded into a configuratino" do
+describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
   before do
     ENV['RAILS_ROOT'] = fake_rails_root
     @configuration = Capistrano::Configuration.new
