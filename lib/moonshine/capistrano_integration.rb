@@ -181,9 +181,11 @@ module Moonshine
           DESC
           task :upload do
             fetch(:local_config).each do |file|
-              filename = File.split(file).last
+              filename = File.basename(file)
+              path = File.dirname(file)
               if File.exist?(file)
-                parent.upload(file, "#{shared_path}/config/#{filename}")
+                run "mkdir -p '#{shared_path}/#{path}'" unless path.empty?
+                parent.upload(file, "#{shared_path}/#{path}/#{filename}")
               end
             end
           end
@@ -193,8 +195,10 @@ module Moonshine
           DESC
           task :symlink do
             fetch(:local_config).each do |file|
-              filename = File.split(file).last
-              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/config/#{filename} #{latest_release}/#{file}"
+              filename = File.basename(file)
+              path = File.dirname(file)
+              run "mkdir -p '#{latest_release}/#{path}'" unless path.empty?
+              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{path}/#{filename} #{latest_release}/#{file}"
             end
           end
 
@@ -208,9 +212,11 @@ module Moonshine
           DESC
           task :upload do
             fetch(:shared_config).each do |file|
-              filename = File.split(file).last
+              filename = File.basename(file)
+              path = File.dirname(file)
               if File.exist?(file)
-                put File.read(file), "#{shared_path}/config/#{filename}"
+                run "mkdir -p '#{shared_path}/#{path}'" unless path.empty?
+                parent.upload(file, "#{shared_path}/#{path}/#{filename}")
               end
             end
           end
@@ -221,10 +227,11 @@ module Moonshine
           DESC
           task :download do
             fetch(:shared_config).each do |file|
-              filename = File.split(file).last
-              if File.exist?(file)
-                get "#{shared_path}/config/#{filename}", file
-              end
+              require 'fileutils'
+              filename = File.basename(file)
+              path = File.dirname(file)
+              FileUtils.mkdir_p(path) unless path.empty?
+              get "#{shared_path}/#{path}/#{filename}", file
             end
           end
 
@@ -233,8 +240,10 @@ module Moonshine
           DESC
           task :symlink do
             fetch(:shared_config).each do |file|
-              filename = File.split(file).last
-              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/config/#{filename} #{latest_release}/#{file}"
+              filename = File.basename(file)
+              path = File.dirname(file)
+              run "mkdir -p '#{latest_release}/#{path}'" unless path.empty?
+              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{path}/#{filename} #{latest_release}/#{file}"
             end
           end
         end

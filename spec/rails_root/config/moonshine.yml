@@ -16,8 +16,9 @@
 #
 # Use :shared_config to copy directories straight from your local project directory
 # to the server: these are files that you don't have/want in scm.
-#:shared_config:
-#  - config/database.yml
+:shared_config:
+  - config/database.yml
+  - config/sample/foo
 #
 # The entries in shared_children are created in #{application}/shared
 :shared_children:

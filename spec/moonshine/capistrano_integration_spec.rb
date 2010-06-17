@@ -62,6 +62,31 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuratino" do
       @configuration.application.should == 'zomg'
     end
 
-  end
+    context "shared_config" do
+      before do
+        @shared_config = @configuration.shared_config.moonshine_yml[:shared_config]
+      end
 
+      it "has some items in shared_config" do
+        @shared_config.should have(2).items
+        @shared_config.should include "config/database.yml"
+      end
+
+      it "uploads files to the fake rails root" do
+        pending
+      end
+
+      it "downloads files from the fake rails root" do
+        pending
+      end
+
+      it "symlinks files to the fake rails root" do
+        pending
+      end
+
+      def full_path(path)
+        @configuration.rails_root.join(path)
+      end
+    end
+  end
 end
