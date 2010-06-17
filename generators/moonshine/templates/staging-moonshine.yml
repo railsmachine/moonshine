@@ -1,6 +1,6 @@
-# production-specific moonshine configuration
+# staging-specific moonshine configuration
 #
-# You can set anything here that you might normally put in config/moonshine.yml, but will only apply to production
+# You can set anything here that you might normally put in config/moonshine.yml, but will only apply to staging
 
 # Primary domain application will be accessed as 
 :domain: <%= staging_domain %>
