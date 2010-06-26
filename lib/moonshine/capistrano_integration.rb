@@ -1,6 +1,8 @@
+require 'pathname'
+
 module Moonshine
   class CapistranoIntegration
-    def self.load_into(capistrano_config)
+    def self.load_defaults_info(capistrano_config)
       capistrano_config.load do
         # these are required at load time by capistrano, we'll set them later
         set :application, ''
@@ -32,11 +34,6 @@ module Moonshine
           "#{shared_path}/log/#{fetch(:rails_env)}.log"
         end
 
-        # callbacks
-        on :start, 'moonshine:configure'
-        after 'deploy:restart', 'deploy:cleanup'
-
-        require 'pathname'
         set :rails_root, Pathname.new(ENV['RAILS_ROOT'] || Dir.pwd)
         set :moonshine_yml_path, rails_root.join('config', 'moonshine.yml')
 
@@ -50,7 +47,22 @@ module Moonshine
             exit(1)
           end
         end
+      end
+    end
 
+    def self.load_callbacks_into(capistrano_config)
+      capistrano_config.load do
+        # callbacks
+        on :start, 'moonshine:configure'
+        after 'deploy:restart', 'deploy:cleanup'
+      end
+    end
+
+    def self.load_into(capistrano_config)
+      load_defaults_info(capistrano_config)
+      load_callbacks_into(capistrano_config)
+
+      capistrano_config.load do
         namespace :moonshine do
           desc "[internal]: populate capistrano with settings from moonshine.yml"
           task :configure do

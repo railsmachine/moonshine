@@ -33,6 +33,35 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     @configuration.rails_root.should == fake_rails_root
   end
 
+  it "does moonshine:configure on start" do
+    @configuration.callbacks[:start].should_not be_nil
+
+    moonshine_configure = @configuration.callbacks[:start].select do |task_callback|
+      task_callback.source == 'moonshine:configure'
+    end
+
+    moonshine_configure.should_not be_nil
+  end
+
+  it "performs deploy:cleanup after deploy:restart" do
+    @configuration.callbacks[:after].should_not be_nil
+
+    moonshine_configure = @configuration.callbacks[:after].select do |task_callback|
+      task_callback.source == 'deploy:cleanup'
+    end
+
+    moonshine_configure.should_not be_nil
+  end
+
+  it "performs moonshine:apply before deploy:symlink" do
+    @configuration.callbacks[:before].should_not be_nil
+
+    moonshine_configure = @configuration.callbacks[:before].select do |task_callback|
+      task_callback.source == 'deploy:cleanup'
+    end
+
+  end
+
   context "scm" do
     it "defaults to git" do
       @configuration.scm.should == :git
