@@ -69,7 +69,7 @@ describe MoonshineGenerator do
       end
 
       it "configures ree as the ruby vm" do
-        configuration[:ruby].should == 'ree'
+        configuration[:ruby].should == 'ree187'
       end
 
       it "configures a default value for domain" do
@@ -130,6 +130,16 @@ describe MoonshineGenerator do
 
       it "configures zombo.dom for domain" do
         configuration[:domain].should == 'zombo.com'
+      end
+    end
+
+    context "run with --ruby ree187" do
+      before do
+        run %w(--ruby ree)
+      end
+
+      it "configures ree187 as the ruby vm" do
+        configuration[:ruby].should == 'ree'
       end
     end
 

@@ -5,7 +5,7 @@ class MoonshineGenerator < Rails::Generator::Base
 
   default_options :user => 'rails',
                   :domain => 'yourapp.com',
-                  :ruby => 'ree',
+                  :ruby => 'ree187',
                   :multistage => false
 
   def initialize(runtime_args, runtime_options = {})
@@ -137,7 +137,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
       opt.on('--multistage',
               "setup multistage deployment environment") { options[:multistage] = true }
       opt.on("--ruby RUBY",
-             "Ruby version to install. Currently supports: mri, ree (default), ree187, src187") { |ruby| options[:ruby] = ruby }
+             "Ruby version to install. Currently supports: mri, ree, ree187 (default), src187") { |ruby| options[:ruby] = ruby }
       
     end
   
