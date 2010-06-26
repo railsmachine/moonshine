@@ -15,7 +15,6 @@ module MoonshineHelpers
       $here.join('rails_root')
     end
 
-
     def generator_rails_root
       @generator_rails_root ||= Pathname.new "#{Dir.tmpdir}/moonshine-generator-rails-root-#{Time.now.strftime('%Y%m%d%H%M%S')}" 
     end

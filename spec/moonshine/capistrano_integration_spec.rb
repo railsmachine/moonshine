@@ -9,57 +9,44 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     Moonshine::CapistranoIntegration.load_into(@configuration)
   end
 
-  it "defaults :repository to blank" do
-    @configuration.repository.should == ""
+  subject { @configuration }
+
+  context "default configuration" do
+    its(:repository) { should == "" }
+    its(:application) { should == "" }
+    its(:rails_env) { should == 'production' }
+    its(:stage) { should be_nil }
+
   end
 
-  it "defaults :application to blank" do
-    @configuration.application.should == ""
-  end
-
-  it "defaults :rails_env to production" do
-    @configuration.rails_env.should == "production"
-  end
-
-  it "sets no stage" do
-    @configuration[:stage].should be_nil
-  end
-
-  it "defaults :keep_releases to 5" do
+  it "keeps 5 releases" do
     @configuration.keep_releases.should == 5
   end
 
-  it "sets rails_root from ENV['RAILS_ROOT]'" do
+  it "sets rails_root from ENV['RAILS_ROOT']" do
     @configuration.rails_root.should == fake_rails_root
   end
 
   it "does moonshine:configure on start" do
-    @configuration.callbacks[:start].should_not be_nil
-
-    moonshine_configure = @configuration.callbacks[:start].select do |task_callback|
-      task_callback.source == 'moonshine:configure'
-    end
-
-    moonshine_configure.should_not be_nil
+    @configuration.should callback('moonshine:configure').on(:start)
   end
 
   it "performs deploy:cleanup after deploy:restart" do
-    @configuration.callbacks[:after].should_not be_nil
-
-    moonshine_configure = @configuration.callbacks[:after].select do |task_callback|
-      task_callback.source == 'deploy:cleanup'
-    end
-
-    moonshine_configure.should_not be_nil
+    @configuration.should callback('deploy:cleanup').after('deploy:restart')
   end
 
   it "performs moonshine:apply before deploy:symlink" do
-    @configuration.callbacks[:before].should_not be_nil
+    callbacks = find_callback(@configuration, :before, 'deploy:symlink')
+    callbacks.should_not be_nil
 
-    moonshine_configure = @configuration.callbacks[:before].select do |task_callback|
-      task_callback.source == 'deploy:cleanup'
+    callback = callbacks.first
+    callback.should_not be_nil
+    
+    @configuration.namespace :moonshine do
+      should_receive(:apply)
     end
 
+    callback.call
   end
 
   context "on default stage" do
@@ -118,23 +105,41 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     context "shared_config" do
       before do
         @shared_config = @configuration.shared_config.moonshine_yml[:shared_config]
+        @configuration.set :shared_path, '/srv/app/shared'
+        @configuration.set :latest_release, '/srv/app/releases/20100601'
       end
 
       it "has some items in shared_config" do
         @shared_config.should have(2).items
-        @shared_config.should include "config/database.yml"
+        @shared_config.should include("config/database.yml")
       end
 
-      it "uploads files to the fake rails root" do
-        pending
+      it "uploads files from fake rails root to the server" do
+        @configuration.should_receive(:run).with("mkdir -p '/srv/app/shared/config/sample'")
+        @configuration.should_receive(:upload).with("config/sample/foo", "/srv/app/shared/config/sample/foo")
+
+        @configuration.should_receive(:run).with("mkdir -p '/srv/app/shared/config'")
+        @configuration.should_receive(:upload).with("config/database.yml", "/srv/app/shared/config/database.yml")
+
+        @configuration.find_and_execute_task('shared_config:upload')
       end
 
-      it "downloads files from the fake rails root" do
-        pending
+      it "downloads files from the server to the fake rails root" do
+        @configuration.should_receive(:get).with("/srv/app/shared/config/sample/foo", "config/sample/foo")
+        @configuration.should_receive(:get).with("/srv/app/shared/config/database.yml", "config/database.yml")
+
+        @configuration.find_and_execute_task('shared_config:download')
       end
 
-      it "symlinks files to the fake rails root" do
-        pending
+      it "symlinks files on the server" do
+        @configuration.should_receive(:run).with("mkdir -p '/srv/app/releases/20100601/config/sample'")
+
+        @configuration.should_receive(:run).with("ls /srv/app/releases/20100601/config/sample/foo 2> /dev/null || ln -nfs /srv/app/shared/config/sample/foo /srv/app/releases/20100601/config/sample/foo")
+
+        @configuration.should_receive(:run).with("mkdir -p '/srv/app/releases/20100601/config'")
+        @configuration.should_receive(:run).with("ls /srv/app/releases/20100601/config/database.yml 2> /dev/null || ln -nfs /srv/app/shared/config/database.yml /srv/app/releases/20100601/config/database.yml")
+
+        @configuration.find_and_execute_task('shared_config:symlink')
       end
 
       def full_path(path)

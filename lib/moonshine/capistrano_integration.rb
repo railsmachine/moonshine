@@ -54,7 +54,6 @@ module Moonshine
 
     def self.load_callbacks_into(capistrano_config)
       capistrano_config.load do
-        # callbacks
         on :start, 'moonshine:configure'
         after 'deploy:restart', 'deploy:cleanup'
       end
@@ -226,12 +225,13 @@ module Moonshine
           DESC
           task :upload do
             fetch(:shared_config).each do |file|
-              filename = File.basename(file)
-              path = File.dirname(file)
-              if File.exist?(file)
-                run "mkdir -p '#{shared_path}/#{path}'" unless path.empty?
-                parent.upload(file, "#{shared_path}/#{path}/#{filename}")
-              end
+              file = Pathname.new(file)
+
+              filename = file.basename
+              directory = file.dirname
+
+              run "mkdir -p '#{shared_path}/#{directory}'"
+              parent.upload(file.to_s, "#{shared_path}/#{directory}/#{filename}")
             end
           end
 
@@ -241,11 +241,14 @@ module Moonshine
           DESC
           task :download do
             fetch(:shared_config).each do |file|
-              require 'fileutils'
-              filename = File.basename(file)
-              path = File.dirname(file)
-              FileUtils.mkdir_p(path) unless path.empty?
-              get "#{shared_path}/#{path}/#{filename}", file
+              file = Pathname.new(file)
+
+              filename = file.basename
+              directory = file.dirname
+
+              FileUtils.mkdir_p(directory)
+
+              get "#{shared_path}/#{directory}/#{filename}", file.to_s
             end
           end
 
@@ -254,10 +257,13 @@ module Moonshine
           DESC
           task :symlink do
             fetch(:shared_config).each do |file|
-              filename = File.basename(file)
-              path = File.dirname(file)
-              run "mkdir -p '#{latest_release}/#{path}'" unless path.empty?
-              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{path}/#{filename} #{latest_release}/#{file}"
+              file = Pathname.new(file)
+
+              filename = file.basename
+              directory = file.dirname
+
+              run "mkdir -p '#{latest_release}/#{directory}'"
+              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{directory}/#{filename} #{latest_release}/#{file}"
             end
           end
         end
