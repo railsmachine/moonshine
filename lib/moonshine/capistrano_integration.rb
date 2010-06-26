@@ -49,20 +49,6 @@ module Moonshine
             exit(1)
           end
         end
-
-        set :rails_env_moonshine_yml_path  do
-          rails_root.join('config', 'moonshine', "#{rails_env}.yml")
-        end
-
-        set :rails_env_moonshine_yml do
-          if rails_env_moonshine_yml_path.exist?
-            require 'yaml'
-            YAML::load(ERB.new(rails_env_moonshine_yml_path.read).result)
-          else
-            {}
-          end
-        end
-
       end
     end
 
@@ -70,6 +56,7 @@ module Moonshine
       capistrano_config.load do
         on :start, 'moonshine:configure'
         after 'deploy:restart', 'deploy:cleanup'
+        after 'multistage:ensure', 'moonshine:configure_stage'
       end
     end
 
@@ -84,9 +71,20 @@ module Moonshine
             moonshine_yml.each do |key, value|
               set key.to_sym, value
             end
-            
-            rails_env_moonshine_yml.each do |key, value|
-              set key.to_sym, value
+          end
+
+          desc "[internal]: populate capistrano with settings from moonshine/<rails_env>.yml"
+          task :configure_stage do
+            set :moonshine_rails_env_yml_path, rails_root.join('config', 'moonshine', "#{rails_env}.yml")
+            set :moonshine_rails_env_yml do
+              if moonshine_rails_env_yml_path.exist?
+                require 'yaml'
+                YAML::load(ERB.new(moonshine_rails_env_yml_path.read).result)
+              end
+            end
+
+            moonshine_rails_env_yml.each do |k,v|
+              set k.to_sym, v
             end
           end
 

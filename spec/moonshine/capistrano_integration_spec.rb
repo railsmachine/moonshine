@@ -31,6 +31,10 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     @configuration.should callback('moonshine:configure').on(:start)
   end
 
+  it "does moonshine:configure_stage after multistage:ensure" do
+    @configuration.should callback('moonshine:configure_stage').after('multistage:ensure')
+  end
+
   it "performs deploy:cleanup after deploy:restart" do
     @configuration.should callback('deploy:cleanup').after('deploy:restart')
   end
@@ -95,12 +99,24 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
 
   context "moonshine:configure" do
     before do
-      @configuration.set(:rails_env, 'test')
       @configuration.find_and_execute_task("moonshine:configure")
     end
 
     it "loads moonshine.yml into configuration" do
       @configuration.application.should == 'zomg'
+    end
+
+    it "does not load rails environment specific configuration" do
+      @configuration[:test_yaml].should be_nil
+    end
+
+  end
+
+  context "moonshine:configure_multistage" do
+    before do
+      # TODO have need a way to have a more realistic multistage env going
+      @configuration.set(:stage, 'test')
+      @configuration.find_and_execute_task("moonshine:configure_stage")
     end
 
     it "loads rails environment specific configuration" do
