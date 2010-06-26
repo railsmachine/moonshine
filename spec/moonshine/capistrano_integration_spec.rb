@@ -21,8 +21,8 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     @configuration.rails_env.should == "production"
   end
 
-  it "defaults :stage to undefined" do
-    @configuration.stage.should == "undefined"
+  it "sets no stage" do
+    @configuration[:stage].should be_nil
   end
 
   it "defaults :keep_releases to 2" do
@@ -60,6 +60,30 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
       task_callback.source == 'deploy:cleanup'
     end
 
+  end
+
+  context "on default stage" do
+    it "sets rails_env to production" do
+      @configuration.rails_env.should == 'production'
+    end
+  end
+
+  context "on staging stage" do
+    before do
+      @configuration.set(:stage, 'staging')
+    end
+    it "sets rails_env to staging" do
+      @configuration.rails_env.should == 'staging'
+    end
+  end
+
+  context "on production stage" do
+    before do
+      @configuration.set(:stage, 'production')
+    end
+    it "sets rails_env to staging" do
+      @configuration.rails_env.should == 'production'
+    end
   end
 
   context "scm" do

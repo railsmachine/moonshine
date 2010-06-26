@@ -23,9 +23,11 @@ module Moonshine
         # set some default values, so we don't have to fetch(:var, :some_default) in multiple places
         set :local_config, []
         set :shared_config, []
-        set :rails_env, 'production'
+        set :stage, nil
+        set :rails_env do
+          self[:stage] || 'production'
+        end
         set :moonshine_manifest, 'application_manifest'
-        set :stage, 'undefined'
         set :app_symlinks, []
         set :ruby, :ree
 
