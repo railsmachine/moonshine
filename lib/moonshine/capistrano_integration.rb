@@ -12,7 +12,7 @@ module Moonshine
         set :branch, 'master'
         set :scm, :git
         set :git_enable_submodules, 1
-        set :keep_releases, 2
+        set :keep_releases, 5
         ssh_options[:paranoid] = false
         ssh_options[:forward_agent] = true
         default_run_options[:pty] = true

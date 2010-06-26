@@ -25,8 +25,8 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     @configuration[:stage].should be_nil
   end
 
-  it "defaults :keep_releases to 2" do
-    @configuration.keep_releases.should == 2
+  it "defaults :keep_releases to 5" do
+    @configuration.keep_releases.should == 5
   end
 
   it "sets rails_root from ENV['RAILS_ROOT]'" do
