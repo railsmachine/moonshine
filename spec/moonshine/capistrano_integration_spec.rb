@@ -6,6 +6,7 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
   before do
     ENV['RAILS_ROOT'] = fake_rails_root
     @configuration = Capistrano::Configuration.new
+    @configuration.extend(Capistrano::Spec::ConfigurationExtension)
     Moonshine::CapistranoIntegration.load_into(@configuration)
   end
 
@@ -16,7 +17,6 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     its(:application) { should == "" }
     its(:rails_env) { should == 'production' }
     its(:stage) { should be_nil }
-
   end
 
   it "keeps 5 releases" do
@@ -115,31 +115,34 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
       end
 
       it "uploads files from fake rails root to the server" do
-        @configuration.should_receive(:run).with("mkdir -p '/srv/app/shared/config/sample'")
-        @configuration.should_receive(:upload).with("config/sample/foo", "/srv/app/shared/config/sample/foo")
-
-        @configuration.should_receive(:run).with("mkdir -p '/srv/app/shared/config'")
-        @configuration.should_receive(:upload).with("config/database.yml", "/srv/app/shared/config/database.yml")
-
         @configuration.find_and_execute_task('shared_config:upload')
+
+        @configuration.should have_run("mkdir -p '/srv/app/shared/config/sample'")
+        @configuration.should have_uploaded("config/sample/foo").to("/srv/app/shared/config/sample/foo")
+
+        @configuration.should have_run("mkdir -p '/srv/app/shared/config'")
+        @configuration.should have_uploaded("config/database.yml").to("/srv/app/shared/config/database.yml")
+
       end
 
       it "downloads files from the server to the fake rails root" do
-        @configuration.should_receive(:get).with("/srv/app/shared/config/sample/foo", "config/sample/foo")
-        @configuration.should_receive(:get).with("/srv/app/shared/config/database.yml", "config/database.yml")
-
         @configuration.find_and_execute_task('shared_config:download')
+
+        @configuration.should have_got("/srv/app/shared/config/sample/foo").to("config/sample/foo")
+        @configuration.should have_got("/srv/app/shared/config/database.yml").to("config/database.yml")
       end
 
       it "symlinks files on the server" do
-        @configuration.should_receive(:run).with("mkdir -p '/srv/app/releases/20100601/config/sample'")
-
-        @configuration.should_receive(:run).with("ls /srv/app/releases/20100601/config/sample/foo 2> /dev/null || ln -nfs /srv/app/shared/config/sample/foo /srv/app/releases/20100601/config/sample/foo")
-
-        @configuration.should_receive(:run).with("mkdir -p '/srv/app/releases/20100601/config'")
-        @configuration.should_receive(:run).with("ls /srv/app/releases/20100601/config/database.yml 2> /dev/null || ln -nfs /srv/app/shared/config/database.yml /srv/app/releases/20100601/config/database.yml")
 
         @configuration.find_and_execute_task('shared_config:symlink')
+
+        @configuration.should have_run("mkdir -p '/srv/app/releases/20100601/config/sample'")
+
+        @configuration.should have_run("ls /srv/app/releases/20100601/config/sample/foo 2> /dev/null || ln -nfs /srv/app/shared/config/sample/foo /srv/app/releases/20100601/config/sample/foo")
+
+        @configuration.should have_run("mkdir -p '/srv/app/releases/20100601/config'")
+        @configuration.should have_run("ls /srv/app/releases/20100601/config/database.yml 2> /dev/null || ln -nfs /srv/app/shared/config/database.yml /srv/app/releases/20100601/config/database.yml")
+
       end
 
       def full_path(path)
