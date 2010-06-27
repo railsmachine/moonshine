@@ -107,7 +107,6 @@ module Moonshine::Manifest::Rails::Rails
     exec 'rails_gems', :command => 'true'
 
     gemfile_path = rails_root.join('Gemfile')
-    gemfile_lock_path = rails_root.join('Gemfile.lock')
     if gemfile_path.exist?
       # Bundler is initially installed by deploy:setup in the ruby:install_moonshine_deps task
       configure(:bundler => {})
@@ -133,14 +132,8 @@ module Moonshine::Manifest::Rails::Rails
       exec 'bundle install',
         :command => "bundle install",
         :cwd => rails_root,
-        :before => [exec('rails_gems'), exec('bundle lock')],
+        :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
-        :user => configuration[:user]
-
-      exec 'bundle lock',
-        :command => 'bundle lock',
-        :cwd => rails_root,
-        :creates => gemfile_lock_path.to_s,
         :user => configuration[:user]
     else
       return unless configuration[:gems]
