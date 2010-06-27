@@ -80,6 +80,8 @@ module Moonshine
               if moonshine_rails_env_yml_path.exist?
                 require 'yaml'
                 YAML::load(ERB.new(moonshine_rails_env_yml_path.read).result)
+              else
+                {}
               end
             end
 

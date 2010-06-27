@@ -149,7 +149,6 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
 
         @configuration.should have_run("mkdir -p '/srv/app/releases/20100601/config'")
         @configuration.should have_run("ls /srv/app/releases/20100601/config/database.yml 2> /dev/null || ln -nfs /srv/app/shared/config/database.yml /srv/app/releases/20100601/config/database.yml")
-
       end
 
       def full_path(path)
@@ -160,14 +159,28 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
   end
 
   context "moonshine:configure_multistage" do
-    before do
-      # TODO have need a way to have a more realistic multistage env going
-      @configuration.set(:stage, 'test')
-      @configuration.find_and_execute_task("moonshine:configure_stage")
+    context "when a environment specific yaml exists" do
+      before do
+        # TODO have need a way to have a more realistic multistage env going
+        @configuration.set(:stage, 'test')
+        @configuration.find_and_execute_task("moonshine:configure_stage")
+      end
+
+      it "loads rails environment specific configuration" do
+        @configuration[:test_yaml].should == 'what what what'
+      end
     end
 
-    it "loads rails environment specific configuration" do
-      @configuration[:test_yaml].should == 'what what what'
+    context "when a environment specific yaml does not exist" do
+      before do
+        # TODO have need a way to have a more realistic multistage env going
+        @configuration.set(:stage, 'staging')
+        @configuration.find_and_execute_task("moonshine:configure_stage")
+      end
+
+      it "doesn't loads rails environment specific configuration" do
+        @configuration[:test_yaml].should == nil
+      end
     end
   end
 
