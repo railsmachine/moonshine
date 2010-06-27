@@ -136,8 +136,8 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
       it "downloads files from the server to the fake rails root" do
         @configuration.find_and_execute_task('shared_config:download')
 
-        @configuration.should have_got("/srv/app/shared/config/sample/foo").to("config/sample/foo")
-        @configuration.should have_got("/srv/app/shared/config/database.yml").to("config/database.yml")
+        @configuration.should have_gotten("/srv/app/shared/config/sample/foo").to("config/sample/foo")
+        @configuration.should have_gotten("/srv/app/shared/config/database.yml").to("config/database.yml")
       end
 
       it "symlinks files on the server" do

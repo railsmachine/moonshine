@@ -98,7 +98,7 @@ module Capistrano
 
       end
 
-      define :have_got do |path|
+      define :have_gotten do |path|
         match do |configuration|
 
           get = configuration.gets[path]
