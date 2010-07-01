@@ -1,8 +1,6 @@
-require 'fileutils'
 require 'rubygems'
+require 'isolate/scenarios/now'
 require 'spec/autorun'
-
-require 'ginger'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
