@@ -360,10 +360,10 @@ module Moonshine
             remove_ruby_from_apt
             run [
               'cd /tmp',
-              'sudo rm -rf ruby-enterprise-1.8.7-2010.01* || true',
-              'wget -q http://rubyforge.org/frs/download.php/68719/ruby-enterprise-1.8.7-2010.01.tar.gz',
-              'tar xzf ruby-enterprise-1.8.7-2010.01.tar.gz',
-              'sudo /tmp/ruby-enterprise-1.8.7-2010.01/installer --dont-install-useful-gems --no-dev-docs -a /usr'
+              'sudo rm -rf ruby-enterprise-1.8.7-2010.02* || true',
+              'wget -q http://rubyforge.org/frs/download.php/71096/ruby-enterprise-1.8.7-2010.02.tar.gz',
+              'tar xzf ruby-enterprise-1.8.7-2010.02.tar.gz',
+              'sudo /tmp/ruby-enterprise-1.8.7-2010.02/installer --dont-install-useful-gems --no-dev-docs -a /usr'
             ].join(' && ')
           end
 
