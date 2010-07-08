@@ -1,4 +1,5 @@
 require 'pathname'
+require 'fileutils'
 
 module Moonshine
   class CapistranoIntegration
