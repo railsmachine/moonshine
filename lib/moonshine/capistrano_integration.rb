@@ -351,6 +351,7 @@ module Moonshine
             run [
               'cd /tmp',
               'sudo rm -rf ruby-enterprise-1.8.6-20090610* || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
               'wget -q http://assets.railsmachine.com/other/ruby-enterprise-1.8.6-20090610.tar.gz',
               'tar xzf ruby-enterprise-1.8.6-20090610.tar.gz',
               'sudo /tmp/ruby-enterprise-1.8.6-20090610/installer --dont-install-useful-gems -a /usr'
@@ -362,6 +363,7 @@ module Moonshine
             run [
               'cd /tmp',
               'sudo rm -rf ruby-enterprise-1.8.7-2010.02* || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
               'wget -q http://rubyforge.org/frs/download.php/71096/ruby-enterprise-1.8.7-2010.02.tar.gz',
               'tar xzf ruby-enterprise-1.8.7-2010.02.tar.gz',
               'sudo /tmp/ruby-enterprise-1.8.7-2010.02/installer --dont-install-useful-gems --no-dev-docs -a /usr'
@@ -373,6 +375,7 @@ module Moonshine
             run [
               'cd /tmp',
               'sudo rm -rf ruby-1.8.7-p249* || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
               'wget -q ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p249.tar.bz2',
               'tar xjf ruby-1.8.7-p249.tar.bz2',
               'cd /tmp/ruby-1.8.7-p249',
