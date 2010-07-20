@@ -110,10 +110,12 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
 
   RewriteEngine On
 
@@ -260,10 +262,12 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
 
   RewriteEngine On
 
