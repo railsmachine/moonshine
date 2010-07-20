@@ -38,7 +38,9 @@ describe Moonshine::Manifest::Rails::Apache do
       :keep_alive_timeout => 30,
       :max_clients => 300,
       :server_limit => 32,
-      :timeout => 600
+      :timeout => 600,
+      :gzip => true,
+      :gzip_types => ['text/css', 'application/javascript']
     }
     @manifest.apache_server
 

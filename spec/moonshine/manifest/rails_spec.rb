@@ -217,6 +217,20 @@ describe Moonshine::Manifest::Rails do
         )
       end
 
+      it "supports configuring gzip" do
+        @manifest.passenger_configure_gem_path
+        @manifest.configure(:apache => {
+          :gzip => true,
+          :gzip_types => ['text/css', 'application/javascript']
+        })
+
+        @manifest.passenger_site
+
+        @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
+          /AddOutputFilterByType DEFLATE text\/css application\/javascript/
+        )
+      end
+
       it "supports configuring ssl" do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:ssl => {
