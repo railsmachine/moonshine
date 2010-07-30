@@ -24,7 +24,8 @@ module Moonshine::Manifest::Rails::Mysql
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
       :require => package('mysql-server'),
-      :notify => service('mysql')
+      :notify => service('mysql'),
+      :checksum => :md5
     file '/etc/logrotate.d/varlogmysql.conf', :ensure => :absent
   end
 
