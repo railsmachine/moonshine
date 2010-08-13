@@ -115,26 +115,33 @@ module Moonshine::Manifest::Rails::Rails
         :ensure => (configuration[:bundler][:version] || :latest),
         :provider => :gem,
         :before => exec("bundle install")
-
-      require 'bundler'
-      ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
-      Bundler.load
-      # FIXME this method doesn't take into account dependencies's dependencies
-      Bundler.runtime.dependencies_for(:default, rails_env.to_sym).each do |dependency|
-        system_dependencies = configuration[:apt_gems][dependency.name.to_sym] || []
-        system_dependencies.each do |system_dependency|
-          package system_dependency,
-            :ensure => :installed,
-            :before => exec('bundle install')
+      sandbox_environment do
+        require 'bundler'
+        ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
+        Bundler.load
+        # FIXME this method doesn't take into account dependencies's dependencies
+        Bundler.runtime.dependencies_for(:default, rails_env.to_sym).each do |dependency|
+          system_dependencies = configuration[:apt_gems][dependency.name.to_sym] || []
+          system_dependencies.each do |system_dependency|
+            package system_dependency,
+              :ensure => :installed,
+              :before => exec('bundle install')
+          end
         end
-      end
-     
+      end     
+      
+      # TODO investigate why this is necessary for bundle install to run sucessfully on each deploy
+      exec "remove_bundle_cache",
+        :command => "rm -rf /home/#{configuration[:user]}/.bundle/ruby/1.8/cache/",
+        :before => exec("bundle install")
+      
       exec 'bundle install',
         :command => "bundle install",
         :cwd => rails_root,
         :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
         :user => configuration[:user]
+
     else
       return unless configuration[:gems]
       configuration[:gems].each do |gem|
@@ -271,5 +278,13 @@ private
     }.merge(options)
   )
   end
-
+  
+  # Creates a sandbox environment so that ENV changes are reverted afterwards
+  OLDENV = {}
+  def sandbox_environment
+    OLDENV.replace(ENV)
+    ENV.replace({})
+    yield
+    ENV.replace(OLDENV)
+  end
 end
