@@ -119,8 +119,15 @@ module Moonshine::Manifest::Rails::Rails
         require 'bundler'
         ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
         Bundler.load
+
         # FIXME this method doesn't take into account dependencies's dependencies
-        Bundler.runtime.dependencies_for(:default, rails_env.to_sym).each do |dependency|
+        bundler = if Bundler::VERSION.to_f < 1.0
+                   Bundler.runtime
+                  else
+                   Bundler.load
+                  end
+        bundler_dependencies = bundler.dependencies_for(:default, rails_env.to_sym)
+        bundler_dependencies.each do |dependency|
           system_dependencies = configuration[:apt_gems][dependency.name.to_sym] || []
           system_dependencies.each do |system_dependency|
             package system_dependency,
