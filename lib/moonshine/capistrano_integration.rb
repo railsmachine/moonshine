@@ -408,7 +408,7 @@ module Moonshine
             sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install shadow_puppet --no-rdoc --no-ri'
             if rails_root.join('Gemfile').exist?
-              sudo 'gem install bundler --prerelease --no-rdoc --no-ri'
+              sudo 'gem install bundler --no-rdoc --no-ri'
             end
           end
         end
