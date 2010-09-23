@@ -111,10 +111,6 @@ module Moonshine::Manifest::Rails::Rails
       # Bundler is initially installed by deploy:setup in the ruby:install_moonshine_deps task
       configure(:bundler => {})
 
-      package 'bundler',
-        :ensure => (configuration[:bundler][:version] || :latest),
-        :provider => :gem,
-        :before => exec("bundle install")
       sandbox_environment do
         require 'bundler'
         ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
@@ -137,17 +133,14 @@ module Moonshine::Manifest::Rails::Rails
         end
       end     
       
-      # TODO investigate why this is necessary for bundle install to run sucessfully on each deploy
-      exec "remove_bundle_cache",
-        :command => "rm -rf /home/#{configuration[:user]}/.bundle/ruby/1.8/cache/",
-        :before => exec("bundle install")
-      
+      bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
       exec 'bundle install',
-        :command => "bundle install",
+        :command => "bundle install --deployment --without #{bundle_install_without_groups} >> #{configuration[:deploy_to]}/shared/log/bundler.log 2>&1",
         :cwd => rails_root,
         :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
-        :user => configuration[:user]
+        :user => configuration[:user],
+        :timeout => -1
 
     else
       return unless configuration[:gems]
