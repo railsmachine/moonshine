@@ -135,12 +135,13 @@ module Moonshine::Manifest::Rails::Rails
       
       bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
       exec 'bundle install',
-        :command => "bundle install --deployment --without #{bundle_install_without_groups} >> #{configuration[:deploy_to]}/shared/log/bundler.log 2>&1",
+        :command => "bundle install --deployment --path #{configuration[:deploy_to]}/shared/bundle --without #{bundle_install_without_groups}"
         :cwd => rails_root,
         :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
         :user => configuration[:user],
-        :timeout => -1
+        :timeout => -1,
+        :logoutput => true
 
     else
       return unless configuration[:gems]
