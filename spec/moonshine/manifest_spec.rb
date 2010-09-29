@@ -70,6 +70,14 @@ describe Moonshine::Manifest do
 
   describe '#on_stage' do
     before { @manifest = Moonshine::Manifest.new }
+    context 'on a class level' do
+      it 'should not error when we call on_stage' do
+        lambda {
+          Moonshine::Manifest.on_stage
+        }.should_not raise_error(NoMethodError)
+      end
+    end
+    
     context 'using a string' do
       it 'should run on_stage block when stage matches the given string' do
         @manifest.should_receive(:deploy_stage).and_return("my_stage")

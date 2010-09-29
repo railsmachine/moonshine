@@ -115,7 +115,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #  on_stage(:unless => [:my_stage, :my_other_stage]) do
   #    puts "I'm not on my stages"
   #  end
-  def on_stage(*args)
+  def self.on_stage(*args)
     options = args.extract_options!
     if_opt = options[:if]
     unless_opt = options[:unless]
