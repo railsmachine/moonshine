@@ -70,15 +70,23 @@ describe Moonshine::Manifest do
 
   describe '#on_stage' do
     before { @manifest = Moonshine::Manifest.new }
+    context 'on a class level' do
+      it 'should not error when we call on_stage' do
+        lambda {
+          Moonshine::Manifest.on_stage
+        }.should_not raise_error(NoMethodError)
+      end
+    end
+    
     context 'using a string' do
       it 'should run on_stage block when stage matches the given string' do
-        @manifest.should_receive(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.should_receive(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage("my_stage") { "on my_stage" }.should == 'on my_stage'
       end
 
       it "should not call block when it doesn't match" do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
 
         @manifest.on_stage("my_stage") { "on my_stage" }.should == nil
       end
@@ -86,13 +94,13 @@ describe Moonshine::Manifest do
 
     context 'using a symbol' do
       it 'should call block when it matches' do
-        @manifest.should_receive(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.should_receive(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:my_stage) { "on my_stage" }.should == 'on my_stage'
       end
 
       it "should not cal block when it doesn't match" do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
 
         @manifest.on_stage(:my_stage) { "on my_stage" }.should == nil
       end
@@ -100,15 +108,15 @@ describe Moonshine::Manifest do
 
     context 'using an array of strings' do
       it 'should call block when it matches ' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
         @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }.should == 'on one of my stages'
 
-        @manifest.should_receive(:deploy_stage).and_return("my_other_stage")
+        Moonshine::Manifest.should_receive(:deploy_stage).and_return("my_other_stage")
         @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }.should == 'on one of my stages'
       end
 
       it "should not call block when it doesn't match" do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
 
         @manifest.on_stage("my_stage", "my_other_stage") { "on one of my stages" }.should == nil
       end
@@ -116,16 +124,16 @@ describe Moonshine::Manifest do
 
     context 'using an array of symbols' do
       it 'should call the block it matches' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }.should == 'on one of my stages'
 
-        @manifest.should_receive(:deploy_stage).and_return("my_other_stage")
+        Moonshine::Manifest.should_receive(:deploy_stage).and_return("my_other_stage")
         @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }.should == 'on one of my stages'
       end
 
       it "should not the call block when it doesn't match" do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
 
         @manifest.on_stage(:my_stage, :my_other_stage) { "on one of my stages" }.should == nil
       end
@@ -133,13 +141,13 @@ describe Moonshine::Manifest do
 
     context 'using :unless with a string' do
       it 'should not call block when it matches' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:unless => "my_stage") { "not on one of my stages" }.should == nil
       end
 
       it 'should call block when it does not match' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:unless => "not_my_stage") { "not on one of my stages" }.should == 'not on one of my stages'
       end
@@ -147,13 +155,13 @@ describe Moonshine::Manifest do
 
     context 'using :unless with a symbol' do
       it 'should not call block when it matches' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:unless => :my_stage) { "not on one of my stages" }.should == nil
       end
 
       it 'should call block when it does not match' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
 
         @manifest.on_stage(:unless => :not_my_stage) { "not on one of my stages" }.should == 'not on one of my stages'
       end
@@ -162,24 +170,24 @@ describe Moonshine::Manifest do
 
     context 'using :unless with an array of strings' do
       it 'should not call block when it matches' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
         @manifest.on_stage(:unless => ["my_stage", "my_other_stage"]) { "not on one of my stages" }.should == nil
       end
 
       it 'should call block when it does not match' do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
         @manifest.on_stage(:unless => ["my_stage", "my_other_stage"]) { "not on one of my stages" }.should == 'not on one of my stages'
       end
     end
 
     context 'using :unless with an array of symbols' do
       it 'should not call block when it matches' do
-        @manifest.stub!(:deploy_stage).and_return("my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("my_stage")
         @manifest.on_stage(:unless => [:my_stage, :my_other_stage]) { "not on one of my stages" }.should == nil
       end
 
       it 'should call block when it does not match' do
-        @manifest.stub!(:deploy_stage).and_return("not_my_stage")
+        Moonshine::Manifest.stub!(:deploy_stage).and_return("not_my_stage")
         @manifest.on_stage(:unless => [:my_stage, :my_other_stage]) { "not on one of my stages" }.should == "not on one of my stages"
       end
     end
