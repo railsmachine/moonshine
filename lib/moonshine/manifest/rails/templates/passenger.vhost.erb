@@ -161,6 +161,9 @@
   <% else %>
   # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
+  <% if configuration[:ssl][:protocol] %>
+  SSLProtocol <%= configuration[:ssl][:protocol] %>
+  <% end %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
