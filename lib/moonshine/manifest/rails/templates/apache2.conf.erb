@@ -71,6 +71,12 @@ PidFile ${APACHE_PID_FILE}
 Timeout <%= configuration[:apache][:timeout] %>
 
 #
+# TraceEnable: Determines the behavior on TRACE requests [on|off|extended]
+#
+
+TraceEnable <%= configuration[:apache][:trace_enable] %>
+
+#
 # KeepAlive: Whether or not to allow persistent connections (more than
 # one request per connection). Set to "Off" to deactivate.
 #

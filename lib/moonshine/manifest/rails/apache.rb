@@ -7,6 +7,7 @@ module Moonshine::Manifest::Rails::Apache
       :max_clients => 150,
       :server_limit => 16,
       :timeout => 300,
+      :trace_enable => 'On',
       :gzip => false,
       :gzip_types => ['text/html', 'text/plain', 'text/xml', 'text/css', 'application/x-javascript', 'application/javascript']
     }

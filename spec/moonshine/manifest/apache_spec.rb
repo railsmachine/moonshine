@@ -29,6 +29,9 @@ describe Moonshine::Manifest::Rails::Apache do
 
     @manifest.configuration[:apache][:timeout].should == 300
     apache2_conf_content.should have_apache_directive('Timeout', 300)
+
+    @manifest.configuration[:apache][:trace_enable].should == 'On'
+    apache2_conf_content.should have_apache_directive('TraceEnable', 'On')
   end
 
   it "allows configuration to be overriden early" do
@@ -39,6 +42,7 @@ describe Moonshine::Manifest::Rails::Apache do
       :max_clients => 300,
       :server_limit => 32,
       :timeout => 600,
+      :trace_enable => 'Off',
       :gzip => true,
       :gzip_types => ['text/css', 'application/javascript']
     }
@@ -48,6 +52,9 @@ describe Moonshine::Manifest::Rails::Apache do
 
     @manifest.configuration[:apache][:timeout].should == 600
     apache2_conf_content.should have_apache_directive('Timeout', 600)
+
+    @manifest.configuration[:apache][:trace_enable].should == 'Off'
+    apache2_conf_content.should have_apache_directive('TraceEnable', 'Off')
 
     @manifest.configuration[:apache][:keep_alive].should == 'On'
     apache2_conf_content.should have_apache_directive('KeepAlive', 'On')
