@@ -1,5 +1,4 @@
 require 'rubygems'
-$LOAD_PATH.unshift '/Users/technicalpickles/code/active/isolate-scenarios/lib'
 require 'isolate/scenarios'
 require 'isolate/now'
 require 'spec/autorun'
