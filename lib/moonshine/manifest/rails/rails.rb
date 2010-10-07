@@ -185,7 +185,6 @@ module Moonshine::Manifest::Rails::Rails
     end
   end
 
-private
   # Creates package("#{name}") with <tt>:provider</tt> set to <tt>:gem</tt>.
   # The given <tt>options[:version]</tt> requirement is tweaked to ensure
   # gems aren't reinstalled on each run. <tt>options[:source]</tt> does what
@@ -241,6 +240,7 @@ private
     package(name, hash)
   end
 
+  private
   def append_system_dependecies(exact_dep, hash) #:nodoc:
     #fixup the requires key to be an array
     if hash[:require] && !hash[:require].is_a?(Array)

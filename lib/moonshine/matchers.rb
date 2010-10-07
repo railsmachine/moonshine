@@ -48,7 +48,13 @@ module Moonshine
           result &&= package.ensure == @version
           end
         if @provider
-          result &&= package.provider == @provider.to_sym
+          @actual_provider = package.provider
+          result &&= @actual_provider == @provider.to_sym
+        end
+
+        if @before
+          @before.each do |type, names|
+          end
         end
         result
       end
@@ -64,7 +70,11 @@ module Moonshine
       end
 
       failure_message_for_should do |actual|
-        "expected manifest to have package #{expected}, but did not"
+        if @provider
+          "expected manifest to have package #{expected} using #{@provider}, was using #{@actual_provider}"
+        else
+          "expected manifest to have package #{expected}, but did not"
+        end
       end
 
       failure_message_for_should_not do |actual|
@@ -137,6 +147,7 @@ module Moonshine
         end
       end
     end
+
 
     def in_apache_if_module(contents, some_module)
       contents.should =~ /<IfModule #{some_module}>(.*)<\/IfModule>/m

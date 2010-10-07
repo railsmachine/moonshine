@@ -439,4 +439,48 @@ describe Moonshine::Manifest::Rails do
     @manifest.should exec_command('/usr/bin/createdb -O pg_username pg_database')
   end
 
+  describe "#gem" do
+    before do
+      @manifest.gem 'rmagick'
+    end
+    it "uses gem provider for package" do
+      @manifest.should have_package('rmagick').from_provider('gem')
+    end
+
+    it "runs before rails_gem" do
+      package = @manifest.packages['rmagick']
+      package.before.type.should == 'Exec'
+      package.before.title.should == 'rails_gems'
+    end
+
+    it "requires /etc/gemrc" do
+      package = @manifest.packages['rmagick']
+
+      gemrc = package.require.detect do |require|
+        require.title == '/etc/gemrc'
+      end
+
+      gemrc.should_not == nil
+      gemrc.type.should == 'File'
+    end
+
+    it "requires native packages" do
+      package = @manifest.packages['rmagick']
+
+      imagemagick = package.require.detect do |require|
+        require.title == 'imagemagick'
+      end
+
+      imagemagick.should_not == nil
+      imagemagick.type.should == 'Package'
+
+      libmagick9_dev = package.require.detect do |require|
+        require.title == 'libmagick9-dev'
+      end
+
+      libmagick9_dev.should_not == nil
+      libmagick9_dev.type.should == 'Package'
+    end
+  end
+
 end
