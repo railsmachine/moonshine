@@ -17,4 +17,5 @@ if Rails::VERSION::MAJOR == 2
   require 'rails_generator/scripts/generate'
   Rails::Generator::Base.sources << Rails::Generator::PathSource.new(:moonshine, $here.join('..', 'generators'))
   Rails::Generator::Base.logger = Rails::Generator::SimpleLogger.new(File.new($here.join('generator.log').to_s, 'w'))
+
 end

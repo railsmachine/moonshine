@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MoonshinePluginGenerator do
+describe "MoonshinePluginGenerator" do
 
   before do
     FileUtils.mkdir_p(generator_rails_root)

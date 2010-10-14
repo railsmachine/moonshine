@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'yaml'
 
-describe MoonshineGenerator do
+describe "MoonshineGenerator" do
   if Rails::VERSION::MAJOR < 3
 
     def run(*args)
