@@ -5,7 +5,7 @@ namespace :moonshine do
     
     if File.exist?("#{RAILS_ROOT}/.svn")
       puts "Updating Moonshine plugin"
-      if `cd #{RAILS_ROOT} && svn st`.empty?
+      if `cd #{RAILS_ROOT} && svn stat -q --ignore-externals`.empty?
         command = ["svn up",
                    "cd #{RAILS_ROOT}",
                    "svn rm vendor/plugins/moonshine",
