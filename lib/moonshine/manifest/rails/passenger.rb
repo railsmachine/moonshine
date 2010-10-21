@@ -29,7 +29,10 @@ module Moonshine::Manifest::Rails::Passenger
     exec "build_passenger",
       :cwd => configuration[:passenger][:path],
       :command => 'sudo /usr/bin/ruby -S rake clean apache2',
-      :unless => "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
+      :unless => [
+        "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
+        "ls `passenger-config --root`/ext/ruby/ruby-*/passenger_native_support.so"
+        ].join(" && "),
       :require => [
         package("passenger"),
         package("apache2-mpm-worker"),
