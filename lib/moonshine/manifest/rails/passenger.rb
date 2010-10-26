@@ -31,7 +31,8 @@ module Moonshine::Manifest::Rails::Passenger
       :command => 'sudo /usr/bin/ruby -S rake clean apache2',
       :unless => [
         "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
-        "ls `passenger-config --root`/ext/ruby/ruby-*/passenger_native_support.so"
+        "ls `passenger-config --root`/ext/ruby/ruby-*/passenger_native_support.so",
+        "ls `passenger-config --root`/agents/PassengerLoggingAgent"
         ].join(" && "),
       :require => [
         package("passenger"),
