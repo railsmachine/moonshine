@@ -167,7 +167,7 @@ describe Moonshine::Manifest::Rails do
         /PassengerUseGlobalQueue On/
       )
       @manifest.should exec_command('/usr/sbin/a2enmod passenger')
-      @manifest.should exec_command('/usr/bin/ruby -S rake clean apache2')
+      @manifest.should exec_command('sudo /usr/bin/ruby -S rake clean apache2')
     end
 
     it "allows setting booleans configurations to false" do
