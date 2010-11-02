@@ -434,7 +434,7 @@ module Moonshine
 
         namespace :aptget do
           task :update do
-            sudo 'source /etc/lsb-release; if test "${DISTRIB_RELEASE}" != 8.10; then apt-get update; fi'
+            run 'if test `lsb_release -rs` != 8.10; then sudo apt-get update; fi'
           end
         end
       end
