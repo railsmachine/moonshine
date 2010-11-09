@@ -2,11 +2,17 @@ module Moonshine::Manifest::Rails::Passenger
   # Install the passenger gem
   def passenger_gem
     configure(:passenger => {})
-    package "passenger",
-      :ensure => (configuration[:passenger][:version] || :latest),
-      :provider => :gem,
-      :require => [ package('libcurl4-gnutls-dev') ]
-    package 'libcurl4-gnutls-dev', :ensure => :installed
+    if configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
+      package "passenger",
+        :ensure => configuration[:passenger][:version],
+        :provider => :gem
+    else
+      package "passenger",
+        :ensure => (configuration[:passenger][:version] || :latest),
+        :provider => :gem,
+        :require => [ package('libcurl4-gnutls-dev') ]
+      package 'libcurl4-gnutls-dev', :ensure => :installed
+    end
   end
 
   # Build, install, and enable the passenger apache module. Please see the
