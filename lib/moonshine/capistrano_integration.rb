@@ -117,7 +117,6 @@ module Moonshine
 
           desc 'Apply the Moonshine manifest for this application'
           task :apply, :except => { :no_release => true } do
-            aptget.update
             sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
@@ -435,7 +434,7 @@ module Moonshine
 
         namespace :aptget do
           task :update do
-            run 'if test `lsb_release -rs` != 8.10; then sudo apt-get update; fi'
+            sudo 'apt-get update'
           end
         end
       end

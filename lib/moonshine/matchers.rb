@@ -40,22 +40,52 @@ module Moonshine
       end
     end
 
+    define :require_resource do |expected|
+      expected = Array(expected)
+      resource_string = expected.map { |r| "#{r.type.downcase}('#{r.title}')"}.join(',')
+      actual_string = ''
+
+      match do |resource|
+        resources = Array(resource.require)
+        actual_string = resources.flatten.map { |r| "#{r.type.downcase}('#{r.title}')"}.join(',')
+
+        if expected.length > resources.length
+          false
+        else
+          expected.each do |expected_resource|
+            result &&= resources.flatten.detect do |actual_resource|
+              actual_resource.type == expected_resource.type &&
+              actual_resource.title == expected_resource.title
+            end
+          end
+        end
+      end
+
+      description do
+        "should require all of #{resource_string}"
+      end
+
+      failure_message_for_should do |actual|
+        "expected resource to require all of #{resource_string}, but required #{actual_string}"
+      end
+
+      failure_message_for_should_not do |actual|
+        "expected resource not to require #{resource_string}, but required #{actual_string}"
+      end
+    end
+
     define :have_package do |expected|
       match do |manifest|
         package = manifest.packages[expected]
         result = !package.nil?
         if @version
           result &&= package.ensure == @version
-          end
+        end
         if @provider
           @actual_provider = package.provider
           result &&= @actual_provider == @provider.to_sym
         end
 
-        if @before
-          @before.each do |type, names|
-          end
-        end
         result
       end
 

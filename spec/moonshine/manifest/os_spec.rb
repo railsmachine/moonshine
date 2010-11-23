@@ -19,6 +19,21 @@ describe Moonshine::Manifest::Rails::Os do
       )
 
     end
+
+    specify "#apt_sources injects a dependency on apt-get update" do
+      @manifest.apt_sources
+
+      @manifest.should exec_command('apt-get update')
+
+      @manifest.should_not have_file("/etc/apt/sources.list")
+
+      @manifest.package('foo', :ensure => :installed)
+
+      @manifest.packages['foo'].should require_resource(@manifest.exec('apt-get update'))
+
+      @manifest.execs['apt-get update'].should_not require_resource(@manifest.file('/etc/apt/sources.list'))
+
+    end
   end
 
   context "Ubuntu Intrepid (8.10)" do
@@ -33,6 +48,36 @@ describe Moonshine::Manifest::Rails::Os do
       @manifest.should have_file("/etc/apt/apt.conf.d/50unattended-upgrades").with_content(
         /Ubuntu intrepid-security/
       )
+    end
+
+    specify "#apt_sources installs customized sources.lst and injects a dependency on it" do
+      @manifest.apt_sources
+
+      @manifest.should exec_command('apt-get update')
+
+      @manifest.execs['apt-get update'].should require_resource([
+        @manifest.file('/etc/apt/sources.list')
+      ])
+
+      @manifest.should have_file("/etc/apt/sources.list").with_content(
+        /deb http:\/\/old-releases.ubuntu.com\/ubuntu intrepid main restricted universe multiverse/
+      )
+
+      @manifest.package('foo', :ensure => :installed)
+      @manifest.package('too', :ensure => :installed)
+      @manifest.package('bar', :ensure => :installed, :require => @manifest.package('foo'))
+      @manifest.package('baz', :ensure => :installed, :require => [@manifest.package('foo'), @manifest.package('too')])
+
+      @manifest.packages['foo'].should require_resource(@manifest.exec('apt-get update'))
+      @manifest.packages['bar'].should require_resource([
+        @manifest.package('foo'),
+        @manifest.exec('apt-get update')
+      ])
+      @manifest.packages['baz'].should require_resource([
+        @manifest.package('foo'),
+        @manifest.package('too'),
+        @manifest.exec('apt-get update')
+      ])
     end
 
   end
