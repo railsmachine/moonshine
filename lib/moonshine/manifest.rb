@@ -164,7 +164,11 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     self.class.template(pathname, b)
   end
 
-  # config/moonshine.yml
+  # autoload plugins
+  Dir.glob(rails_root + 'vendor/plugins/*/moonshine/init.rb').each do |path|
+    Kernel.eval(File.read(path), binding, path)
+  end  # config/moonshine.yml
+
   if moonshine_yml.exist?
     configure(YAML::load(ERB.new(moonshine_yml.read).result))
   end
@@ -185,10 +189,6 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   if gems_yml.exist?
     configure(:gems => (YAML.load_file(gems_yml) rescue nil))
   end
-  
-  # autoload plugins
-  Dir.glob(rails_root + 'vendor/plugins/*/moonshine/init.rb').each do |path|
-    Kernel.eval(File.read(path), binding, path)
-  end
+
 
 end
