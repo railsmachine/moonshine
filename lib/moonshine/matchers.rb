@@ -8,7 +8,7 @@ module Moonshine
           actual = actual.content
         end
 
-        if actual =~ /^\s*#{directive}\s+(\w+)[^#\n]*/
+        if actual =~ /^\s*#{directive}\s+(.+)[^#\n]*/
           @found_value = $1
           value.to_s == @found_value
         else
