@@ -92,8 +92,8 @@ module Moonshine
           end
 
           desc <<-DESC
-  Bootstrap a barebones Ubuntu system with Git/Subversion, Ruby, RubyGems, and Moonshine
-  dependencies. Called by deploy:setup.
+  Bootstrap a barebones Ubuntu system with Git/Subversion, Ruby, RubyGems, and
+  Moonshine dependencies. Called by deploy:setup.
           DESC
           task :bootstrap do
             ruby.install
