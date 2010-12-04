@@ -50,7 +50,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
     when 'postgresql'
       recipe :postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database
     when 'sqlite' || 'sqlite3'
-      self.class.recipe :sqlite3
+      recipe :sqlite3
     end
     recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
     recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates, :apt_sources
