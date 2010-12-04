@@ -19,7 +19,7 @@ module Moonshine
         default_run_options[:pty] = true
 
         # fix common svn error
-        set :scm, :svn if !! repository =~ /^svn/
+        set :scm, :subversion if !! repository =~ /^svn/
 
         # set some default values, so we don't have to fetch(:var, :some_default) in multiple places
         set :local_config, []

@@ -121,9 +121,11 @@
 
   <%= configuration[:passenger][:vhost_extra] %>
 
-  # Prevent access to .git directories
-  RewriteRule ^(.*/)?\.git/ - [F,L]
+<% if configuration[:scm].to_s == 'subversion' %>
+  # Prevent access to svn metadata
+  RewriteRule ^(.*/)?\.svn/ - [F,L]
   ErrorDocument 403 "Access Forbidden"
+<% end %>
 
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
@@ -284,9 +286,11 @@
   <%= configuration[:passenger][:vhost_extra] %>
 <% end %>
 
-  # Prevent access to .git directories
-  RewriteRule ^(.*/)?\.git/ - [F,L]
+<% if configuration[:scm].to_s == 'subversion' %>
+  # Prevent access to svn metadata
+  RewriteRule ^(.*/)?\.svn/ - [F,L]
   ErrorDocument 403 "Access Forbidden"
+<% end %>
 
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
