@@ -92,7 +92,7 @@ module Moonshine
           end
 
           desc <<-DESC
-  Bootstrap a barebones Ubuntu system with Git/Subversion, Ruby, RubyGems, and
+  Bootstrap a barebones Ubuntu system with Git/Subversion, Ruby, RubyGems, and \
   Moonshine dependencies. Called by deploy:setup.
           DESC
           task :bootstrap do
@@ -103,7 +103,7 @@ module Moonshine
           end
 
           desc <<-DESC
-  Applies the lib/moonshine_setup_manifest.rb manifest, which replicates the old
+  Applies the lib/moonshine_setup_manifest.rb manifest, which replicates the old \
   capistrano deploy:setup behavior.
           DESC
           task :setup_directories do
@@ -208,7 +208,7 @@ module Moonshine
         namespace :local_config do
 
           desc <<-DESC
-  Uploads local configuration files to the application's shared directory for
+  Uploads local configuration files to the application's shared directory for \
   later symlinking (if necessary). Called if local_config is set.
           DESC
           task :upload do
@@ -239,7 +239,7 @@ module Moonshine
         namespace :shared_config do
 
           desc <<-DESC
-  Uploads local configuration files to the application's shared directory for
+  Uploads local configuration files to the application's shared directory for \
   later symlinking (if necessary). Called if shared_config is set.
           DESC
           task :upload do
@@ -255,7 +255,7 @@ module Moonshine
           end
 
           desc <<-DESC
-  Downloads remote configuration from the application's shared directory for
+  Downloads remote configuration from the application's shared directory for \
   local use.
           DESC
           task :download do
