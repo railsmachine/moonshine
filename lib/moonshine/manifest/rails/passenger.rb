@@ -45,7 +45,8 @@ module Moonshine::Manifest::Rails::Passenger
         package("apache2-mpm-worker"),
         package("apache2-threaded-dev"),
         exec('symlink_passenger')
-      ]
+      ],
+      :timeout => -1
 
     load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so"
 
