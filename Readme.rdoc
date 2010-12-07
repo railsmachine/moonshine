@@ -4,14 +4,9 @@ Moonshine is Rails deployment and configuration management done right.
 
 By leveraging capistrano and puppet, moonshine allows you have a working application server in 15 minutes, and be able to sanely manage it's configuration from the comfort of your version control of choice.
 
-* Step-by-step instructions for getting started: http://wiki.github.com/railsmachine/moonshine/step-by-step-instructions
-* Managing server configuration with ShadowPuppet: http://wiki.github.com/railsmachine/moonshine/shadow-puppet-overview-and-examples
-* Managing gems: http://wiki.github.com/railsmachine/moonshine/add-a-gem
-* Managing moonshine.yml: http://wiki.github.com/railsmachine/moonshine/configuring-moonshineyml
-* Managing additional Apache vhosts: http://wiki.github.com/railsmachine/moonshine/managing-additional-apache-vhosts
-* Moonshine plugins: http://wiki.github.com/railsmachine/moonshine/moonshine-plugins
-* Details about capistrano-integration: http://wiki.github.com/railsmachine/moonshine/capistrano
-* Rails 3 notes: http://wiki.github.com/railsmachine/moonshine/rails-3
+To get started, check out our {tutorial}[https://github.com/railsmachine/moonshine/wiki/Tutorial]. It covers configuring and deploying your application for the first time with Moonshine.
+
+Once you're a bit more comfortable with Moonshine, you'll find our documentation on {the wiki}[https://github.com/railsmachine/moonshine/wiki] to be helpful!
 
 == Requirements
 
@@ -34,6 +29,6 @@ It's easy enough:
 
 == Getting Help
 
-You can find more examples in the documentation[http://railsmachine.github.com/moonshine] and on the Wiki[http://wiki.github.com/railsmachine/moonshine].
+You can find more examples in the documentation[http://railsmachine.github.com/moonshine] and on the Wiki[https://github.com/railsmachine/moonshine/wiki].
 
 For help or general discussion, visit the Moonshine newsgroup[http://groups.google.com/group/railsmachine-moonshine].
