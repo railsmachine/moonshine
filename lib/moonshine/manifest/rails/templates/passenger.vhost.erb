@@ -132,10 +132,14 @@
   ErrorDocument 403 "Access Forbidden"
 <% end %>
 
+<% if configuration[:passenger][:maintenance_rewrite] %>
+	<%= configuration[:passenger][:maintenance_rewrite] %>
+<% else %>
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteRule ^.*$ /system/maintenance.html [L]
+<% end %>
 
   # Rewrite index to check for static
   RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
@@ -297,10 +301,14 @@
   ErrorDocument 403 "Access Forbidden"
 <% end %>
 
+<% if configuration[:passenger][:maintenance_rewrite] %>
+	<%= configuration[:passenger][:maintenance_rewrite] %>
+<% else %>
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteRule ^.*$ /system/maintenance.html [L]
+<% end %>
 
   # Rewrite index to check for static
   RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
