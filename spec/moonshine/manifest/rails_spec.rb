@@ -93,6 +93,14 @@ describe Moonshine::Manifest::Rails do
         /rubygems.org/
       )
     end
+    
+    it "should be valid gemrc syntax (i.e. no leading symbols)" do
+      @manifest.rails_gems
+
+      @manifest.should have_file('/etc/gemrc').with_content(
+        /^gem:/
+      )
+    end
 
     it "loads gems from config" do
       @manifest.configure(:gems => [ { :name => 'jnewland-pulse', :source => 'http://rubygems.org' } ])
