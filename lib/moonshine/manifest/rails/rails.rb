@@ -86,7 +86,7 @@ module Moonshine::Manifest::Rails::Rails
   # <tt>config/gems.yml</tt>, which can be generated from by running
   # <tt>rake moonshine:gems</tt> locally.
   def rails_gems
-    gemrc = {
+    gemrc = HashWithIndifferentAccess.new({
       :verbose => true,
       :gem => '--no-ri --no-rdoc',
       :update_sources => true,
@@ -94,14 +94,14 @@ module Moonshine::Manifest::Rails::Rails
         'http://rubygems.org',
         'http://gems.github.com'
       ]
-     }
+     })
      gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
      file '/etc/gemrc',
       :ensure   => :present,
       :mode     => '744',
       :owner    => 'root',
       :group    => 'root',
-      :content  => gemrc.to_yaml
+      :content  => gemrc.to_hash.to_yaml
 
     # stub for puppet dependencies
     exec 'rails_gems', :command => 'true'
