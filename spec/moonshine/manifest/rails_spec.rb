@@ -196,7 +196,7 @@ describe Moonshine::Manifest::Rails do
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
         @manifest.should have_file(vhost_conf_path).with_content(
-          /RailsAllowModRewrite On/
+          /RailsAllowModRewrite is deprecated/
         )
 
         @manifest.should exec_command('/usr/sbin/a2dissite 000-default')
