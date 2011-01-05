@@ -33,4 +33,19 @@ describe Moonshine::Manifest::Rails::Mysql do
     end
 
   end
+
+  context "MySQL adapter" do
+    specify "Gem mysql should be installed" do
+      @manifest.should_receive(:database_environment).at_least(:once).and_return({:adapter => 'mysql' })
+      @manifest.mysql_gem
+      @manifest.should have_package('mysql').from_provider(:gem)
+    end
+
+    specify "Gem mysql2 should be installed" do
+      @manifest.should_receive(:database_environment).at_least(:once).and_return({:adapter => 'mysql2' })
+      @manifest.mysql_gem
+      @manifest.should have_package('mysql2').from_provider(:gem)
+      @manifest.packages['mysql2'].alias.should == 'mysql'
+    end
+  end
 end

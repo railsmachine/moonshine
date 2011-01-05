@@ -219,6 +219,7 @@ module Moonshine::Manifest::Rails::Rails
       :require  => file('/etc/gemrc')
     }
     hash.merge!(:source => options[:source]) if options[:source]
+    hash.merge!(:alias => options[:alias]) if options[:alias]
     #fixup the version required
     exact_dep = Gem::Dependency.new(name, options[:version] || '>0')
     matches = Gem.source_index.search(exact_dep)
