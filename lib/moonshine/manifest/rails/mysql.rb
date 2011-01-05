@@ -7,9 +7,7 @@ module Moonshine::Manifest::Rails::Mysql
   def mysql_server
     package 'mysql-server', :ensure => :installed
     service 'mysql', :ensure => :running, :require => [
-      package('mysql-server'),
-      # TODO remove since it refers to the gem 'mysql'
-      package('mysql')
+      package('mysql-server')
     ]
 
     # ensure the mysql key is present on the configuration hash
