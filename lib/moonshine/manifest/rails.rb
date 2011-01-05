@@ -45,11 +45,11 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
     recipe :apache_server
     recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
     case database_environment[:adapter]
-    when 'mysql'
+    when 'mysql', 'mysql2'
       recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
     when 'postgresql'
       recipe :postgresql_server, :postgresql_gem, :postgresql_user, :postgresql_database
-    when 'sqlite' || 'sqlite3'
+    when 'sqlite', 'sqlite3'
       recipe :sqlite3
     end
     recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
