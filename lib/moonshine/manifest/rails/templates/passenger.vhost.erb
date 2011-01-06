@@ -16,6 +16,7 @@
     AllowOverride <%= if configuration[:apache]; configuration[:apache][:allow_override] || 'None'; else 'None'; end %>
     Order allow,deny
     Allow from all
+    <%= "FileETag #{configuration[:apache][:file_etag]}" if configuration[:apache][:file_etag] %>
   </Directory>
 
   <% if configuration[:apache ] && (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>

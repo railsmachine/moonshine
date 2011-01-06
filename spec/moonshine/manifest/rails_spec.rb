@@ -229,6 +229,18 @@ describe Moonshine::Manifest::Rails do
         )
       end
 
+      it "supports configuring FileETag" do
+        @manifest.passenger_configure_gem_path
+        @manifest.configure(:apache => { :file_etag => "MTime Size" })
+        
+        @manifest.passenger_site
+
+        vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /FileETag MTime Size/
+        )
+      end
+
       it "supports configuring ssl" do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:ssl => {
