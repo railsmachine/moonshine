@@ -190,6 +190,7 @@
     AllowOverride None
     Order allow,deny
     Allow from all
+    <%= "FileETag #{configuration[:apache][:file_etag]}" if configuration[:apache][:file_etag] %>
   </Directory>
 
   <% if configuration[:apache ] and (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>
