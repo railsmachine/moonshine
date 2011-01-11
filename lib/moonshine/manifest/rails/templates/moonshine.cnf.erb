@@ -58,7 +58,14 @@ thread_stack          = <%= configuration[:mysql][:thread_stack] || '192K' %>
 transaction_isolation = <%= configuration[:mysql][:transaction_isolation] || 'READ-COMMITTED' %>
 tmp_table_size        = <%= configuration[:mysql][:tmp_table_size] || '128M' %>
 tmpdir                = <%= configuration[:mysql][:tmpdir] || '/tmp' %>
-<%= configuration[:mysql][:version] > 5 ? 'slow_query_log' : 'log_slow_queries' %>      = <%= configuration[:mysql][:log_slow_queries] || '/var/log/mysql/slow_queries.log' %>
+<% if configuration[:mysql][:version] > 5 %>
+slow_query_log        = <%= configuration[:mysql][:disable_slow_query_log] ? 0 : 1 %>
+slow_query_log_file   = <%= configuration[:mysql][:log_slow_queries] || '/var/log/mysql/slow_queries.log' %>
+<% else %>
+<% unless configuration[:mysql][:disable_slow_query_log] %>
+log_slow_queries      = <%= configuration[:mysql][:log_slow_queries] || '/var/log/mysql/slow_queries.log' %>
+<% end %>
+<% end %>
 long_query_time       = <%= configuration[:mysql][:long_query_time] || '5' %>
 
 <%= configuration[:mysql][:extra] %>
