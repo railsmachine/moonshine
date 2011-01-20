@@ -270,7 +270,7 @@ module Moonshine::Manifest::Rails::Rails
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {
-      :command => "rake #{name} 2>&1 | tee -a /var/log/moonshine_rake.log",
+      :command => "rake #{name} 2>&1 | tee -a /var/log/moonshine_rake.log; test ${PIPESTATUS: -1} = 0",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
