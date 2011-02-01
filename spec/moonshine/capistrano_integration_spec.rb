@@ -53,6 +53,54 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
     callback.call
   end
 
+  it "performs moonshine:noop_apply before deploy:symlink" do
+    @configuration.set :noop, true
+    @configuration.set :shared_path, '/srv/app/shared'
+    @configuration.set :latest_release, '/srv/app/releases/20100601'
+    callbacks = find_callback(@configuration, :before, 'deploy:symlink')
+    callbacks.should_not be_nil
+
+    callback = callbacks.first
+    callback.should_not be_nil
+    
+    @configuration.namespace :moonshine do
+      should_receive(:noop_apply)
+    end
+
+    callback.call
+  end
+
+  context "noop deploy" do
+    before do
+      @configuration.set :noop, true
+      @configuration.set :shared_path, '/srv/app/shared'
+      @configuration.set :latest_release, '/srv/app/releases/20100601'
+      @configuration.set :rails_env, :staging
+      @configuration.set :stage, :staging
+      @configuration.set :moonshine_manifest, 'application_manifest'
+    end
+
+    it "should execute noop_apply" do
+      pending "Needs some tweaks to cap integration handling"
+      apply_cmd = "sudo sh -c 'RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{'--noop' if noop} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb'"
+      # should run noop
+      noop = true
+      @configuration.should have_run(apply_cmd)
+      # should not run go-op
+      noop = false
+      @configuration.should_not have_run(apply_cmd)
+    end
+
+    it "should rollback the release" do
+      pending "Needs some tweaks to cap integration handling"
+    end
+
+    it "rolling back the noop release should not restart passenger" do
+      pending "Needs some tweaks to cap integration handling"
+      @configuration.should_not have_run("touch tmp/restart.txt")
+    end
+  end
+
   context "on default stage" do
     it "sets rails_env to production" do
       @configuration.rails_env.should == 'production'

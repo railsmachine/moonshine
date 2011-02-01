@@ -17,6 +17,7 @@ module Moonshine
         ssh_options[:paranoid] = false
         ssh_options[:forward_agent] = true
         default_run_options[:pty] = true
+        set :noop, false
 
         # fix common svn error
         set :scm, :subversion if !! repository =~ /^svn/
@@ -56,7 +57,9 @@ module Moonshine
     def self.load_callbacks_into(capistrano_config)
       capistrano_config.load do
         on :start, 'moonshine:configure'
-        after 'deploy:restart', 'deploy:cleanup'
+        unless fetch(:noop)
+          after 'deploy:restart', 'deploy:cleanup'
+        end
         after 'multistage:ensure', 'moonshine:configure_stage'
       end
     end
@@ -120,6 +123,11 @@ module Moonshine
             sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
+          desc 'No-op apply the Moonshine manifest for this application'
+          task :noop_apply, :except => { :no_release => true } do
+            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet --noop #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
+          end
+
           desc 'Update code and then run a console. Useful for debugging deployment.'
           task :update_and_console do
             set :moonshine_apply, false
@@ -142,7 +150,15 @@ module Moonshine
           end
 
           before 'deploy:symlink' do
-            apply if fetch(:moonshine_apply, true) == true
+            if fetch(:noop)
+              noop_apply
+            else
+              apply if fetch(:moonshine_apply, true) == true
+            end
+          end
+
+          after 'deploy' do
+            deploy.rollback.default if fetch(:noop)
           end
 
         end
@@ -290,7 +306,9 @@ module Moonshine
         namespace :deploy do
           desc 'Restart the Passenger processes on the app server by touching tmp/restart.txt.'
           task :restart, :roles => :app, :except => { :no_release => true } do
-            run "touch #{current_path}/tmp/restart.txt"
+            unless fetch(:noop)
+              run "touch #{current_path}/tmp/restart.txt"
+            end
           end
 
           [:start, :stop].each do |t|
@@ -313,6 +331,11 @@ module Moonshine
           task :setup, :except => { :no_release => true } do
             moonshine.bootstrap
           end
+        end
+
+        desc "does a no-op deploy. great for testing a potential deploy before running it!"
+        task :noop do
+          set :noop, true
         end
 
         namespace :ruby do
