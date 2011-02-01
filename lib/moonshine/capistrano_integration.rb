@@ -408,7 +408,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            version = fetch(:rubygems_version, '1.3.7')
+            version = fetch(:rubygems_version, '1.4.2')
             run [
               'cd /tmp',
               "sudo rm -rf rubygems-#{version}* || true",
@@ -416,8 +416,7 @@ module Moonshine
               "tar xfz rubygems-#{version}.tgz",
               "cd /tmp/rubygems-#{version}",
               'sudo ruby setup.rb',
-                'sudo ln -s /usr/bin/gem1.8 /usr/bin/gem || true',
-                'sudo gem update --system'
+              'sudo ln -s /usr/bin/gem1.8 /usr/bin/gem || true',
             ].join(' && ')
           end
 
