@@ -3,6 +3,12 @@ namespace :moonshine do
   desc "Update Moonshine"
   task :update do
     
+    plugin_cmd = if File.exist?('script/plugin')
+                   "ruby script/plugin"
+                 else
+                   "ruby script/rails plugin"
+                 end
+
     if File.exist?("#{RAILS_ROOT}/.svn")
       puts "Updating Moonshine plugin"
       if `cd #{RAILS_ROOT} && svn stat -q --ignore-externals`.empty?
@@ -10,7 +16,7 @@ namespace :moonshine do
                    "cd #{RAILS_ROOT}",
                    "svn rm vendor/plugins/moonshine",
                    "svn commit -m 'cleaning moonshine before update'",
-                   "ruby script/plugin install git://github.com/railsmachine/moonshine.git",
+                   "#{plugin_cmd} install git://github.com/railsmachine/moonshine.git",
                    "svn add vendor/plugins/moonshine",
                    "svn commit -m 'updated moonshine'"]
       else
@@ -29,7 +35,7 @@ namespace :moonshine do
       
       puts "Updating Moonshine plugin"
       command = ["cd #{RAILS_ROOT}",
-                 "ruby script/plugin install --force git://github.com/railsmachine/moonshine.git"]
+                 "#{plugin_cmd} install --force git://github.com/railsmachine/moonshine.git"]
     
     end
     
