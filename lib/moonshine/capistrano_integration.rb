@@ -32,6 +32,7 @@ module Moonshine
         set :moonshine_manifest, 'application_manifest'
         set :app_symlinks, []
         set :ruby, :ree
+        set :rails_version, 2
 
         # know the path to rails logs
         set :rails_log do
@@ -180,15 +181,17 @@ module Moonshine
           desc 'Run script/console on the first application server'
           task :console, :roles => :app, :except => {:no_symlink => true} do
             input = ''
-            if Rails::VERSION::MAJOR >= 3
+            if fetch(:rails_version) >= 3
               command = "cd #{current_path} && rails console #{fetch(:rails_env)}"
+              prompt = /:\d{3}:\d+(\*|>)/
             else
               command = "cd #{current_path} && ./script/console #{fetch(:rails_env)}"
+              prompt = /^(>|\?)>/
             end
             run command do |channel, stream, data|
               next if data.chomp == input.chomp || data.chomp == ''
               print data
-              channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
+              channel.send_data(input = $stdin.gets) if data =~ prompt
             end
           end
 

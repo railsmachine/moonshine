@@ -7,6 +7,7 @@ class MoonshineGenerator < Rails::Generators::Base
   class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
   class_option :repository, :default => 'git@github.com:username/your_app_name.git', :desc => 'git or subversion repository to deploy from', :type => :string
   class_option :ruby, :default => 'ree187', :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187', :type => :string
+  class_option :rails_version, :default => 2, :desc => 'Rails major version. Set to either 2 or 3.', :type => :integer
   class_option :multistage, :default => false, :desc => 'setup multistage deployment environment', :type => :boolean
 
   def self.source_root
