@@ -72,6 +72,10 @@ describe "MoonshineGenerator" do
         configuration[:ruby].should == 'ree187'
       end
 
+      it "sets the rails_version to 2" do
+        configuration[:rails_version].should == 2
+      end
+
       it "configures a default value for domain" do
         configuration[:domain].should == 'yourapp.com'
       end
