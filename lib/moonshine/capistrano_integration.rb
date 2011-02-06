@@ -180,7 +180,12 @@ module Moonshine
           desc 'Run script/console on the first application server'
           task :console, :roles => :app, :except => {:no_symlink => true} do
             input = ''
-            run "cd #{current_path} && ./script/console #{fetch(:rails_env)}" do |channel, stream, data|
+            if Rails::VERSION::MAJOR >= 3
+              command = "cd #{current_path} && rails console #{fetch(:rails_env)}"
+            else
+              command = "cd #{current_path} && ./script/console #{fetch(:rails_env)}"
+            end
+            run command do |channel, stream, data|
               next if data.chomp == input.chomp || data.chomp == ''
               print data
               channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
