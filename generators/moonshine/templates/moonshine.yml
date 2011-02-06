@@ -1,3 +1,7 @@
+# config/moonshine.yml is loaded both by capistrano and moonshine.
+#  The result is the values defined here can be used in `config/deploy.rb` directly
+#  and in `app/manifest/<%=  file_name%>.rb` via `configuration`
+
 # ruby to install at `cap deploy:setup` time. If you change this value, you
 # need to run `cap ruby:upgrade`. Currently allowed values include: mri,
 # src187, ree, ree187
@@ -15,14 +19,16 @@
 
 # Directory where application is deployed to
 :deploy_to: /srv/<%= application %>
+<% unless options[:multistage] -%>
 
 # Primary domain application will be accessed as 
 :domain: <%= domain %>
 
-# Domain aliases for applaction. One common use of this is for asset hosts.
+# Domain aliases for application. One common use of this is for asset hosts.
 #:domain_aliases:
 #  - assets1.<%= domain %>
 #  - assets2.<%= domain %>
+<% end -%>
 
 # Source control management to use. Defaults to git.
 # If you change this value, you will need to run: cap vcs:install
@@ -50,7 +56,7 @@
 # Specify native dependencies of gems. Moonshine comes with some preconfigured
 # defaults, but this allows you to add to them. Please file an issue at
 # http://github.com/railsmachine/moonshine/issues if there are additional gem
-# dependencies moonshine should know about.
+# dependencies Moonshine should know about.
 #:apt_gems:
 #  :awesomegem:
 #    - awesome

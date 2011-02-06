@@ -1,4 +1,17 @@
 module Moonshine::Manifest::Rails::Apache
+  def self.included(manifest)
+    manifest.configure :apache => {
+      :keep_alive => 'Off',
+      :max_keep_alive_requests => 100,
+      :keep_alive_timeout => 15,
+      :max_clients => 150,
+      :server_limit => 16,
+      :timeout => 300,
+      :trace_enable => 'On',
+      :gzip => false,
+      :gzip_types => ['text/html', 'text/plain', 'text/xml', 'text/css', 'application/x-javascript', 'application/javascript']
+    }
+  end
 
   # Installs Apache 2.2 and enables mod_rewrite and mod_status. Enables mod_ssl
   # if <tt>configuration[:ssl]</tt> is present
@@ -12,7 +25,11 @@ module Moonshine::Manifest::Rails::Apache
       a2enmod('headers')
       a2enmod('ssl')
     end
-    if configuration[:apache] && configuration[:apache][:users]
+    if configuration[:apache][:gzip]
+      a2enmod('deflate')
+    end
+
+    if configuration[:apache][:users]
       htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd"
       
       file htpasswd, :ensure => :file, :owner => configuration[:user], :mode => '644'
@@ -23,6 +40,15 @@ module Moonshine::Manifest::Rails::Apache
           :unless  => "grep '#{user}' #{htpasswd}"
       end
     end
+
+    apache2_conf = template(rails_template_dir.join('apache2.conf.erb'), binding)
+    file '/etc/apache2/apache2.conf',
+      :ensure => :present,
+      :content => apache2_conf,
+      :mode => '644',
+      :require => package('apache2-mpm-worker'),
+      :notify => service('apache2')
+
     status = <<-STATUS
 <IfModule mod_status.c>
 ExtendedStatus On
@@ -34,6 +60,9 @@ ExtendedStatus On
 </Location>
 </IfModule>
 STATUS
+
+
+
     file '/etc/apache2/mods-available/status.conf',
       :ensure => :present,
       :mode => '644',
@@ -41,6 +70,7 @@ STATUS
       :content => status,
       :notify => service("apache2")
     file '/etc/logrotate.d/varlogapachelog.conf', :ensure => :absent
+
   end
 
 private

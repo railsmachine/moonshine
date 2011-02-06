@@ -2,7 +2,8 @@ Description:
     Generate a sample moonshine manifest for your Rails Application
 
 Example:
-    ./script/generate moonshine
+    ./script/generate moonshine (Rails 2.3)
+    rails g moonshine (Rails 3)
 
     This will create:
         app/manifests/application_manifest.rb

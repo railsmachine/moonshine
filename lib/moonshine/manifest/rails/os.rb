@@ -71,7 +71,7 @@ from installing any gems, packages, or dependencies directly on the server.
   # packages from these upgrades, create an array of packages on
   # <tt>configuration[:unattended_upgrade][:package_blacklist]</tt>
   def security_updates
-    configure(:unattended_upgrade => {})
+    configure(:unattended_upgrade => {:allowed_origins => [distro_unattended_security_origin].compact})
     unattended_config = <<-CONFIG
 APT::Periodic::Update-Package-Lists "#{configuration[:unattended_upgrade][:package_lists]||1}";
 APT::Periodic::Unattended-Upgrade "#{configuration[:unattended_upgrade][:interval]||1}";
@@ -88,7 +88,47 @@ CONFIG
       :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
   end
 
+  def apt_sources
+    if ubuntu_intrepid?
+      file '/etc/apt/sources.list',
+        :ensure => :present,
+        :mode => '644',
+        :content => template(File.join(File.dirname(__FILE__), "templates", "sources.list.intrepid"))
+      exec 'apt-get update', :command => 'apt-get update', :require => file('/etc/apt/sources.list')
+    else
+      exec 'apt-get update', :command => 'apt-get update'
+    end
+  end
+
+  # Override the shadow_puppet package method to inject a dependency on
+  # exec('apt-get update')
+  def package(*args)
+    if args && args.flatten.size == 1
+      super(*args)
+    elsif
+      name = args.first
+      hash = args.last
+      hash[:require] = Array(hash[:require]).push(exec('apt-get update'))
+      super(name, hash)
+    end
+  end
+
 private
+
+  def ubuntu_lucid?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
+  end
+
+  def ubuntu_intrepid?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 8.10
+  end
+
+  def distro_unattended_security_origin
+    case Facter.lsbdistrelease.to_f
+    when 8.10 then 'Ubuntu intrepid-security'
+    when 10.04 then 'Ubuntu lucid-security'
+    end
+  end
 
   #Provides a helper for creating logrotate config for various parts of your
   #stack. For example:

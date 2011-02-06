@@ -5,7 +5,8 @@ class MoonshineGenerator < Rails::Generator::Base
 
   default_options :user => 'rails',
                   :domain => 'yourapp.com',
-                  :ruby => 'ree'
+                  :ruby => 'ree187',
+                  :multistage => false
 
   def initialize(runtime_args, runtime_options = {})
     name = if runtime_args.first && runtime_args.first !~ /^--/
@@ -39,14 +40,36 @@ class MoonshineGenerator < Rails::Generator::Base
     recorded_session = record do |m|
       m.template  'Capfile', 'Capfile'
       m.directory 'app/manifests'
-      m.directory 'app/manifests/templates'
       m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
       m.directory 'app/manifests/templates'
       m.template  'readme.templates', 'app/manifests/templates/README'
+
       m.directory 'config'
       m.template  'moonshine.yml', 'config/moonshine.yml'
       m.template  'gems.yml', 'config/gems.yml', :assigns => { :gems => gems }
+
       m.template  'deploy.rb', 'config/deploy.rb'
+
+      production_env_path = Pathname.new("#{RAILS_ROOT}/config/environments/production.rb")
+      if production_env_path.exist?
+        production_env = production_env_path.read
+        unless production_env.include?('ActionMailer::Base.delivery_method')
+          m.gsub_file 'config/environments/production.rb', /\z/, "\n# Use postfix for mail delivery \nActionMailer::Base.delivery_method = :sendmail "
+        end
+      end
+
+      if options[:multistage]
+        m.directory 'config/deploy'
+        m.template 'staging-deploy.rb', 'config/deploy/staging.rb'
+        m.template 'production-deploy.rb', 'config/deploy/production.rb'
+
+        m.directory 'config/moonshine'
+        m.template 'staging-moonshine.yml', 'config/moonshine/staging.yml'
+        m.template 'production-moonshine.yml', 'config/moonshine/production.yml'
+
+        m.directory 'config/environments/'
+        m.template 'staging-environment.rb', 'config/environments/staging.rb'
+      end
     end
     
     intro = <<-INTRO
@@ -74,7 +97,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
   def repository
     options[:repository] ||= begin
                                detected_repo = `git config remote.origin.url`.chomp
-                               detected_repo.present? ? detected_repo : 'git@github.com:username/your_app_name.git'
+                               !detected_repo.blank? ? detected_repo : 'git@github.com:username/your_app_name.git'
                              end
   end
 
@@ -84,6 +107,18 @@ define the server 'stack', cron jobs, mail aliases, configuration files
 
   def domain
     options[:domain]
+  end
+
+  def staging_domain
+    "staging.#{options[:domain]}"
+  end
+
+  def server
+    options[:server] || options[:domain]
+  end
+
+  def staging_server
+    "staging.#{server}"
   end
 
   protected
@@ -97,8 +132,12 @@ define the server 'stack', cron jobs, mail aliases, configuration files
              "Domain name of your application") { |domain| options[:domain] = domain }
       opt.on("--repository REPOSITORY",
              "git or subversion repository to deploy from") { |repository| options[:repository] = repository }
+      opt.on('--server SERVER',
+              "server") { |server| options[:server] = server }
+      opt.on('--multistage',
+              "setup multistage deployment environment") { options[:multistage] = true }
       opt.on("--ruby RUBY",
-             "Ruby version to install. Currently supports: mri, ree (default), ree187, src187") { |ruby| options[:ruby] = ruby }
+             "Ruby version to install. Currently supports: mri, ree, ree187 (default), src187") { |ruby| options[:ruby] = ruby }
       
     end
   

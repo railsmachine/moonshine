@@ -3,12 +3,12 @@ module <%= module_name %>
   # Define options for this plugin via the <tt>configure</tt> method
   # in your application manifest:
   #
-  #   configure(:<%= name %> => {:foo => true})
+  #    configure(:<%= name %> => {:foo => true})
   #
-  # Then include the plugin and call the recipe(s) you need:
+  # Moonshine will autoload plugins, just call the recipe(s) you need in your
+  # manifests:
   #
-  #  plugin :<%= name %>
-  #  recipe :<%= name %>
+  #    recipe :<%= name %>
   def <%= name %>(options = {})
     # define the recipe
     # options specified with the configure method will be 

@@ -1,5 +1,5 @@
 # This is the base Moonshine Manifest class, which provides a simple system
-# for loading moonshine recipes from plugins, a template helper, and parses
+# for loading Moonshine recipes from plugins, a template helper, and parses
 # several configuration files:
 #
 #   config/moonshine.yml
@@ -13,11 +13,13 @@
 # The contents of your database config are parsed and are available at
 # <tt>configuration[:database]</tt>.
 #
-# If you'd like to create another 'default rails stack' using other tools that
+# If you'd like to create another 'default rails stack' using other tools than
 # what Moonshine::Manifest::Rails uses, subclass this and go nuts.
 class Moonshine::Manifest < ShadowPuppet::Manifest
 
   # Load a Moonshine Plugin
+  #
+  # *Deprecated*: plugins are now auto-loaded.
   #
   #   class MyManifest < Moonshine::Manifest
   #
@@ -30,12 +32,15 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #     ...
   #   end
   def self.plugin(name = nil)
+    require 'active_support/core_ext/module/attribute_accessors'
+    require 'active_support/core_ext/kernel/reporting'
     require 'active_support/deprecation'
-    ActiveSupport::Deprecation.warn("explicitly using plugins are now deprecated, as they are automatically loaded now", caller)
+
+    ActiveSupport::Deprecation.warn("explicitly calling the plugin method is deprecated, as plugins are now automatically loaded", caller)
     true
   end
 
-  # The working directory of the Rails application this manifests describes.
+  # The working directory of the Rails application this manifest describes.
   def self.rails_root
    @rails_root ||= Pathname.new(ENV["RAILS_ROOT"] || Dir.getwd).expand_path
   end
@@ -53,9 +58,18 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV["RAILS_ENV"] || 'production'
   end
 
+  # HAX for cases where we evaluate ERB that refers to Rails.env
+  def self.env
+    rails_env
+  end
+
   # The current environment's database configuration
   def database_environment
-   configuration[:database][rails_env.to_sym]
+   if configuration[:database]
+     configuration[:database][rails_env.to_sym]
+    else
+      {}
+    end
   end
 
   # The current deployment target. Best when used with capistrano-ext's multistage settings.
@@ -63,7 +77,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     ENV['DEPLOY_STAGE'] || 'undefined'
   end
 
-  # Delegate missing methods to class, so we don't have to have so many convience methods
+  # Delegate missing methods to class, so we don't have to have so many convenience methods
   def method_missing(method, *args, &block)
     if self.class.respond_to?(method)
       self.class.send(method, *args, &block)
@@ -101,7 +115,7 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   #  on_stage(:unless => [:my_stage, :my_other_stage]) do
   #    puts "I'm not on my stages"
   #  end
-  def on_stage(*args)
+  def self.on_stage(*args)
     options = args.extract_options!
     if_opt = options[:if]
     unless_opt = options[:unless]
@@ -121,28 +135,43 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
     end
   end
 
+  def self.local_template_dir
+    @local_template_dir ||= rails_root.join('app/manifests/templates')
+  end
+
+  def self.local_template(pathname)
+   (local_template_dir + pathname.basename).expand_path
+  end
+
   # Render the ERB template located at <tt>pathname</tt>. If a template exists
   # with the same basename at <tt>RAILS_ROOT/app/manifests/templates</tt>, it
   # is used instead. This is useful to override templates provided by plugins
   # to customize application configuration files.
-  def template(pathname, b = binding)
-    template_contents = nil
-    basename = pathname.index('/') ? pathname.split('/').last : pathname
-    if File.exist?(File.expand_path(File.join(rails_root, 'app', 'manifests', 'templates', basename)))
-      template_contents = File.read(File.expand_path(File.join(rails_root, 'app', 'manifests', 'templates', basename)))
-    elsif File.exist?(File.expand_path(pathname))
-      template_contents = File.read(File.expand_path(pathname))
-    else
-      raise LoadError, "Can't find template #{pathname}"
-    end
+  def self.template(pathname, b = binding)
+    pathname = Pathname.new(pathname) unless pathname.kind_of?(Pathname)
+
+    template_contents = if local_template(pathname).exist?
+                          template_contents = local_template(pathname).read
+                        elsif pathname.exist?
+                          template_contents = pathname.read
+                        else
+                          raise LoadError, "Can't find template #{pathname}"
+                        end
     ERB.new(template_contents).result(b)
   end
 
-  # config/moonshine.yml
+  def template(pathname, b = binding)
+    self.class.template(pathname, b)
+  end
+
+  # autoload plugins
+  Dir.glob(rails_root + 'vendor/plugins/*/moonshine/init.rb').each do |path|
+    Kernel.eval(File.read(path), binding, path)
+  end  # config/moonshine.yml
+
   if moonshine_yml.exist?
     configure(YAML::load(ERB.new(moonshine_yml.read).result))
   end
-
 
   # config/moonshine/#{rails_env}.yml
   env_config = rails_root.join('config', 'moonshine', rails_env + '.yml')
@@ -160,10 +189,6 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   if gems_yml.exist?
     configure(:gems => (YAML.load_file(gems_yml) rescue nil))
   end
-  
-  # autoload plugins
-  Dir.glob(rails_root + 'vendor/plugins/*/moonshine/init.rb').each do |path|
-    Kernel.eval(File.read(path), binding, path)
-  end
+
 
 end

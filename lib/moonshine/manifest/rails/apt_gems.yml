@@ -32,3 +32,7 @@ image_science:
 - libfreeimage-dev
 geoip_city:
 - libgeoip-dev
+memcached:
+- libsasl2-2
+- libsasl2-dev
+- libsasl2-modules

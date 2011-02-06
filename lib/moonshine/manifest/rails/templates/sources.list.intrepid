@@ -1,0 +1,8 @@
+deb http://old-releases.ubuntu.com/ubuntu intrepid main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu intrepid main restricted universe multiverse
+
+deb http://old-releases.ubuntu.com/ubuntu intrepid-updates main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu intrepid-updates main restricted universe multiverse
+
+deb http://old-releases.ubuntu.com/ubuntu intrepid-security main restricted universe multiverse
+deb-src http://old-releases.ubuntu.com/ubuntu intrepid-security main restricted universe multiverse

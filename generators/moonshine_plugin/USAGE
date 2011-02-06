@@ -2,7 +2,8 @@ Description:
     Generate a Moonshine plugin to provide new, reusable functionality in your manifest.
 
 Example:
-    ./script/generate moonshine_plugin iptables
+    ./script/generate moonshine_plugin iptables (Rails 2.3)
+    rails g moonshine_plugin iptables (Rails 3)
 
     This will create the plugin structure at:
         vendor/plugins/moonshine_iptables

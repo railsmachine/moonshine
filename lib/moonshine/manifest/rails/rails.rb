@@ -18,7 +18,7 @@ module Moonshine::Manifest::Rails::Rails
   #   rake moonshine:app:bootstrap
   #
   # The <tt>moonshine:app:bootstrap</tt> task does nothing by default. If
-  # you'd like to have your application preform any logic on it's first deploy,
+  # you'd like to have your application perform any logic on its first deploy,
   # overwrite this task in your <tt>Rakefile</tt>:
   #
   #   namespace :moonshine do
@@ -30,9 +30,9 @@ module Moonshine::Manifest::Rails::Rails
   #     end
   #   end
   #
-  # All of this assumes one things. That your application can run 'rake
-  # environment' with an empty database. Please ensure your application can do
-  # so!
+  # All of this assumes one thing: that your application can run <tt>rake
+  # environment</tt> with an empty database. Please ensure your application can
+  # do so!
   def rails_bootstrap
     rake 'moonshine:bootstrap',
       :alias => 'rails_bootstrap',
@@ -86,64 +86,66 @@ module Moonshine::Manifest::Rails::Rails
   # <tt>config/gems.yml</tt>, which can be generated from by running
   # <tt>rake moonshine:gems</tt> locally.
   def rails_gems
-    gemrc = {
+    gemrc = HashWithIndifferentAccess.new({
       :verbose => true,
       :gem => '--no-ri --no-rdoc',
       :update_sources => true,
       :sources => [
-        'http://gemcutter.org',
-        'http://gems.rubyforge.org',
+        'http://rubygems.org',
         'http://gems.github.com'
       ]
-    }
-    gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
-    file '/etc/gemrc',
+     })
+     gemrc.merge!(configuration[:rubygems]) if configuration[:rubygems]
+     file '/etc/gemrc',
       :ensure   => :present,
       :mode     => '744',
       :owner    => 'root',
       :group    => 'root',
-      :content  => gemrc.to_yaml
+      :content  => gemrc.to_hash.to_yaml
 
     # stub for puppet dependencies
     exec 'rails_gems', :command => 'true'
 
     gemfile_path = rails_root.join('Gemfile')
-    gemfile_lock_path = rails_root.join('Gemfile.lock')
     if gemfile_path.exist?
-      gem 'bundler', :before => exec('bundle install')
-      #require 'bundler'
-      # FIXME waiting on a bugfix in rubygems 1.3.6 which lets
-      # prerelease gems depend on non-prerelease gems, enabling
-      # rails 3 beta to be installed
-      #ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
-      #Bundler.load.dependencies_for(:default, rails_env).each do |dependency|
-      #  gem dependency.name,
-      #      :version => dependency.version_requirements,
-      #      :before => exec("bundle install")
-      #end
+      # Bundler is initially installed by deploy:setup in the ruby:install_moonshine_deps task
+      configure(:bundler => {})
 
-      # this mkdir is a workaround for http://github.com/carlhuda/bundler/issues/issue/77
-      exec "mkdir #{rails_root.join('.bundle')}",
-        :before => exec("bundle install"),
-        :creates => rails_root.join('.bundle').to_s,
-        :user => configuration[:user]
+      sandbox_environment do
+        require 'bundler'
+        ENV['BUNDLE_GEMFILE'] = gemfile_path.to_s
+        Bundler.load
+
+        # FIXME this method doesn't take into account dependencies's dependencies
+        bundler = if Bundler::VERSION.to_f < 1.0
+                   Bundler.runtime
+                  else
+                   Bundler.load
+                  end
+        bundler_dependencies = bundler.dependencies_for(:default, rails_env.to_sym)
+        bundler_dependencies.each do |dependency|
+          system_dependencies = configuration[:apt_gems][dependency.name.to_sym] || []
+          system_dependencies.each do |system_dependency|
+            package system_dependency,
+              :ensure => :installed,
+              :before => exec('bundle install')
+          end
+        end
+      end     
+      
+      bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
       exec 'bundle install',
-        :command => 'bundle install',
+        :command => "bundle install --deployment --path #{configuration[:deploy_to]}/shared/bundle --without #{bundle_install_without_groups}",
         :cwd => rails_root,
-        :before => [exec('rails_gems'), exec('bundle lock')],
+        :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
-        :user => configuration[:user]
-      # this is a hack for getting passenger to load the bundler load path
-      # http://groups.google.com/group/phusion-passenger/browse_thread/thread/6642823360242cab/b75495c82b565fb1?#b75495c82b565fb1
-      exec 'bundle lock',
-        :command => 'bundle lock',
-        :cwd => rails_root,
-        :creates => gemfile_lock_path.to_s,
-        :user => configuration[:user]
+        :user => configuration[:user],
+        :timeout => -1,
+        :logoutput => true
+
     else
       return unless configuration[:gems]
       configuration[:gems].each do |gem|
-        gem.delete(:source) if gem[:source] && gemrc[:sources].include?(gem[:source])
         gem(gem[:name], {
           :version => gem[:version],
           :source => gem[:source]
@@ -183,7 +185,6 @@ module Moonshine::Manifest::Rails::Rails
     end
   end
 
-private
   # Creates package("#{name}") with <tt>:provider</tt> set to <tt>:gem</tt>.
   # The given <tt>options[:version]</tt> requirement is tweaked to ensure
   # gems aren't reinstalled on each run. <tt>options[:source]</tt> does what
@@ -218,6 +219,7 @@ private
       :require  => file('/etc/gemrc')
     }
     hash.merge!(:source => options[:source]) if options[:source]
+    hash.merge!(:alias => options[:alias]) if options[:alias]
     #fixup the version required
     exact_dep = Gem::Dependency.new(name, options[:version] || '>0')
     matches = Gem.source_index.search(exact_dep)
@@ -239,6 +241,7 @@ private
     package(name, hash)
   end
 
+  private
   def append_system_dependecies(exact_dep, hash) #:nodoc:
     #fixup the requires key to be an array
     if hash[:require] && !hash[:require].is_a?(Array)
@@ -277,5 +280,13 @@ private
     }.merge(options)
   )
   end
-
+  
+  # Creates a sandbox environment so that ENV changes are reverted afterwards
+  OLDENV = {}
+  def sandbox_environment
+    OLDENV.replace(ENV)
+    ENV.replace({})
+    yield
+    ENV.replace(OLDENV)
+  end
 end

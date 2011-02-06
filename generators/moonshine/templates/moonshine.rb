@@ -32,7 +32,7 @@ class <%= klass_name %> < Moonshine::Manifest::Rails
     # cron 'custom:task', :command => some_rake_task, :user => configuration[:user], :minute => 0, :hour => 0
 
     # %w( root rails ).each do |user|
-    #   mailalias user, :recipient => 'you@domain.com'
+    #   mailalias user, :recipient => 'you@domain.com', :notify => exec('newaliases')
     # end
 
     # farm_config = <<-CONFIG

@@ -4,5 +4,10 @@ rdoc
 doc
 coverage
 .autotest
-test/test.log
-test/rails_root
+spec/test.log
+spec/generator.log
+.ginger
+.rvmrc
+.bundle
+.DS_Store
+tmp

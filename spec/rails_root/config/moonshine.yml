@@ -1,0 +1,42 @@
+:ruby: ree187
+:application: zomg
+:user: rails
+#:time_zone: UTC
+:deploy_to: /srv/zomg
+:domain: yourapp.com
+#:domain_aliases:
+#  - assets1.yourapp.com
+#  - assets2.yourapp.com
+#:scm: git
+:repository: git@github.com:username/your_app_name.git
+# Use :app_symlinks to setup directories under public/ that you want to persist
+# across deployments. They'll be symlinked to the shared directory.
+#:app_symlinks:
+#  - uploads
+#
+# Use :shared_config to copy directories straight from your local project directory
+# to the server: these are files that you don't have/want in scm.
+:shared_config:
+  - config/database.yml
+  - config/sample/foo
+#
+# The entries in shared_children are created in #{application}/shared
+:shared_children:
+- system
+- log
+- pids
+- config
+# After specifying a gem with config.gem, run 'rake moonshine:gems'
+# to update config/gems.yml. If the gem depends on native packages, 
+# tell Moonshine here:
+#:apt_gems:
+#  :awesomegem:
+#    - awesome
+#    - libawesome-dev
+#
+# See all the options for Passenger, Apache vhosts, and MySQL in the
+# respective templates: moonshine/lib/moonshine/manifest/rails/templates
+:passenger:
+  :max_pool_size: 3
+:mysql:
+  :innodb_buffer_pool_size: 128M

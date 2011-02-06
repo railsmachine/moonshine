@@ -1,29 +1,30 @@
-require 'test_helper'
-class MoonshinePluginGeneratorTest < Test::Unit::TestCase
+require 'spec_helper'
 
-  def setup
+describe "MoonshinePluginGenerator" do
+
+  before do
     FileUtils.mkdir_p(generator_rails_root)
     Rails::Generator::Scripts::Generate.new.run(["moonshine_plugin","iptables"], :destination => generator_rails_root)
   end
 
-  def teardown
+  after do
     FileUtils.rm_r(generator_rails_root)
   end
 
-  def test_generates_correct_files
-    assert readme_path.exist?
-    assert init_path.exist?
-    assert module_path.exist?
-    assert spec_path.exist?
+  it "generates correct files" do
+    readme_path.should exist
+    init_path.should exist
+    module_path.should exist
+    spec_path.should exist
   end
 
-  def test_generates_plugin_module
-    assert_match /module Iptables/, module_path.read
+  it "generates a plugin module" do 
+    module_path.read.should match(/module Iptables/)
   end
   
-  def test_includes_plugin_module
-    assert_match /require ".*iptables\.rb"/, init_path.read
-    assert_match /include Iptables/, init_path.read
+  it "generates an init.rb that includes the plugin module" do
+    init_path.read.should match(/require ".*iptables\.rb"/)
+    init_path.read.should match(/include Iptables/)
   end
 
   private

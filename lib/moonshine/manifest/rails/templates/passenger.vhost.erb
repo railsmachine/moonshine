@@ -16,6 +16,7 @@
     AllowOverride <%= if configuration[:apache]; configuration[:apache][:allow_override] || 'None'; else 'None'; end %>
     Order allow,deny
     Allow from all
+    <%= "FileETag #{configuration[:apache][:file_etag]}" if configuration[:apache][:file_etag] %>
   </Directory>
 
   <% if configuration[:apache ] && (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>
@@ -69,6 +70,8 @@
   # RailsBaseURI <uri>
   <% end %>
 
+
+  <% if configuration[:passenger][:allow_mod_rewrite] %>
   ## RailsAllowModRewrite
   #
   # Passenger will not override mod_rewrite rules if this option
@@ -77,21 +80,24 @@
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
-<% if rails_root.join('config.ru').exist? %>
+  <% else %>
+  # RailsAllowModRewrite is deprecated. Passenger supports mod_rewrite by default now. configure(:passenger => { :allow_mod_rewrite => true/false }) if you still wish to use it.
+  <% end %>
+
   ## RackEnv
   #
   # Use this option to specify the default RACK_ENV value. The default
   # setting is production.
 
-  RackEnv <%= configuration[:passenger][:rack_env] || ENV['RACK_ENV'] || 'production' %>
-<% else %>
+  RackEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
+
   ## RailsEnv
   #
   # Use this option to specify the default RAILS_ENV value. The default
   # setting is production.
 
   RailsEnv <%= configuration[:passenger][:rails_env] || ENV['RAILS_ENV'] || 'production' %>
-<% end %>
+
   ## RailsSpawnMethod
   #
   # Internally, Phusion Passenger spawns multiple Ruby on Rails processes
@@ -110,23 +116,31 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
 
   RewriteEngine On
 
   <%= configuration[:passenger][:vhost_extra] %>
 
-  # Prevent access to .git directories
-  RewriteRule ^(.*/)?\.git/ - [F,L]
+<% if configuration[:scm].to_s == 'subversion' %>
+  # Prevent access to svn metadata
+  RewriteRule ^(.*/)?\.svn/ - [F,L]
   ErrorDocument 403 "Access Forbidden"
+<% end %>
 
+<% if configuration[:passenger][:maintenance_rewrite] %>
+	<%= configuration[:passenger][:maintenance_rewrite] %>
+<% else %>
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteRule ^.*$ /system/maintenance.html [L]
+<% end %>
 
   # Rewrite index to check for static
   RewriteCond  %{THE_REQUEST} ^(GET|HEAD)
@@ -159,6 +173,9 @@
   <% else %>
   # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
+  <% if configuration[:ssl][:protocol] %>
+  SSLProtocol <%= configuration[:ssl][:protocol] %>
+  <% end %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
@@ -173,6 +190,7 @@
     AllowOverride None
     Order allow,deny
     Allow from all
+    <%= "FileETag #{configuration[:apache][:file_etag]}" if configuration[:apache][:file_etag] %>
   </Directory>
 
   <% if configuration[:apache ] and (configuration[:apache][:users] || configuration[:apache][:allow] || configuration[:apache][:deny]) %>
@@ -226,6 +244,7 @@
   # RailsBaseURI <uri>
   <% end %>
 
+  <% if configuration[:passenger][:allow_mod_rewrite] %>
   ## RailsAllowModRewrite
   #
   # Passenger will not override mod_rewrite rules if this option
@@ -234,6 +253,9 @@
   # Options: <on|off>
 
   RailsAllowModRewrite <%= passenger_config_boolean(configuration[:passenger][:allow_mod_rewrite]) %>
+  <% else %>
+  # RailsAllowModRewrite is deprecated. Passenger supports mod_rewrite by default now. configure(:passenger => { :allow_mod_rewrite => true/false }) if you still wish to use it.
+  <% end %>
 
   ## RailsEnv
   #
@@ -260,10 +282,12 @@
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
   # Deflate
-  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/x-javascript application/javascript
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
 
   RewriteEngine On
 
@@ -273,14 +297,20 @@
   <%= configuration[:passenger][:vhost_extra] %>
 <% end %>
 
-  # Prevent access to .git directories
-  RewriteRule ^(.*/)?\.git/ - [F,L]
+<% if configuration[:scm].to_s == 'subversion' %>
+  # Prevent access to svn metadata
+  RewriteRule ^(.*/)?\.svn/ - [F,L]
   ErrorDocument 403 "Access Forbidden"
+<% end %>
 
+<% if configuration[:passenger][:maintenance_rewrite] %>
+	<%= configuration[:passenger][:maintenance_rewrite] %>
+<% else %>
   # Check for maintenance file and redirect all requests
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteRule ^.*$ /system/maintenance.html [L]
+<% end %>
 
   # Rewrite index to check for static
   RewriteCond  %{THE_REQUEST} ^(GET|HEAD)

@@ -1,0 +1,11 @@
+# production-specific moonshine configuration
+#
+# You can set anything here that you might normally put in config/moonshine.yml, but will only apply to production
+
+# Primary domain application will be accessed as 
+:domain: <%= domain %>
+
+# Domain aliases for applaction. One common use of this is for asset hosts.
+#:domain_aliases:
+#  - assets1.<%= domain %>
+#  - assets2.<%= domain %>

@@ -6,3 +6,8 @@ require File.join(File.dirname(__FILE__), '..', '..', 'moonshine', 'lib', 'moons
 require File.join(File.dirname(__FILE__), '..', 'lib', '<%= name %>.rb')
 
 require 'shadow_puppet/test'
+
+class <%= module_name %>Manifest < Moonshine::Manifest::Rails
+  path = Pathname.new(__FILE__).dirname.join('..', 'moonshine', 'init.rb')
+  Kernel.eval(File.read(path), binding, path)
+end

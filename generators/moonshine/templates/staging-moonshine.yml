@@ -1,0 +1,11 @@
+# staging-specific moonshine configuration
+#
+# You can set anything here that you might normally put in config/moonshine.yml, but will only apply to staging
+
+# Primary domain application will be accessed as 
+:domain: <%= staging_domain %>
+
+# Domain aliases for applaction. One common use of this is for asset hosts.
+#:domain_aliases:
+#  - assets1.<%= staging_domain %>
+#  - assets2.<%= staging_domain %>

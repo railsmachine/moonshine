@@ -14,7 +14,8 @@ collation_server        = <%= configuration[:mysql][:collation_server] || 'utf8_
 ######### replication
 server-id                = <%= configuration[:mysql][:server_id] || '1' %>
 auto-increment-increment = <%= configuration[:mysql][:auto_increment_increment] || '10' %>
-auto-increment-offset    = <%= configuration[:mysql][:auto_increment_offset] || configuration[:mysql][:server_id] || '1' %>
+auto-increment-offset    = <%= configuration[:mysql][:auto_increment_offset] || configuration[:mysql][:server_id] || '1' %><% if configuration[:mysql][:version] > 5 %>
+binlog_format            = mixed<% end %>
 log-bin                  = <%= configuration[:mysql][:log_bin] || "#{log_prefix}-bin" %>
 log-bin-index            = <%= configuration[:mysql][:log_bin_index] || "#{log_prefix}-bin" %>
 relay-log                = <%= configuration[:mysql][:relay_log] || "#{log_prefix}-relay" %>
@@ -57,7 +58,7 @@ thread_stack          = <%= configuration[:mysql][:thread_stack] || '192K' %>
 transaction_isolation = <%= configuration[:mysql][:transaction_isolation] || 'READ-COMMITTED' %>
 tmp_table_size        = <%= configuration[:mysql][:tmp_table_size] || '128M' %>
 tmpdir                = <%= configuration[:mysql][:tmpdir] || '/tmp' %>
-log_slow_queries      = <%= configuration[:mysql][:log_slow_queries] || '/var/log/mysql/slow_queries.log' %>
+<%= configuration[:mysql][:version] > 5 ? 'slow_query_log' : 'log_slow_queries' %>      = <%= configuration[:mysql][:log_slow_queries] || '/var/log/mysql/slow_queries.log' %>
 long_query_time       = <%= configuration[:mysql][:long_query_time] || '5' %>
 
 <%= configuration[:mysql][:extra] %>
