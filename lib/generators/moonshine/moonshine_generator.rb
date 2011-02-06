@@ -61,6 +61,10 @@ protected
     options[:ruby] ||= "ree187"
   end
 
+  def rails_version
+    options[:rails_version] ||= 2
+  end
+
   def user
     options[:user]
   end
