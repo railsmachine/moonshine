@@ -32,7 +32,6 @@ module Moonshine
         set :moonshine_manifest, 'application_manifest'
         set :app_symlinks, []
         set :ruby, :ree
-        set :rails_version, 2
 
         # know the path to rails logs
         set :rails_log do

@@ -7,10 +7,6 @@
 # src187, ree, ree187
 :ruby: <%= ruby %>
 
-# Rails major version. Should be either 2 or 3.
-# Determines which `cap app:console` command to run
-:rails_version: <%= rails_version %>
-
 # Name of your application. Should be something with only alphanumerics, hypens
 # and underscores.
 :application: <%= application %>
