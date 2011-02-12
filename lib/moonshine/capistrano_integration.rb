@@ -184,7 +184,7 @@ module Moonshine
               command = "cd #{current_path} && ./script/console #{fetch(:rails_env)}"
               prompt = /^(>|\?)>/
             else
-              command = "cd #{current_path} && rails console #{fetch(:rails_env)}"
+              command = "cd #{current_path} && ./script/rails console #{fetch(:rails_env)}"
               prompt = /:\d{3}:\d+(\*|>)/
             end
             run command do |channel, stream, data|
