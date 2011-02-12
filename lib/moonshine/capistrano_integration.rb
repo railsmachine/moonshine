@@ -415,7 +415,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            version = fetch(:rubygems_version, '1.4.2')
+            version = fetch(:rubygems_version, '1.5.2')
             run [
               'cd /tmp',
               "sudo rm -rf rubygems-#{version}* || true",
@@ -437,7 +437,7 @@ module Moonshine
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
             sudo 'gem install shadow_puppet --no-rdoc --no-ri'
             if rails_root.join('Gemfile').exist?
-              sudo 'gem install bundler --no-rdoc --no-ri'
+              sudo "gem install bundler --no-rdoc --no-ri --version='~> 1.0.10'"
             end
           end
         end
