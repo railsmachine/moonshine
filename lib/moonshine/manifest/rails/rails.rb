@@ -140,7 +140,7 @@ module Moonshine::Manifest::Rails::Rails
         :before => exec('rails_gems'),
         :require => file('/etc/gemrc'),
         :user => configuration[:user],
-        :timeout => -1,
+        :timeout => 108000,
         :logoutput => true
 
     else
@@ -276,7 +276,7 @@ module Moonshine::Manifest::Rails::Rails
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :require => exec('rake tasks'),
       :logoutput => true,
-      :timeout => -1
+      :timeout => 108000
     }.merge(options)
   )
   end
