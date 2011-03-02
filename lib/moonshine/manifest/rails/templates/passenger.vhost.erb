@@ -3,6 +3,14 @@
   <% if configuration[:domain_aliases] %>
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
   <% end %>
+
+  <% if configuration[:passenger].nil? || configuration[:passenger][:version].nil? || (configuration[:passenger][:version] == :latest || configuration[:passenger][:version] > '3.0.4') %>
+    <% if configuration[:union_station] && configuration[:union_station][:key] %>
+    PassengerAnalytics on
+    UnionStationKey <%= configuration[:union_station][:key] %>
+    <% end %>
+  <% end %>
+
 <% if configuration[:ssl] && configuration[:ssl][:only] %>
   RewriteEngine On
   RewriteCond %{HTTPS} !=on
@@ -184,6 +192,13 @@
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
   <% end %>
   DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
+
+  <% if configuration[:passenger].nil? || configuration[:passenger][:version].nil? || (configuration[:passenger][:version] == :latest || configuration[:passenger][:version] > '3.0.4') %>
+    <% if configuration[:union_station] && configuration[:union_station][:key] %>
+    PassengerAnalytics on
+    UnionStationKey <%= configuration[:union_station][:key] %>
+    <% end %>
+  <% end %>
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
     Options FollowSymLinks
