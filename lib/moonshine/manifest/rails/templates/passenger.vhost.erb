@@ -136,6 +136,31 @@
   PassengerMinInstances <%= configuration[:passenger][:min_instances] %>
   <% end %>
 
+  ## PassengerPreStart
+  #
+  # By default, Phusion Passenger does not start any application instances
+  # until said web application is first accessed. The result is that the
+  # first visitor of said web application might experience a small delay as
+  # Phusion Passenger is starting the web application on demand. If that is
+  # undesirable, then this directive can be used to pre-started application
+  # instances during Apache startup.
+  #
+  # This directive only accepts a URL that fits the following criteria:
+  # - The domain part of the URL must be equal to the value of the ServerName
+  #   directive of the VirtualHost block that defines the web application.
+  # - Unless the web application is deployed on port 80, the URL should
+  #   contain the web application’s port number too.
+  # - The path part of the URL must point to some URI that the web
+  #   application handles.
+  #
+  # You probably want to combine this with PassengerMinInstances.
+  #
+  # Example URL: http://example.com/
+
+  <% if configuration[:passenger][:pre_start_url] %>
+  PassengerPreStart <%= configuration[:passenger][:pre_start_url] %>
+  <% end %>
+
   # Deflate
   <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
@@ -321,6 +346,31 @@
 
   <% if configuration[:passenger][:min_instances] %>
   PassengerMinInstances <%= configuration[:passenger][:min_instances] %>
+  <% end %>
+
+  ## PassengerPreStart
+  #
+  # By default, Phusion Passenger does not start any application instances
+  # until said web application is first accessed. The result is that the
+  # first visitor of said web application might experience a small delay as
+  # Phusion Passenger is starting the web application on demand. If that is
+  # undesirable, then this directive can be used to pre-started application
+  # instances during Apache startup.
+  #
+  # This directive only accepts a URL that fits the following criteria:
+  # - The domain part of the URL must be equal to the value of the ServerName
+  #   directive of the VirtualHost block that defines the web application.
+  # - Unless the web application is deployed on port 80, the URL should
+  #   contain the web application’s port number too.
+  # - The path part of the URL must point to some URI that the web
+  #   application handles.
+  #
+  # You probably want to combine this with PassengerMinInstances.
+  #
+  # Example URL: http://example.com/
+
+  <% if configuration[:passenger][:pre_start_url] %>
+  PassengerPreStart <%= configuration[:passenger][:pre_start_url] %>
   <% end %>
 
   # Deflate
