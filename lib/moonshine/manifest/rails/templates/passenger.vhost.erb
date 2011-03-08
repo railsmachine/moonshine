@@ -115,6 +115,27 @@
 
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
 
+  ## PassengerMinInstances
+  #
+  # This specifies the minimum number of application instances that must be
+  # kept around whenever Phusion Passenger cleans up idle instances. You should
+  # set this option to a non-zero value if you want to avoid potentially long
+  # startup times after a website has been idle for an extended period.
+  #
+  # Please note that this option does not pre-start application instances during
+  # Apache startup. It just makes sure that when the application is first accessed:
+  # - at least the given number of instances will be spawned.
+  # - the given number of processes will be kept around even when instances are
+  #   being idle cleaned (see PassengerPoolIdleTime).
+  #
+  # If you want to pre-start application instances during Apache startup, then you
+  # should use the PassengerPreStart directive, possibly in combination with
+  # PassengerMinInstances.
+
+  <% if configuration[:passenger][:min_instances] %>
+  PassengerMinInstances <%= configuration[:passenger][:min_instances] %>
+  <% end %>
+
   # Deflate
   <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
@@ -280,6 +301,27 @@
   #    It does not perform any code caching at all.
 
   RailsSpawnMethod <%= configuration[:passenger][:rails_spawn_method] || 'smart' %>
+
+  ## PassengerMinInstances
+  #
+  # This specifies the minimum number of application instances that must be
+  # kept around whenever Phusion Passenger cleans up idle instances. You should
+  # set this option to a non-zero value if you want to avoid potentially long
+  # startup times after a website has been idle for an extended period.
+  #
+  # Please note that this option does not pre-start application instances during
+  # Apache startup. It just makes sure that when the application is first accessed:
+  # - at least the given number of instances will be spawned.
+  # - the given number of processes will be kept around even when instances are
+  #   being idle cleaned (see PassengerPoolIdleTime).
+  #
+  # If you want to pre-start application instances during Apache startup, then you
+  # should use the PassengerPreStart directive, possibly in combination with
+  # PassengerMinInstances.
+
+  <% if configuration[:passenger][:min_instances] %>
+  PassengerMinInstances <%= configuration[:passenger][:min_instances] %>
+  <% end %>
 
   # Deflate
   <IfModule mod_deflate.c>
