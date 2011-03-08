@@ -19,6 +19,7 @@ class MoonshineGenerator < Rails::Generators::Base
     template "moonshine.rb", "app/manifests/#{file_name}.rb"
     template "moonshine.yml", "config/moonshine.yml"
     template "deploy.rb", "config/deploy.rb"
+    environment "config.paths.app.manifests 'app/manifests', :eager_load => false", :verbose => true
 
     if options[:multistage]
       template 'staging-deploy.rb', 'config/deploy/staging.rb'
