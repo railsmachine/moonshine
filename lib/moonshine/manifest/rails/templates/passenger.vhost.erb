@@ -9,7 +9,7 @@
     PassengerAnalytics on
     UnionStationSupport on
     UnionStationKey <%= configuration[:union_station][:key] %>
-      <% (configuration[:union_station][:filters] || []).each do |us_filter| %>
+      <% configuration[:union_station][:filters].to_a.each do |us_filter| %>
     UnionStationFilter "<%= us_filter %>"
       <% end %>
     <% end %>
@@ -202,8 +202,9 @@
     PassengerAnalytics on
     UnionStationSupport on
     UnionStationKey <%= configuration[:union_station][:key] %>
-    <% (configuration[:union_station][:filters] || []).each do |us_filter| %>
+      <% configuration[:union_station][:filters].to_a.each do |us_filter| %>
     UnionStationFilter "<%= us_filter %>"
+      <% end %>
     <% end %>
   <% end %>
 
