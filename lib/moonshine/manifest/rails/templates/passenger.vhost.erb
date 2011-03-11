@@ -7,7 +7,10 @@
   <% if configuration[:passenger].nil? || configuration[:passenger][:version].nil? || (configuration[:passenger][:version] == :latest || configuration[:passenger][:version] > '3.0.4') %>
     <% if configuration[:union_station] && configuration[:union_station][:key] %>
     PassengerAnalytics on
+    UnionStationSupport on
     UnionStationKey <%= configuration[:union_station][:key] %>
+    <% (configuration[:union_station][:filters] || []).each do |us_filter| %>
+    UnionStationFilter "<%= us_filter %>"
     <% end %>
   <% end %>
 
@@ -196,7 +199,10 @@
   <% if configuration[:passenger].nil? || configuration[:passenger][:version].nil? || (configuration[:passenger][:version] == :latest || configuration[:passenger][:version] > '3.0.4') %>
     <% if configuration[:union_station] && configuration[:union_station][:key] %>
     PassengerAnalytics on
+    UnionStationSupport on
     UnionStationKey <%= configuration[:union_station][:key] %>
+    <% (configuration[:union_station][:filters] || []).each do |us_filter| %>
+    UnionStationFilter "<%= us_filter %>"
     <% end %>
   <% end %>
 
