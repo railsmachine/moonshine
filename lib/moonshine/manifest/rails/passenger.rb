@@ -8,7 +8,7 @@ module Moonshine::Manifest::Rails::Passenger
         :provider => :gem
     else
       package "passenger",
-        :ensure => (configuration[:passenger][:version] || :latest),
+        :ensure => (configuration[:passenger][:version] || '3.0.4'),
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
       package 'libcurl4-openssl-dev', :ensure => :installed
