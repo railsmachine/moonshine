@@ -16,6 +16,16 @@ Once you're a bit more comfortable with Moonshine, you'll find our documentation
   * Execute commands via sudo
   * Access your application's source code repository
 
+== Installation
+
+It's also pretty simple!
+
+    $ script/plugin install git://github.com/railsmachine/moonshine.git
+    # Rails 3
+    $ script/rails generate moonshine
+    # Rails 2
+    $ script/generate moonshine
+
 == Running Tests
 
 It's easy enough:
