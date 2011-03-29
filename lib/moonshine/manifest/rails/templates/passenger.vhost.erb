@@ -183,9 +183,11 @@
 	<%= configuration[:passenger][:maintenance_rewrite] %>
 <% else %>
   # Check for maintenance file and redirect all requests
+  ErrorDocument 503 /system/maintenance.html
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
-  RewriteRule ^.*$ /system/maintenance.html [L]
+  RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+  RewriteRule ^.*$ - [R=503,L]
 <% end %>
 
   # Rewrite index to check for static
@@ -399,9 +401,11 @@
 	<%= configuration[:passenger][:maintenance_rewrite] %>
 <% else %>
   # Check for maintenance file and redirect all requests
+  ErrorDocument 503 /system/maintenance.html
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
-  RewriteRule ^.*$ /system/maintenance.html [L]
+  RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+  RewriteRule ^.*$ - [R=503,L]
 <% end %>
 
   # Rewrite index to check for static
