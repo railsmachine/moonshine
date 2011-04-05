@@ -1,14 +1,21 @@
 module Moonshine::Manifest::Rails::Passenger
   # Install the passenger gem
   def passenger_gem
+    blessed_version = '3.0.6'
     configure(:passenger => {})
     if configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
       package "passenger",
         :ensure => configuration[:passenger][:version],
         :provider => :gem
+    elsif configuration[:passenger][:version] == :latest
+      package "passenger",
+        :ensure => blessed_version,
+        :provider => :gem,
+        :require => [ package('libcurl4-openssl-dev') ]
+      package 'libcurl4-openssl-dev', :ensure => :installed
     else
       package "passenger",
-        :ensure => (configuration[:passenger][:version] || '3.0.4'),
+        :ensure => (configuration[:passenger][:version] || blessed_version),
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
       package 'libcurl4-openssl-dev', :ensure => :installed
