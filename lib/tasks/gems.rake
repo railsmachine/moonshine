@@ -1,6 +1,10 @@
 namespace :moonshine do
   desc "Update config/moonshine.yml with a list of the required gems"
   task :gems => 'gems:base' do
+    gemfile_path = File.join(Dir.pwd, 'Gemfile')
+    if File.exist?(gemfile_path)
+      puts "You don't need to run this task if you're using Bundler!"
+    end
     gem_array = Rails.configuration.gems.reject{|g| g.frozen? && !g.framework_gem?}.map do |gem|
       hash = { :name => gem.name }
       hash.merge!(:source => gem.source) if gem.source
