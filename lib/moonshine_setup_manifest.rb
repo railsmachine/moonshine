@@ -8,7 +8,13 @@
 #   user: rails
 #   deploy_to: /srv/your_app_name
 class MoonshineSetupManifest < ShadowPuppet::Manifest
+
+  deploy_stage = ENV['DEPLOY_STAGE'] || 'undefined'
+
   configure(YAML.load_file('/tmp/moonshine.yml'))
+  if File.exist? "/tmp/moonshine/#{deploy_stage}.yml"
+    configure(YAML.load_file("/tmp/moonshine/#{deploy_stage}.yml"))
+  end
 
   recipe :directories
 
