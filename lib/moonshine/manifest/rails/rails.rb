@@ -225,8 +225,13 @@ module Moonshine::Manifest::Rails::Rails
     matches = Gem.source_index.search(exact_dep)
     installed_spec = matches.first
     if installed_spec
-      #it's already loaded, let's just specify that we want it installed
-      hash.merge!(:ensure => :installed)
+      if options[:version]
+        #if it's not installed and version specified, we require that version
+        hash.merge!(:ensure => options[:version])
+      else
+        #it's already loaded, let's just specify that we want it installed
+        hash.merge!(:ensure => :installed)
+      end
     else
       if options[:version]
         #if it's not installed and version specified, we require that version
