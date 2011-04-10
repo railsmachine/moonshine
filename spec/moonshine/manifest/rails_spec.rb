@@ -247,7 +247,8 @@ describe Moonshine::Manifest::Rails do
           :certificate_file => 'cert_file',
           :certificate_key_file => 'cert_key_file',
           :certificate_chain_file => 'cert_chain_file',
-          :protocol => 'all -SSLv2'
+          :protocol => 'all -SSLv2',
+          :cipher_suite => 'ALL:!aNULL:!ADH:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM'
         })
 
         @manifest.passenger_site
@@ -260,6 +261,9 @@ describe Moonshine::Manifest::Rails do
         )
         @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
           /SSLProtocol all -SSLv2/
+        )
+        @manifest.should have_file("/etc/apache2/sites-available/#{@manifest.configuration[:application]}").with_content(
+          /ALL:\!aNULL:\!ADH:\!eNULL:\!LOW:\!EXP:RC4\+RSA:\+HIGH:\+MEDIUM/
         )
       end
 

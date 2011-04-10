@@ -211,7 +211,7 @@
   RequestHeader set X_FORWARDED_PROTO "https"
 
   SSLEngine on
-  SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+  SSLCipherSuite <%= configuration[:ssl][:cipher_suite] || 'ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL' %>
   SSLCertificateFile    <%= configuration[:ssl][:certificate_file] || '/etc/ssl/certs/ssl-cert-snakeoil.pem' %>
   SSLCertificateKeyFile <%= configuration[:ssl][:certificate_key_file] || '/etc/ssl/private/ssl-cert-snakeoil.key' %>
   <% if configuration[:ssl][:certificate_chain_file] %>
