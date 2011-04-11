@@ -161,6 +161,20 @@
   PassengerPreStart <%= configuration[:passenger][:pre_start_url] %>
   <% end %>
 
+  ## Phusion UnionStation support
+  #
+  # http://www.unionstationapp.com/
+  #
+  # On Rails 3, you will also need to add config/initializers/passenger.rb
+  # with the following line:
+  #
+  # PhusionPassenger.install_framework_extensions! if defined?(PhusionPassenger)
+
+  <% if configuration[:passenger][:union_station_key] %>
+  UnionStationSupport on
+  UnionStationKey <%= configuration[:passenger][:union_station_key] %>
+  <% end %>
+
   # Deflate
   <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
@@ -371,6 +385,20 @@
 
   <% if configuration[:passenger][:pre_start_url] %>
   PassengerPreStart <%= configuration[:passenger][:pre_start_url] %>
+  <% end %>
+
+  ## Phusion UnionStation support
+  #
+  # http://www.unionstationapp.com/
+  #
+  # On Rails 3, you will also need to add config/initializers/passenger.rb
+  # with the following line:
+  #
+  # PhusionPassenger.install_framework_extensions! if defined?(PhusionPassenger)
+
+  <% if configuration[:passenger][:union_station_key] %>
+  UnionStationSupport on
+  UnionStationKey <%= configuration[:passenger][:union_station_key] %>
   <% end %>
 
   # Deflate
