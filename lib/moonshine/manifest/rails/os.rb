@@ -1,23 +1,38 @@
+# **Moonshine::Manifest::Rails::Os** is a manifest for configuring the
+# base Ubuntu operating system.
+
 module Moonshine::Manifest::Rails::Os
-  # Set up cron and enable the service. You can create cron jobs in your
-  # manifests like so:
+  #### Cron
+  
+  # Ensures the cron package is installed and the service is running.
   #
-  #   cron :run_me_at_three
-  #     :command => "/usr/sbin/something",
-  #     :user => root,
-  #     :hour => 3
+  # Cron jobs can be defined inside any manifest or recipe like so:
   #
-  #   cron 'rake:task',
-  #       :command => "cd #{rails_root} && RAILS_ENV=#{ENV['RAILS_ENV']} rake rake:task",
+  #     cron :run_me_at_three
+  #       :command => "/usr/sbin/something",
+  #       :user => root,
+  #       :hour => 3
+  #
+  #     cron 'rake:task',
+  #       :command => [
+  #         "cd #{rails_root}",
+  #         "RAILS_ENV=#{ENV['RAILS_ENV']} rake rake:task"
+  #       ].join(' && '),
   #       :user => configuration[:user],
   #       :minute => 15
+
   def cron_packages
     service "cron", :require => package("cron"), :ensure => :running
     package "cron", :ensure => :installed
   end
 
-  # Create a MOTD to remind those logging in via SSH that things are managed
-  # with Moonshine
+  #### MOTD
+
+  # We provide a default MOTD (message of the day) which has some basic
+  # information. You can override this particular recipe or
+  # the two file resources it declares in order to customize your own
+  # MOTD.
+
   def motd
     motd_contents ="""-----------------
 Moonshine Managed
@@ -42,19 +57,36 @@ from installing any gems, packages, or dependencies directly on the server.
       :content => motd_contents
   end
 
-  # Install postfix.
+  #### Postfix
+
+  # We enable Postfix by default because it provides a sane default
+  # and makes sending emails, a common task for many Rails apps,
+  # easy to setup.
+
   def postfix
     package 'postfix', :ensure => :latest
   end
 
-  # Install ntp and enables the ntp service.
+  #### NTP
+
+  # We enable NTP by default to ensure that servers always have a sane time.
+
   def ntp
     package 'ntp', :ensure => :latest
     service 'ntp', :ensure => :running, :require => package('ntp'), :pattern => 'ntpd'
   end
 
-  # Set the system timezone to <tt>configuration[:time_zone]</tt> or 'UTC' by
-  # default.
+  #### Time Zones
+
+  # Sometimes it's desirable to have a server run in a time besides UTC.
+  # The format for time zones looks like so:
+  #
+  #     America/New_York
+  #
+  # You can find a complete list of available time zones by running:
+  #
+  #     $ ls /usr/share/zoneinfo/*
+
   def time_zone
     zone = configuration[:time_zone] || 'UTC'
     zone = 'UTC' if zone.nil? || zone.strip == ''
@@ -66,10 +98,13 @@ from installing any gems, packages, or dependencies directly on the server.
       :notify => service('ntp')
   end
 
-  # Configure automatic security updates. Output regarding errors
-  # will be sent to <tt>configuration[:user]</tt>. To exclude specific
-  # packages from these upgrades, create an array of packages on
-  # <tt>configuration[:unattended_upgrade][:package_blacklist]</tt>
+  #### Security Updates
+
+  # Ubuntu allows system administrators to configure the server to automatically
+  # download and install stable security updates. We enable these by default
+  # because they're well-vetted and ensure servers that might not be actively
+  # maintained still receive updates to protect against vulnerabilities.
+
   def security_updates
     configure(:unattended_upgrade => {:allowed_origins => [distro_unattended_security_origin].compact})
     unattended_config = <<-CONFIG
@@ -88,6 +123,12 @@ CONFIG
       :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
   end
 
+  #### Apt Sources
+
+  # Ubuntu 8.10 has been End of Life'd, so we provide a special apt
+  # mirror for it. This recipe simply uses those repos for Intrepid users
+  # and Lucid for everyone else.
+
   def apt_sources
     if ubuntu_intrepid?
       file '/etc/apt/sources.list',
@@ -100,8 +141,14 @@ CONFIG
     end
   end
 
-  # Override the shadow_puppet package method to inject a dependency on
-  # exec('apt-get update')
+  #### Packages
+
+  # We Override the `shadow_puppet` package method to inject a dependency on
+  # `exec('apt-get update')`. This accomplishes two things:
+  #
+  # 1. Apt won't fail to retrieve a package because the apt-cache is out of date
+  # 2. Apt will always fetch the latest version of a package unless otherwise specified
+
   def package(*args)
     if args && args.flatten.size == 1
       super(*args)
@@ -114,6 +161,12 @@ CONFIG
   end
 
 private
+
+  #### Ubuntu Version Detection
+
+  # Some parts of the server may need configured differently based on
+  # the version of Ubuntu they're running. Moonshine currently supports
+  # 8.10 and 10.04, so we provide helpers to detect those versions.
 
   def ubuntu_lucid?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
@@ -130,14 +183,22 @@ private
     end
   end
 
-  #Provides a helper for creating logrotate config for various parts of your
-  #stack. For example:
+  #### Logrotate
+
+  # We provide a simple helper for automating the configuration of logrotate
+  # scripts since many utilities can log lots of output that we can safely
+  # rotate on a regular basis.
   #
-  #  logrotate('/srv/theapp/shared/logs/*.log', {
-  #    :options => %w(daily missingok compress delaycompress sharedscripts),
-  #    :postrotate => 'touch /srv/theapp/current/tmp/restart.txt'
-  #  })
+  # Example:
   #
+  #     logrotate '/srv/theapp/shared/logs/*.log',
+  #       :options => [
+  #         'daily', 'missingok', 'compress',
+  #         'delaycompress', 'sharedscripts'
+  #       ],
+  #       :postrotate => 'touch /srv/theapp/current/tmp/restart.txt'
+
+
   def logrotate(log_or_glob, options = {})
     options = options.respond_to?(:to_hash) ? options.to_hash : {}
 
