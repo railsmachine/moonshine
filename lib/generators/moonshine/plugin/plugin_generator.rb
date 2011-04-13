@@ -14,7 +14,7 @@ module Moonshine
         template  "README.markdown", "vendor/plugins/#{plugin_name}/README.markdown"
         template  'init.rb', "vendor/plugins/#{plugin_name}/moonshine/init.rb"
         template  'plugin.rb', "vendor/plugins/#{plugin_name}/lib/moonshine/#{name}.rb"
-        template  'spec.rb', "vendor/plugins/#{plugin_name}/spec/#{name}_spec.rb"
+        template  'spec.rb', "vendor/plugins/#{plugin_name}/spec/moonshine/#{name}_spec.rb"
         template  'spec_helper.rb', "vendor/plugins/#{plugin_name}/spec/spec_helper.rb"
       end
 

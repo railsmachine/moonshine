@@ -25,8 +25,8 @@ class MoonshinePluginGenerator < Rails::Generator::Base
       m.template  'init.rb', "vendor/plugins/#{plugin_name}/moonshine/init.rb"
       m.directory "vendor/plugins/#{plugin_name}/lib/moonshine"
       m.template  'plugin.rb', "vendor/plugins/#{plugin_name}/lib/moonshine/#{name}.rb"
-      m.directory "vendor/plugins/#{plugin_name}/spec"
-      m.template  'spec.rb', "vendor/plugins/#{plugin_name}/spec/#{name}_spec.rb"
+      m.directory "vendor/plugins/#{plugin_name}/spec/moonshine"
+      m.template  'spec.rb', "vendor/plugins/#{plugin_name}/spec/moonshine/#{name}_spec.rb"
       m.template  'spec_helper.rb', "vendor/plugins/#{plugin_name}/spec/spec_helper.rb"
     end
   end

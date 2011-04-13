@@ -47,7 +47,7 @@ describe "MoonshinePluginGenerator" do
     end
 
     def spec_path
-      plugin_path + 'spec/iptables_spec.rb'
+      plugin_path + 'spec/moonshine/iptables_spec.rb'
     end
 
     def spec_helper_path
