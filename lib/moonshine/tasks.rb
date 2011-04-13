@@ -1,5 +1,47 @@
 module Moonshine
   module Rake
+
+    class DocTask < ::Rake::TaskLib
+      def initialize(options = {})
+        @options    = options
+        @moonshine_files = []
+        setup_moonshine_files
+        define
+      end
+
+      private
+
+      def setup_moonshine_files
+        ['app/manifests/*.rb', 'config/moonshine.yml', 'config/moonshine/*.yml'].each do |path|
+          Dir.glob[path].each do |f|
+            @moonshine_files << f
+          end
+        end
+      end
+
+      def define
+        namespace :moonshine do
+          task :doc => :"doc:default"
+
+          namespace :doc do
+            task :default do
+              begin
+                require 'rocco'
+              rescue
+                puts 'Exiting: you need to install the `rocco` gem.'
+                exit(1)
+              end
+              @moonshine_files.each do |file|
+                puts "Rocco'ing #{file}..."
+                system "rocco -o doc/ #{file} > /dev/null 2>&1"
+              end
+            end
+          end
+        end
+      end
+    end
+
+
     class UpdateTask < ::Rake::TaskLib
       def initialize(options = {})
         @options    = options
