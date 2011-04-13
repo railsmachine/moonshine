@@ -13,7 +13,7 @@ module Moonshine
 
       def setup_moonshine_files
         ['app/manifests/*.rb', 'config/moonshine.yml', 'config/moonshine/*.yml'].each do |path|
-          Dir.glob[path].each do |f|
+          Dir.glob(path).each do |f|
             @moonshine_files << f
           end
         end
