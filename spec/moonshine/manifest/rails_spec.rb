@@ -215,6 +215,23 @@ describe Moonshine::Manifest::Rails do
         )
       end
 
+      it "makes the maintenance.html page return a 503" do
+        @manifest.passenger_configure_gem_path
+
+        @manifest.passenger_site
+
+        vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /ErrorDocument 503 \/system\/maintenance\.html/
+        )
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /RewriteCond \%\{SCRIPT_FILENAME\} \!maintenance\.html/
+        )
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /RewriteRule \^\.\*\$ - \[R=503,L\]/
+        )
+      end
+
       it "supports configuring gzip" do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:apache => {
