@@ -1,4 +1,4 @@
-= Moonshine <%= module_name %>
+= Moonshine::<%= module_name %>
 
 === A plugin for Moonshine[http://github.com/railsmachine/moonshine]
 

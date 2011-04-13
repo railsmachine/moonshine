@@ -35,7 +35,7 @@ describe "MoonshinePluginGenerator" do
     end
 
     def module_path
-      plugin_path + 'lib/iptables.rb'
+      plugin_path + 'lib/moonshine/iptables.rb'
     end
 
     def init_path
