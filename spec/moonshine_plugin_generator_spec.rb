@@ -16,6 +16,7 @@ describe "MoonshinePluginGenerator" do
     init_path.should exist
     module_path.should exist
     spec_path.should exist
+    license_path.should exist
   end
 
   it "generates a plugin module" do 
@@ -51,6 +52,10 @@ describe "MoonshinePluginGenerator" do
 
     def spec_helper_path
       plugin_path + 'spec/spec_helper.rb'
+    end
+
+    def license_path
+      plugin_path + 'LICENSE'
     end
 
 end

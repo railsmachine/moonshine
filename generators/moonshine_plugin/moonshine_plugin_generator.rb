@@ -19,6 +19,7 @@ class MoonshinePluginGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       m.directory "vendor/plugins/#{plugin_name}"
+      m.template  "LICENSE", "vendor/plugins/#{plugin_name}/LICENSE"
       m.template  "README.rdoc", "vendor/plugins/#{plugin_name}/README.rdoc"
       m.directory "vendor/plugins/#{plugin_name}/moonshine"
       m.template  'init.rb', "vendor/plugins/#{plugin_name}/moonshine/init.rb"

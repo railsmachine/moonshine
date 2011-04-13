@@ -2,12 +2,17 @@
 
 === A plugin for Moonshine[http://github.com/railsmachine/moonshine]
 
-A plugin for installing and managing <%= name %>.
+A plugin for installing and managing <%= name %>[http://link/to/<%= name %>].
+
+Available options:
+
+ * <tt>:example_option</tt> - explanation of example_options
+
 
 === Instructions
 
 * <tt>script/plugin install git://github.com/ACCOUNT/<%= plugin_name%>.git</tt>
 * Configure settings if needed
-    configure(:<%= name %> => {:foo => true})
+    configure :<%= name %> => {:foo => true}
 * Invoke the recipe(s) in your Moonshine manifest
     recipe :<%= name %>
