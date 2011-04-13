@@ -25,7 +25,7 @@ describe "MoonshinePluginGenerator" do
   
   it "generates an init.rb that includes the plugin module" do
     init_path.read.should match(/require ".*iptables\.rb"/)
-    init_path.read.should match(/include Iptables/)
+    init_path.read.should match(/include Moonshine::Iptables/)
   end
 
   private

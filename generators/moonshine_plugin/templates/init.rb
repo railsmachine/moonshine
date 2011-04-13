@@ -1,3 +1,3 @@
-require "#{File.dirname(__FILE__)}/../lib/<%= name %>.rb"
+require "#{File.dirname(__FILE__)}/../lib/moonshine/<%= name %>.rb"
 
-include <%= module_name %>
+include Moonshine::<%= module_name %>
