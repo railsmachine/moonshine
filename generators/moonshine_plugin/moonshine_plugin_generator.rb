@@ -20,7 +20,7 @@ class MoonshinePluginGenerator < Rails::Generator::Base
     record do |m|
       m.directory "vendor/plugins/#{plugin_name}"
       m.template  "LICENSE", "vendor/plugins/#{plugin_name}/LICENSE"
-      m.template  "README.rdoc", "vendor/plugins/#{plugin_name}/README.rdoc"
+      m.template  "README.markdown", "vendor/plugins/#{plugin_name}/README.markdown"
       m.directory "vendor/plugins/#{plugin_name}/moonshine"
       m.template  'init.rb', "vendor/plugins/#{plugin_name}/moonshine/init.rb"
       m.directory "vendor/plugins/#{plugin_name}/lib/moonshine"

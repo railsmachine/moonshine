@@ -43,7 +43,7 @@ describe "MoonshinePluginGenerator" do
     end
 
     def readme_path
-      plugin_path + 'README.rdoc'
+      plugin_path + 'README.markdown'
     end
 
     def spec_path

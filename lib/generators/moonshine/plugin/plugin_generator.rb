@@ -11,7 +11,7 @@ module Moonshine
 
       def manifest
         template  'LICENSE', "vendor/plugins/#{plugin_name}/LICENSE"
-        template  "README.rdoc", "vendor/plugins/#{plugin_name}/README.rdoc"
+        template  "README.markdown", "vendor/plugins/#{plugin_name}/README.markdown"
         template  'init.rb', "vendor/plugins/#{plugin_name}/moonshine/init.rb"
         template  'plugin.rb', "vendor/plugins/#{plugin_name}/lib/moonshine/#{name}.rb"
         template  'spec.rb', "vendor/plugins/#{plugin_name}/spec/#{name}_spec.rb"
