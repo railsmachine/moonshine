@@ -113,7 +113,7 @@ module Moonshine
             set :moonshine_rails_env_yml_path, rails_root.join('config', 'moonshine', "#{rails_env}.yml")
             if moonshine_rails_env_yml_path.exist?
               run 'mkdir -p /tmp/moonshine'
-              upload moonshine_rails_env_yml_path, "/tmp/moonshine/#{rails_env}.yml"
+              upload moonshine_rails_env_yml_path.to_s, "/tmp/moonshine/#{rails_env}.yml"
             end
             upload moonshine_yml_path.to_s, '/tmp/moonshine.yml'
             upload File.join(File.dirname(__FILE__), '..', 'moonshine_setup_manifest.rb'), '/tmp/moonshine_setup_manifest.rb'
