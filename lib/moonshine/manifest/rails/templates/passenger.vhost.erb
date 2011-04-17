@@ -169,6 +169,8 @@
     BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
   </IfModule>
 
+  RequestHeader set X-Request-Start "%t"
+
   RewriteEngine On
 
   <%= configuration[:passenger][:vhost_extra] %>
@@ -391,6 +393,8 @@
     BrowserMatch ^Mozilla/4\.0[678] no-gzip
     BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
   </IfModule>
+
+  RequestHeader set X-Request-Start "%t"
 
   RewriteEngine On
 

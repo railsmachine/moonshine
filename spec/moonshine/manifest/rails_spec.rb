@@ -246,6 +246,16 @@ describe Moonshine::Manifest::Rails do
         )
       end
 
+      it "sets the X-Request-Start header" do
+        @manifest.passenger_configure_gem_path
+        @manifest.passenger_site
+
+        vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
+        @manifest.should have_file(vhost_conf_path).with_content(
+          /RequestHeader set X-Request-Start "%t"/
+        )
+      end
+
       it "supports configuring FileETag" do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:apache => { :file_etag => "MTime Size" })
