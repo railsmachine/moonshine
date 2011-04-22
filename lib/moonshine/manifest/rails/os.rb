@@ -62,9 +62,20 @@ from installing any gems, packages, or dependencies directly on the server.
   # We enable Postfix by default because it provides a sane default
   # and makes sending emails, a common task for many Rails apps,
   # easy to setup.
+  #
+  # We also allow configuring the hostname used for sending email
+  # via the `configuration[:mailname]` variable, which can be set
+  # in a recipe/manifest via the `configure(opts)` method or in
+  # a Moonshine YML file.
 
   def postfix
     package 'postfix', :ensure => :latest
+    file '/etc/mailname',
+      :ensure  => :present,
+      :content => (configuration[:mailname] || Facter.fqdn),
+      :owner   => 'root',
+      :group   => 'root',
+      :mode    => '644'
   end
 
   #### NTP

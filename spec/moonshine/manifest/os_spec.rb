@@ -99,4 +99,14 @@ describe Moonshine::Manifest::Rails::Os do
       /"foo";/
     )
   end
+  
+  specify "postfix" do
+    @manifest.configure(:mailname => "mail.awesome-mc-winface.com")
+    @manifest.postfix
+
+    @manifest.should have_package("postfix")
+    @manifest.should have_file("/etc/mailname").with_content(
+      /^mail\.awesome\-mc\-winface\.com$/
+    )
+  end
 end
