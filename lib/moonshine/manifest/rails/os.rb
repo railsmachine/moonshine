@@ -57,6 +57,22 @@ from installing any gems, packages, or dependencies directly on the server.
       :content => motd_contents
   end
 
+  #### Hostname
+  
+  # This recipe is used to configure the hostname on a server via the
+  # `/etc/hostname` file. Generally, this requires a restart to take
+  # effect. We default back to `Facter.fqdn` (the current hostname) as
+  # a default value to avoid any unanticipated changes.
+  
+  def hostname
+    file '/etc/hostname',
+      :ensure  => :present,
+      :content => (configuration[:hostname] || Facter.fqdn),
+      :owner   => 'root',
+      :group   => 'root',
+      :mode    => '644'
+  end
+
   #### Postfix
 
   # We enable Postfix by default because it provides a sane default
