@@ -71,7 +71,9 @@ module Moonshine::Manifest::Rails::Passenger
       :notify => service("apache2"),
       :alias => "passenger_conf"
 
-    a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]
+    a2enmod 'headers', :notify => service('apache2')
+
+    a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load"), exec('a2enmod headers')]
   end
 
   # Creates and enables a vhost configuration named after your application.
