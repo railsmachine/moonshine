@@ -1,4 +1,4 @@
-<VirtualHost *:80>
+<VirtualHost *:<%= configuration[:apache][:port] || 80 %>>
   ServerName <%= configuration[:domain] || (Facter.to_hash["hostname"] + '.' + Facter.to_hash["domain"]) %>
   <% if configuration[:domain_aliases] %>
   ServerAlias <%= configuration[:domain_aliases].to_a.join(' ') %>
