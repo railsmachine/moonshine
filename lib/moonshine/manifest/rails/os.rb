@@ -88,7 +88,7 @@ from installing any gems, packages, or dependencies directly on the server.
     package 'postfix', :ensure => :latest
     file '/etc/mailname',
       :ensure  => :present,
-      :content => (configuration[:mailname] || Facter.fqdn),
+      :content => (configuration[:mailname] || Facter.fqdn || Facter.hostname || ''),
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644'
