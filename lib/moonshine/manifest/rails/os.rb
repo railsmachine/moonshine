@@ -67,7 +67,7 @@ from installing any gems, packages, or dependencies directly on the server.
   def hostname
     file '/etc/hostname',
       :ensure  => :present,
-      :content => (configuration[:hostname] || Facter.fqdn),
+      :content => (configuration[:hostname] || Facter.fqdn || Facter.hostname || ''),
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644'
