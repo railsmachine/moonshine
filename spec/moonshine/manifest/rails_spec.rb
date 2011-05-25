@@ -534,4 +534,18 @@ describe Moonshine::Manifest::Rails do
     end
   end
 
+  describe "rake" do
+    it "installs :installed by default" do
+      @manifest.configure(:rake_version => nil)
+      @manifest.rails_rake_environment
+      @manifest.should have_package('rake').version(:installed)
+    end
+
+    it "can be pinned to a specific version" do
+      @manifest.configure(:rake_version => '1.2.3')
+      @manifest.rails_rake_environment
+      @manifest.should have_package('rake').version('1.2.3')
+    end
+  end
+
 end

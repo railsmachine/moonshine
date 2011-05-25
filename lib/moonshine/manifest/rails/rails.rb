@@ -59,7 +59,8 @@ module Moonshine::Manifest::Rails::Rails
   # This task ensures Rake is installed and that <tt>rake environment</tt>
   # executes without error in your <tt>rails_root</tt>.
   def rails_rake_environment
-    package 'rake', :provider => :gem, :ensure => :installed
+    rake_version = configuration[:rake_version] || :installed
+    package 'rake', :provider => :gem, :ensure => rake_version
     file '/var/log/moonshine_rake.log',
       :ensure   => :present,
       :owner    => configuration[:user],
