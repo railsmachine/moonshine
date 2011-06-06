@@ -1,7 +1,7 @@
 module Moonshine::Manifest::Rails::Passenger
   # Install the passenger gem
   def passenger_gem
-    blessed_version = '3.0.6'
+    blessed_version = '3.0.7'
     configure(:passenger => {})
     if configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
       package "passenger",

@@ -148,13 +148,13 @@ describe Moonshine::Manifest::Rails do
   end
 
   describe "passenger support" do
-    it "installs 3.0.6 by default " do
+    it "installs 3.0.7 by default " do
       @manifest.configure(:passenger => { :version => nil })
 
       @manifest.passenger_configure_gem_path
       @manifest.passenger_gem
 
-      @manifest.should have_package('passenger').version('3.0.6')
+      @manifest.should have_package('passenger').version('3.0.7')
     end
 
     it "can be pinned to a specific version" do
