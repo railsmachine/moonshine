@@ -1,21 +1,23 @@
 module Moonshine::Manifest::Rails::Passenger
+
+  BLESSED_VERSION = '3.0.7'
+
   # Install the passenger gem
   def passenger_gem
-    blessed_version = '3.0.7'
     configure(:passenger => {})
     if configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
       package "passenger",
         :ensure => configuration[:passenger][:version],
         :provider => :gem
-    elsif configuration[:passenger][:version] == :latest
+    elsif configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
       package "passenger",
-        :ensure => blessed_version,
+        :ensure => BLESSED_VERSION,
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
       package 'libcurl4-openssl-dev', :ensure => :installed
-    else
+    elsif configuration[:passenger][:version]
       package "passenger",
-        :ensure => (configuration[:passenger][:version] || blessed_version),
+        :ensure => (configuration[:passenger][:version]),
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
       package 'libcurl4-openssl-dev', :ensure => :installed
@@ -92,14 +94,11 @@ module Moonshine::Manifest::Rails::Passenger
 
   def passenger_configure_gem_path
     configure(:passenger => {})
-    return configuration[:passenger][:path] if configuration[:passenger][:path]
-    version = begin
-      configuration[:passenger][:version] || Gem::SourceIndex.from_installed_gems.find_name("passenger").last.version.to_s
-    rescue
-      `gem install passenger --no-ri --no-rdoc`
-      `passenger-config --version`.chomp
+    if configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
+      configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{BLESSED_VERSION}" })
+    elsif configuration[:passenger][:version]
+      configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{configuration[:passenger][:version]}" })
     end
-    configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{version}" })
   end
 
 private
