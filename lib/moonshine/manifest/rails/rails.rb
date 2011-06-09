@@ -62,7 +62,7 @@ module Moonshine::Manifest::Rails::Rails
     rake_version = configuration[:rake_version] || :installed
     package 'rake', :provider => :gem, :ensure => rake_version
     exec 'rake tasks',
-      :command => 'rake environment 2>&1',
+      :command => 'rake environment',
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
@@ -267,7 +267,7 @@ module Moonshine::Manifest::Rails::Rails
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
     exec("rake #{name}", {
-      :command => "rake #{name} 2>&1 | tee -a /var/log/moonshine_rake.log",
+      :command => "rake #{name}",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
