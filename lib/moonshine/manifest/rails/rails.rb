@@ -61,24 +61,15 @@ module Moonshine::Manifest::Rails::Rails
   def rails_rake_environment
     rake_version = configuration[:rake_version] || :installed
     package 'rake', :provider => :gem, :ensure => rake_version
-    file '/var/log/moonshine_rake.log',
-      :ensure   => :present,
-      :owner    => configuration[:user],
-      :group    => configuration[:group] || configuration[:user],
-      :mode     => '775',
-      :content  => ' ',
-      :backup   => false,
-      :loglevel => :debug
     exec 'rake tasks',
-      :command => 'rake environment 2>&1 | tee -a /var/log/moonshine_rake.log',
+      :command => 'rake environment 2>&1',
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
       :logoutput => true,
       :require => [
         exec('rails_gems'),
-        package('rake'),
-        file('/var/log/moonshine_rake.log')
+        package('rake')
       ]
   end
 
