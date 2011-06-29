@@ -419,8 +419,24 @@ module Moonshine
             ].join(' && ')
           end
 
+          task :mri19 do
+            remove_ruby_from_apt
+            run [
+              'cd /tmp',
+              'sudo rm -rf ruby-1.9.2-p180* || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
+              'wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.2-p180.tar.gz',
+              'tar xzf ruby-1.9.2-p180.tar.gz',
+              'cd /tmp/ruby-1.9.2-p180',
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+          end
+
           task :install_rubygems do
-            version = fetch(:rubygems_version, '1.4.2')
+            default_rubygems_version = (fetch(:ruby) == 'mri19' ? '1.8.5' : '1.4.2')
+            version = fetch(:rubygems_version, default_rubygems_version)
             run [
               'cd /tmp',
               "sudo rm -rf rubygems-#{version}* || true",
@@ -438,12 +454,12 @@ module Moonshine
           end
 
           task :install_moonshine_deps do
-            rake_version = fetch(:rake_version, '>= 0')
-            sudo "gem install rake --no-rdoc --no-ri --version='#{rake_version}'"
+            sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
-            sudo 'gem install shadow_puppet --no-rdoc --no-ri'
+            sudo 'gem install shadow_puppet --no-rdoc --no-ri --prerelease'
             if rails_root.join('Gemfile').exist?
-              bundler_version = fetch(:bundler_version, '1.0.9')
+              default_bundler_version = (fetch(:ruby) == 'mri19' ? '1.0.15' : '1.0.9')
+              bundler_version = fetch(:bundler_version, default_bundler_version)
               sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}'"
             end
           end
