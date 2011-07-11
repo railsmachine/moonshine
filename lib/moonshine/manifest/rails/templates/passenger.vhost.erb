@@ -161,6 +161,25 @@
   PassengerPreStart <%= configuration[:passenger][:pre_start_url] %>
   <% end %>
 
+  ## PassengerAppGroupName
+  #
+  # By default, Passenger groups applcations by the the path they are served out of,
+  # ie /srv/yourapp/current.
+  #
+  # At times, it may be useful be serving the same app from multiple vhosts, but have 
+  # them be have different workers. For example, you may have a /ping URL that needs to
+  # respond quickly, without being affected by the rest of the app. In this case, you can: 
+  #
+  #  * create a new vhost pointing at the same app
+  #  * set PassengerAppGroupName to ping 
+  #  * configure a proxy to forward /ping to the new vhost
+  
+  <% if configuration[:passenger][:app_group_name] %>
+  PassengerAppGroupName <%= configuration[:passenger][:app_group_name] %>
+  <% else %>
+  #PassengerAppGroupName <%= configuration[:application] %>
+  <% end %>
+
   # Deflate
   <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE <%= configuration[:apache][:gzip_types].join(' ') %>
