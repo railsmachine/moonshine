@@ -1,3 +1,4 @@
+require 'rake/tasklib'
 module Moonshine
   module Rake
 
