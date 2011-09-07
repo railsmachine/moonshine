@@ -139,7 +139,7 @@ module Moonshine::Manifest::Rails::Rails
         :require => file('/etc/gemrc'),
         :user => configuration[:user],
         :timeout => 108000,
-        :logoutput => true
+        :logoutput => :on_failure
 
     else
       return unless configuration[:gems]
