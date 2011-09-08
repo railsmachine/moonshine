@@ -419,15 +419,15 @@ module Moonshine
             ].join(' && ')
           end
 
-          task :mri19 do
+          task :src192 do
             remove_ruby_from_apt
             run [
               'cd /tmp',
-              'sudo rm -rf ruby-1.9.2-p180* || true',
+              'sudo rm -rf ruby-1.9.2-p290* || true',
               'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
-              'wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.2-p180.tar.gz',
-              'tar xzf ruby-1.9.2-p180.tar.gz',
-              'cd /tmp/ruby-1.9.2-p180',
+              'wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.2-p290.tar.gz',
+              'tar xzf ruby-1.9.2-p290.tar.gz',
+              'cd /tmp/ruby-1.9.2-p290',
               './configure --prefix=/usr',
               'make',
               'sudo make install'
@@ -435,7 +435,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            default_rubygems_version = (fetch(:ruby) == 'mri19' ? '1.8.5' : '1.4.2')
+            default_rubygems_version = (fetch(:ruby) == 'src192' ? '1.8.7' : '1.4.2')
             version = fetch(:rubygems_version, default_rubygems_version)
             run [
               'cd /tmp',
