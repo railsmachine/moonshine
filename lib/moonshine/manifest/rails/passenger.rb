@@ -1,6 +1,6 @@
 module Moonshine::Manifest::Rails::Passenger
 
-  BLESSED_VERSION = '3.0.8'
+  BLESSED_VERSION = '3.0.9'
 
   # Install the passenger gem
   def passenger_gem
