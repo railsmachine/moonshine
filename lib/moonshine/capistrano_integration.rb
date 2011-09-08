@@ -356,6 +356,7 @@ module Moonshine
           task :upgrade do
             install
             sudo 'gem pristine --all'
+            passenger.compile
             apache.restart
           end
 
@@ -469,6 +470,12 @@ module Moonshine
           desc 'Restarts the Apache web server'
           task :restart do
             sudo 'service apache2 restart'
+          end
+        end
+
+        namespace :passenger do
+          task :compile do
+            run 'gem list -i passenger && cd /usr/local/src/passenger && sudo /usr/bin/ruby -S rake clean apache2 || true'
           end
         end
 
