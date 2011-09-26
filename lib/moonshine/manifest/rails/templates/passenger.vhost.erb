@@ -12,6 +12,9 @@
   DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
+    <% if configuration[:passenger][:limit_except] %>
+      <%= configuration[:passenger][:limit_except] %>
+    <% end %>
     Options FollowSymLinks
     AllowOverride <%= if configuration[:apache]; configuration[:apache][:allow_override] || 'None'; else 'None'; end %>
     Order allow,deny
@@ -255,6 +258,9 @@
   DocumentRoot <%= configuration[:deploy_to] + "/current/public" %>
 
   <Directory <%= configuration[:deploy_to] + "/current/public" %>>
+    <% if configuration[:passenger][:limit_except] %>
+      <%= configuration[:passenger][:limit_except] %>
+    <% end %>
     Options FollowSymLinks
     AllowOverride <%= if configuration[:apache]; configuration[:apache][:allow_override] || 'None'; else 'None'; end %>
     Order allow,deny
