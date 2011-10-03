@@ -77,7 +77,7 @@ protected
   end
 
   def application
-    @application ||= File.basename(RAILS_ROOT)
+    @application ||= File.basename(Rails.root ? Rails.root : RAILS_ROOT)
   end
 
   
