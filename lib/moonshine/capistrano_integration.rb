@@ -397,11 +397,11 @@ module Moonshine
             remove_ruby_from_apt
             run [
               'cd /tmp',
-              'sudo rm -rf ruby-enterprise-1.8.7-2011.02* || true',
+              'sudo rm -rf ruby-enterprise-1.8.7-2011.03* || true',
               'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
-              'wget -q http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-2011.02.tar.gz',
-              'tar xzf ruby-enterprise-1.8.7-2011.02.tar.gz',
-              'sudo /tmp/ruby-enterprise-1.8.7-2011.02/installer --dont-install-useful-gems --no-dev-docs -a /usr'
+              'wget -q http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-2011.03.tar.gz',
+              'tar xzf ruby-enterprise-1.8.7-2011.03.tar.gz',
+              'sudo /tmp/ruby-enterprise-1.8.7-2011.03/installer --dont-install-useful-gems --no-dev-docs -a /usr'
             ].join(' && ')
           end
 
