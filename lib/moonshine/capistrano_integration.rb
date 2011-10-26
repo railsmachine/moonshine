@@ -422,13 +422,32 @@ module Moonshine
 
           task :src192 do
             remove_ruby_from_apt
+            pv = '1.9.2-p290'
+            p = "ruby-#{pv}"
             run [
               'cd /tmp',
-              'sudo rm -rf ruby-1.9.2-p290* || true',
+              "sudo rm -rf #{p}* || true",
+              "sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true",
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+          end
+
+          task :src193 do
+            remove_ruby_from_apt
+            pv = "1.9.3-rc1"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
-              'wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.2-p290.tar.gz',
-              'tar xzf ruby-1.9.2-p290.tar.gz',
-              'cd /tmp/ruby-1.9.2-p290',
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
@@ -436,7 +455,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            default_rubygems_version = '1.8.11'
+            default_rubygems_version = (fetch(:ruby) =~ /^src19/ ? '1.8.7' : '1.4.2')
             version = fetch(:rubygems_version, default_rubygems_version)
             run [
               'cd /tmp',
@@ -452,6 +471,9 @@ module Moonshine
           task :install_deps do
             aptget.update
             sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget'
+            if fetch(:ruby) ==  'src193'
+              sudo 'apt-get install -q -y libyaml-dev'
+            end
           end
 
           task :install_moonshine_deps do
