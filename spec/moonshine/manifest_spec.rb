@@ -77,7 +77,7 @@ describe Moonshine::Manifest do
         }.should_not raise_error(NoMethodError)
       end
     end
-    
+
     context 'using a string' do
       it 'should run on_stage block when stage matches the given string' do
         Moonshine::Manifest.should_receive(:deploy_stage).and_return("my_stage")

@@ -100,7 +100,7 @@ describe Moonshine::Manifest::Rails::Apache do
     # TODO refactor to something like @manifest.should have_service('apache2').require(package('apache2-mpm-worker'))
     apache = @manifest.services["apache2"]
     apache.should_not == nil
-    apache.require.to_s.should == @manifest.package('apache2-mpm-worker').to_s 
+    apache.require.to_s.should == @manifest.package('apache2-mpm-worker').to_s
   end
 
   it "supports ssl" do

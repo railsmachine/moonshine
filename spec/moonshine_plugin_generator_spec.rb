@@ -19,10 +19,10 @@ describe "MoonshinePluginGenerator" do
     license_path.should exist
   end
 
-  it "generates a plugin module" do 
+  it "generates a plugin module" do
     module_path.read.should match(/module Iptables/)
   end
-  
+
   it "generates an init.rb that includes the plugin module" do
     init_path.read.should match(/require ".*iptables\.rb"/)
     init_path.read.should match(/include Moonshine::Iptables/)

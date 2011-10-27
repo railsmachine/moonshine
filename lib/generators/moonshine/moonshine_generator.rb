@@ -1,7 +1,7 @@
 class MoonshineGenerator < Rails::Generators::Base
   desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
   argument :name, :optional => true, :default => 'application'
- 
+
   class_option :application, :default => Rails.root.basename.to_s, :desc => 'name of your application'
   class_option :user, :default => 'rails', :desc => 'User to use on remote server', :type => :string
   class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
@@ -12,7 +12,7 @@ class MoonshineGenerator < Rails::Generators::Base
   def self.source_root
     @_moonshine_source_root ||= Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'templates')
   end
-  
+
   def manifest
     template "Capfile", "Capfile"
     template "readme.templates", "app/manifests/templates/README"
@@ -22,7 +22,7 @@ class MoonshineGenerator < Rails::Generators::Base
 
     if ActiveSupport::VERSION::MAJOR == 3 && ActiveSupport::VERSION::MINOR >= 1
       app_manifests_load_prevention_string = "config.paths['app/manifests'].skip_eager_load!"
-    else 
+    else
       app_manifests_load_prevention_string = "config.paths.app.manifests 'app/manifests', :eager_load => false"
     end
 
@@ -38,28 +38,28 @@ class MoonshineGenerator < Rails::Generators::Base
       template 'staging-environment.rb', 'config/environments/staging.rb'
     end
 
-    
+
     intro = <<-INTRO
-    
+
 After the Moonshine generator finishes don't forget to:
- 
+
 - Edit config/moonshine.yml
-Use this file to manage configuration related to deploying and running the app: 
+Use this file to manage configuration related to deploying and running the app:
 domain name, git repos, package dependencies for gems, and more.
- 
+
 - Edit app/manifests/#{file_name}.rb
 Use this to manage the configuration of everything else on the server:
-define the server 'stack', cron jobs, mail aliases, configuration files 
- 
+define the server 'stack', cron jobs, mail aliases, configuration files
+
     INTRO
     puts intro if File.basename($0) == 'generate'
   end
- 
+
 protected
   def file_name
     @manifest_name ||= name.downcase.underscore + "_manifest"
   end
- 
+
   def klass_name
     @klass_name ||= file_name.classify
   end
@@ -87,7 +87,7 @@ protected
     @application ||= File.basename(RAILS_ROOT)
   end
 
-  
+
   def staging_domain
     "staging.#{options[:domain]}"
   end
@@ -99,5 +99,5 @@ protected
   def staging_server
     "staging.#{server}"
   end
-  
+
 end

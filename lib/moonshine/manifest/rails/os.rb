@@ -3,7 +3,7 @@
 
 module Moonshine::Manifest::Rails::Os
   #### Cron
-  
+
   # Ensures the cron package is installed and the service is running.
   #
   # Cron jobs can be defined inside any manifest or recipe like so:
@@ -58,12 +58,12 @@ from installing any gems, packages, or dependencies directly on the server.
   end
 
   #### Hostname
-  
+
   # This recipe is used to configure the hostname on a server via the
   # `/etc/hostname` file. Generally, this requires a restart to take
   # effect. We default back to `Facter.fqdn` (the current hostname) as
   # a default value to avoid any unanticipated changes.
-  
+
   def hostname
     file '/etc/hostname',
       :ensure  => :present,

@@ -30,5 +30,5 @@ class MoonshinePluginGenerator < Rails::Generator::Base
       m.template  'spec_helper.rb', "vendor/plugins/#{plugin_name}/spec/spec_helper.rb"
     end
   end
-  
+
 end

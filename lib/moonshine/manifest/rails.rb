@@ -36,7 +36,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   include Moonshine::Manifest::Rails::Rails
   include Moonshine::Manifest::Rails::Os
 
-  # A super recipe for installing Apache, Passenger, a database, 
+  # A super recipe for installing Apache, Passenger, a database,
   # Rails, NTP, Cron, Postfix. To customize your stack, call the
   # individual recipes you want to include rather than default_stack.
   #

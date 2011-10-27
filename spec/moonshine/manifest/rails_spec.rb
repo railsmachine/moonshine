@@ -57,7 +57,7 @@ describe Moonshine::Manifest::Rails do
 
     end
 
-    it "supports postgresl" do 
+    it "supports postgresl" do
       @manifest.should_receive(:database_environment).at_least(:once).and_return({:adapter => 'postgresql' })
 
       @manifest.default_stack
@@ -85,7 +85,7 @@ describe Moonshine::Manifest::Rails do
         /--no-rdoc/
       )
     end
-    
+
     it "configures gem sources" do
       @manifest.rails_gems
 
@@ -93,7 +93,7 @@ describe Moonshine::Manifest::Rails do
         /rubygems.org/
       )
     end
-    
+
     it "should be valid gemrc syntax (i.e. no leading symbols)" do
       @manifest.rails_gems
 
@@ -219,7 +219,7 @@ describe Moonshine::Manifest::Rails do
       it "supports configuring FileETag" do
         @manifest.passenger_configure_gem_path
         @manifest.configure(:apache => { :file_etag => "MTime Size" })
-        
+
         @manifest.passenger_site
 
         vhost_conf_path = "/etc/apache2/sites-available/#{@manifest.configuration[:application]}"
@@ -317,7 +317,7 @@ describe Moonshine::Manifest::Rails do
     end
 
   end
-  
+
   describe "apache server" do
     it "generates htpasswd" do
       @manifest.passenger_configure_gem_path
@@ -328,7 +328,7 @@ describe Moonshine::Manifest::Rails do
         }
       })
       @manifest.apache_server
-      
+
       @manifest.should exec_command('htpasswd -b /srv/foo/shared/config/htpasswd jimbo motorcycle')
       @manifest.should exec_command('htpasswd -b /srv/foo/shared/config/htpasswd joebob jimbo')
       @manifest.should have_file("#{@manifest.configuration[:deploy_to]}/shared/config/htpasswd")
@@ -407,7 +407,7 @@ describe Moonshine::Manifest::Rails do
 
       @manifest.should have_package("logrotate")
       @manifest.should have_file("/etc/logrotate.d/srvfoosharedloglog.conf")
-      
+
       logrotate_conf = @manifest.files["/etc/logrotate.d/srvfoosharedloglog.conf"].content
 
       logrotate_conf.should match(/foo/)

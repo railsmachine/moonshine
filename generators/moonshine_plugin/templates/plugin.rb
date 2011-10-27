@@ -12,10 +12,10 @@ module Moonshine
     #    recipe :<%= name %>
     def <%= name %>(options = {})
       # define the recipe
-      # options specified with the configure method will be 
+      # options specified with the configure method will be
       # automatically available here in the options hash.
       #    options[:foo]   # => true
     end
-    
+
   end
 end
