@@ -61,16 +61,11 @@ module Moonshine::Manifest::Rails::Rails
   def rails_rake_environment
     rake_version = configuration[:rake_version] || :installed
     package 'rake', :provider => :gem, :ensure => rake_version
-    exec 'rake tasks',
-      :command => 'rake environment',
-      :user => configuration[:user],
-      :cwd => rails_root,
-      :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
-      :logoutput => true,
-      :require => [
-        exec('rails_gems'),
-        package('rake')
-      ]
+    # we override these opts to avoid self-referential requires. probably best to not touch this.
+    rake 'environment --trace',
+      :alias => "rake tasks",
+      :require => [exec('rails_gems')],
+      :logoutput => :on_failure
   end
 
   # Automatically install all gems needed specified in the array at
@@ -272,8 +267,9 @@ module Moonshine::Manifest::Rails::Rails
   # Creates exec("rake #name") that runs in <tt>rails root</tt> of the rails
   # app, with RAILS_ENV properly set
   def rake(name, options = {})
-    exec("rake #{name}", {
-      :command => "rake #{name}",
+    exec("#{try_bundle_exec} rake #{name}", {
+      :command => "#{try_bundle_exec} rake #{name}",
+      :alias => "rake #{name}",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
@@ -282,6 +278,15 @@ module Moonshine::Manifest::Rails::Rails
       :timeout => 108000
     }.merge(options)
   )
+  end
+  
+  def try_bundle_exec
+    gemfile_path = rails_root.join('Gemfile')
+    if gemfile_path.exist?
+      'bundle exec'
+    else
+      ''
+    end
   end
   
   # Creates a sandbox environment so that ENV changes are reverted afterwards
