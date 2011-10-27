@@ -4,6 +4,10 @@
 #
 module Moonshine::Manifest::Rails::Postgresql
 
+  def postgresql_version
+    ubuntu_lucid? ? '8.4' : '8.3'
+  end
+
   # Installs <tt>postgresql</tt> from apt and enables the <tt>postgresql</tt>
   # service.
   def postgresql_server
@@ -11,38 +15,37 @@ module Moonshine::Manifest::Rails::Postgresql
     package 'postgresql-client', :ensure => :installed
     package 'postgresql-contrib', :ensure => :installed
     package 'libpq-dev', :ensure => :installed
-    service 'postgresql-8.3',
+    service "postgresql-#{postgresql_version}",
+      :alias      => 'postgresql',
       :ensure     => :running,
       :hasstatus  => true,
       :require    => [
-        package('postgresql'),
-        package('postgres'),
-        package('pg')
+        package('postgresql')
       ]
     #ensure the postgresql key is present on the configuration hash
     configure(:postgresql => {})
-    file '/etc/postgresql/8.3/main/pg_hba.conf',
+    file "/etc/postgresql/#{postgresql_version}/main/pg_hba.conf",
       :ensure  => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'pg_hba.conf.erb')),
       :require => package('postgresql'),
       :mode    => '600',
       :owner   => 'postgres',
       :group   => 'postgres',
-      :notify  => service('postgresql-8.3')
-    file '/etc/postgresql/8.3/main/postgresql.conf',
+      :notify  => service("postgresql")
+    file "/etc/postgresql/#{postgresql_version}/main/postgresql.conf",
       :ensure  => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'postgresql.conf.erb')),
       :require => package('postgresql'),
       :mode    => '600',
       :owner   => 'postgres',
       :group   => 'postgres',
-      :notify  => service('postgresql-8.3')
+      :notify  => service("postgresql")
   end
 
   # Install the <tt>pg</tt> rubygem and dependencies
   def postgresql_gem
-    gem 'pg'
-    gem 'postgres'
+    gem 'pg', :require => service("postgresql")
+    gem 'postgres', :require => service("postgresql")
   end
 
   # Grant the database user specified in the current <tt>database_environment</tt>
@@ -51,7 +54,7 @@ module Moonshine::Manifest::Rails::Postgresql
     psql "CREATE USER #{database_environment[:username]} WITH PASSWORD '#{database_environment[:password]}'",
       :alias    => "postgresql_user",
       :unless   => psql_query('\\\\du') + "| grep #{database_environment[:username]}",
-      :require  => service('postgresql-8.3')
+      :require  => service("postgresql")
   end
 
   # Create the database from the current <tt>database_environment</tt>
