@@ -71,22 +71,22 @@ class MoonshineGenerator < Rails::Generator::Base
         m.template 'staging-environment.rb', 'config/environments/staging.rb'
       end
     end
-    
+
     intro = <<-INTRO
-    
+
 After the Moonshine generator finishes don't forget to:
 
 - Edit config/moonshine.yml
-Use this file to manage configuration related to deploying and running the app: 
+Use this file to manage configuration related to deploying and running the app:
 domain name, git repos, package dependencies for gems, and more.
 
 - Edit app/manifests/#{file_name}.rb
 Use this to manage the configuration of everything else on the server:
-define the server 'stack', cron jobs, mail aliases, configuration files 
+define the server 'stack', cron jobs, mail aliases, configuration files
 
     INTRO
     puts intro if File.basename($0) == 'generate'
-    
+
     recorded_session
   end
 
@@ -138,11 +138,11 @@ define the server 'stack', cron jobs, mail aliases, configuration files
               "setup multistage deployment environment") { options[:multistage] = true }
       opt.on("--ruby RUBY",
              "Ruby version to install. Currently supports: mri, ree, ree187 (default), src187") { |ruby| options[:ruby] = ruby }
-      
+
     end
-  
+
     def ruby
       options[:ruby]
     end
-  
+
 end

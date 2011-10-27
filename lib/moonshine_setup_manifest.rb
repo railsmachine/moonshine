@@ -14,7 +14,7 @@ class MoonshineSetupManifest < ShadowPuppet::Manifest
   end
 
   ## Prerequites
-  # 
+  #
   # The following configuration is required, either in `config/moonshine.yml` or `config/moonshine/<stage>.yml`:
   #
   #     :user: rails

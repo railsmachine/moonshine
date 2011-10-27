@@ -87,7 +87,7 @@ module Moonshine
             puts "You have changes in your project directory. Please commit before updating #{@repo}."
           end
 
-        elsif File.exist?("#{RAILS_ROOT}/.gitmodules") && 
+        elsif File.exist?("#{RAILS_ROOT}/.gitmodules") &&
           File.open("#{RAILS_ROOT}/.gitmodules") {|f| f.grep /#{@repo}\.git/}.any? &&
           File.exist?("#{RAILS_ROOT}/vendor/plugins/#{@repo}/.git")
 

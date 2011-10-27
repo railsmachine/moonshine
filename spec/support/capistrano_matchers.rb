@@ -24,7 +24,7 @@ module Capistrano
       def uploads
         @uploads ||= {}
       end
-      
+
     end
 
     module Helpers
@@ -158,7 +158,7 @@ module Capistrano
         failure_message_for_should do |actual|
           "expected configuration to run #{cmd}, but did not"
         end
-        
+
       end
 
     end

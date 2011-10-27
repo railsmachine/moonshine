@@ -123,8 +123,8 @@ module Moonshine::Manifest::Rails::Rails
               :before => exec('bundle install')
           end
         end
-      end     
-      
+      end
+
       bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
       bundle_install_options = [
          '--deployment',
@@ -283,7 +283,7 @@ module Moonshine::Manifest::Rails::Rails
     }.merge(options)
   )
   end
-  
+
   # Creates a sandbox environment so that ENV changes are reverted afterwards
   OLDENV = {}
   def sandbox_environment

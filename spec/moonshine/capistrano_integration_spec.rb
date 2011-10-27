@@ -45,7 +45,7 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
 
     callback = callbacks.first
     callback.should_not be_nil
-    
+
     @configuration.namespace :moonshine do
       should_receive(:apply)
     end
@@ -62,7 +62,7 @@ describe Moonshine::CapistranoIntegration, "loaded into a configuration" do
 
     callback = callbacks.first
     callback.should_not be_nil
-    
+
     @configuration.namespace :moonshine do
       should_receive(:noop_apply)
     end

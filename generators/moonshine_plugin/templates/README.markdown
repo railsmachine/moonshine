@@ -32,8 +32,8 @@ Welcome to Moonshine::<%= module_name %>, a [Moonshine](http://github.com/railsm
 Here's some quick links:
 
  * [Homepage](http://github.com/ACCOUNT/moonshine_<%= name %>)
- * [Issues](http://github.com/ACCOUNT/moonshine_<%= name %>/issues) 
- * [Wiki](http://github.com/ACCOUNT/moonshine_<%= name %>/wiki) 
+ * [Issues](http://github.com/ACCOUNT/moonshine_<%= name %>/issues)
+ * [Wiki](http://github.com/ACCOUNT/moonshine_<%= name %>/wiki)
  * [Mailing List](http://groups.google.com)
  * Resources for using <%= module_name %>:
    * [<%= module_name %> Homepage](http://www.google.com/search?q=<%= name %>)

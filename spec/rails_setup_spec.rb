@@ -20,7 +20,7 @@ describe "MoonshineSetupManifest" do
 
   it "creates deploy_to directory" do
     @manifest.should use_recipe(:directories)
-    
+
     @manifest.directories
 
     deploy_to = @manifest.files["#{@manifest.configuration[:deploy_to]}"]
