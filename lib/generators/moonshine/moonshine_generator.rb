@@ -1,4 +1,8 @@
+require File.join(File.dirname(__FILE__), '..', 'moonshine_helper')
+
 class MoonshineGenerator < Rails::Generators::Base
+  include MoonshineGeneratorHelpers
+  
   desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
   argument :name, :optional => true, :default => 'application'
  
@@ -95,7 +99,7 @@ protected
   end
 
   def application
-    @application ||= File.basename(RAILS_ROOT)
+    @application ||= File.basename(rails_root_path)
   end
 
   
