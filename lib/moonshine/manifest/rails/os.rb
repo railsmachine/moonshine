@@ -187,6 +187,17 @@ CONFIG
     end
   end
 
+  def exec(*args)
+    if args && args.flatten.size == 1
+      super(*args)
+    elsif
+      name = args.first
+      hash = args.last
+      hash[:logoutput] = (hash[:logoutput] || :on_failure)
+      super(name, hash)
+    end
+  end
+
 private
 
   #### Ubuntu Version Detection
