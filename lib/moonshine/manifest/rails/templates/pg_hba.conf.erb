@@ -71,12 +71,20 @@
 # (autovacuum, daily cronjob, replication, and similar tasks).
 #
 # Database administrative login by UNIX sockets
+<% if configuration[:postgresql][:version].to_s =~ /^9/ %>
+local   all         postgres                          peer
+<% else %>
 local   all         postgres                          ident sameuser
+<% end %>
 
 # TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
 
 # "local" is for Unix domain socket connections only
+<% if configuration[:postgresql][:version].to_s =~ /^9/ %>
+local   all         postgres                          peer
+<% else %>
 local   all         all                               md5 sameuser
+<% end %>
 # IPv4 local connections:
 host    all         all         127.0.0.1/32          md5
 # IPv6 local connections:

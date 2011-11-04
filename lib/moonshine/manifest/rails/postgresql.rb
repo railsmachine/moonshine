@@ -11,20 +11,37 @@ module Moonshine::Manifest::Rails::Postgresql
   # Installs <tt>postgresql</tt> from apt and enables the <tt>postgresql</tt>
   # service.
   def postgresql_server
-    package 'postgresql', :ensure => :installed
-    package 'postgresql-client', :ensure => :installed
-    package 'postgresql-contrib', :ensure => :installed
+    # pre-reqs for 9.x packages
+    package 'python-software-properties', :ensure => :installed
+
+    exec 'add postgresql ppa',
+      :command => 'add-apt-repository ppa:pitti/postgresql',
+      :unless  => 'apt-key list | grep 1024R/8683D8A2',
+      :require => package('python-software-properties'),
+      :before => package('postgresql')
+    
+    #ensure the postgresql key is present on the configuration hash
+    default_config = HashWithIndifferentAccess.new
+    default_config[:version] = postgresql_version
+    
+    configure(:postgresql => HashWithIndifferentAccess.new)
+    
+    package "postgresql-#{configuration[:postgresql][:version]}", :ensure => :installed
+    package "postgresql-client-#{configuration[:postgresql][:version]}", :ensure => :installed
+    package "postgresql-contrib-#{configuration[:postgresql][:version]}", :ensure => :installed
+    package "postgresql-client-common", :ensure => :installed
+    package "postgresql-common", :ensure => :installed
     package 'libpq-dev', :ensure => :installed
-    service "postgresql-#{postgresql_version}",
+    
+    service "postgresql-#{configuration[:postgresql][:version]}",
       :alias      => 'postgresql',
       :ensure     => :running,
       :hasstatus  => true,
       :require    => [
         package('postgresql')
       ]
-    #ensure the postgresql key is present on the configuration hash
-    configure(:postgresql => {})
-    file "/etc/postgresql/#{postgresql_version}/main/pg_hba.conf",
+    
+    file "/etc/postgresql/#{configuration[:postgresql][:version]}/main/pg_hba.conf",
       :ensure  => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'pg_hba.conf.erb')),
       :require => package('postgresql'),
@@ -32,7 +49,8 @@ module Moonshine::Manifest::Rails::Postgresql
       :owner   => 'postgres',
       :group   => 'postgres',
       :notify  => service("postgresql")
-    file "/etc/postgresql/#{postgresql_version}/main/postgresql.conf",
+
+    file "/etc/postgresql/#{configuration[:postgresql][:version]}/main/postgresql.conf",
       :ensure  => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'postgresql.conf.erb')),
       :require => package('postgresql'),
