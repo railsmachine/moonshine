@@ -439,15 +439,13 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
-            pv = "1.9.3-rc1"
-            p = "ruby-#{pv}"
             run [
               'cd /tmp',
-              "sudo rm -rf #{p}* || true",
+              "sudo rm -rf ruby-1.9-p0* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
-              "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
-              "tar xzf #{p}.tar.gz",
-              "cd /tmp/#{p}",
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p0.tar.gz",
+              "tar xzf ruby-1.9.3-p0.tar.gz",
+              "cd /tmp/ruby-1.9.3-p0",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
