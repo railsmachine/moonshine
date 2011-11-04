@@ -1,6 +1,9 @@
 require 'rbconfig'
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'generators', 'moonshine_helper')
 
 class MoonshineGenerator < Rails::Generator::Base
+  include MoonshineGeneratorHelpers
+
   attr_reader :file_name, :klass_name
 
   default_options :user => 'rails',
@@ -50,7 +53,7 @@ class MoonshineGenerator < Rails::Generator::Base
 
       m.template  'deploy.rb', 'config/deploy.rb'
 
-      production_env_path = Pathname.new("#{RAILS_ROOT}/config/environments/production.rb")
+      production_env_path = Pathname.new("#{rails_root_path}/config/environments/production.rb")
       if production_env_path.exist?
         production_env = production_env_path.read
         unless production_env.include?('ActionMailer::Base.delivery_method')
@@ -91,7 +94,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
   end
 
   def application
-    File.basename(RAILS_ROOT)
+    File.basename(rails_root_path)
   end
 
   def repository

@@ -1,4 +1,8 @@
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'generators', 'moonshine_helper')
+
 class MoonshinePluginGenerator < Rails::Generator::Base
+  include MoonshineGeneratorHelpers
+
   attr_reader :name, :plugin_name, :module_name
 
   def initialize(runtime_args, runtime_options = {})
