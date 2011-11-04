@@ -1,6 +1,10 @@
+require File.join(File.dirname(__FILE__), '..', '..', 'moonshine_helper')
+
 module Moonshine
   module Generators
     class PluginGenerator < Rails::Generators::Base
+      include MoonshineGeneratorHelpers
+
       desc Pathname.new(__FILE__).dirname.join('..', '..', '..', '..', 'generators', 'moonshine_plugin', 'USAGE').read
 
       argument :name, :required => true, :description => 'The name of the new plugin'

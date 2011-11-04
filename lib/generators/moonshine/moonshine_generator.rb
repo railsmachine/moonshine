@@ -1,4 +1,8 @@
+require File.join(File.dirname(__FILE__), '..', 'moonshine_helper')
+
 class MoonshineGenerator < Rails::Generators::Base
+  include MoonshineGeneratorHelpers
+  
   desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
   argument :name, :optional => true, :default => 'application'
  
@@ -21,9 +25,20 @@ class MoonshineGenerator < Rails::Generators::Base
     template "deploy.rb", "config/deploy.rb"
 
     if ActiveSupport::VERSION::MAJOR == 3 && ActiveSupport::VERSION::MINOR >= 1
-      app_manifests_load_prevention_string = "config.paths['app/manifests'].skip_eager_load!"
+      app_manifests_load_prevention_string = <<-EOS
+
+  # don't attempt to auto-require the moonshine manifests into the rails env
+  config.paths['app/manifests'] = 'app/manifests'
+  config.paths['app/manifests'].skip_eager_load!
+
+EOS
     else 
-      app_manifests_load_prevention_string = "config.paths.app.manifests 'app/manifests', :eager_load => false"
+      app_manifests_load_prevention_string = <<-EOS
+
+  # don't attempt to auto-require the moonshine manifests into the rails env
+  config.paths.app.manifests 'app/manifests', :eager_load => false"
+
+EOS
     end
 
     environment app_manifests_load_prevention_string, :verbose => true
@@ -84,7 +99,7 @@ protected
   end
 
   def application
-    @application ||= File.basename(RAILS_ROOT)
+    @application ||= File.basename(rails_root_path)
   end
 
   

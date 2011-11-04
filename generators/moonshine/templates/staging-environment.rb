@@ -1,1 +1,1 @@
-<%= File.read(File.join(RAILS_ROOT, 'config', 'environments', 'production.rb')) %>
+<%= File.read(File.join(rails_root_path, 'config', 'environments', 'production.rb')) %>
