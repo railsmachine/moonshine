@@ -118,8 +118,8 @@ module Moonshine::Manifest::Rails::Rails
               :before => exec('bundle install')
           end
         end
-      end     
-      
+      end
+
       bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
       bundle_install_options = [
          '--deployment',
@@ -164,11 +164,13 @@ module Moonshine::Manifest::Rails::Rails
       shared_dirs = configuration[:shared_children].map { |d| "#{configuration[:deploy_to]}/shared/#{d}" }
       dirs += shared_dirs
     end
+
     if configuration[:app_symlinks].is_a?(Array)
       dirs += ["#{configuration[:deploy_to]}/shared/public"]
       symlink_dirs = configuration[:app_symlinks].map { |d| "#{configuration[:deploy_to]}/shared/public/#{d}" }
       dirs += symlink_dirs
     end
+
     dirs.each do |dir|
       file dir,
       :ensure => :directory,
@@ -176,6 +178,19 @@ module Moonshine::Manifest::Rails::Rails
       :group => configuration[:group] || configuration[:user],
       :mode => '775'
     end
+  end
+
+  def rails_asset_pipeline
+    file "#{configuration[:deploy_to]}/shared/assets",
+      :ensure => :directory, 
+      :owner => configuration[:user],
+      :group => configuration[:group] || configuration[:user],
+      :mode => '775'
+    file "#{rails_root}/public/assets",
+      :ensure => "#{configuration[:deploy_to]}/shared/assets",
+      :require => file("#{configuration[:deploy_to]}/shared/assets")
+    rake 'assets:precompile',
+      :require => file("#{rails_root}/public/assets")
   end
 
   # Creates package("#{name}") with <tt>:provider</tt> set to <tt>:gem</tt>.
@@ -279,7 +294,7 @@ module Moonshine::Manifest::Rails::Rails
     }.merge(options)
   )
   end
-  
+
   def try_bundle_exec
     gemfile_path = rails_root.join('Gemfile')
     if gemfile_path.exist?
@@ -288,7 +303,7 @@ module Moonshine::Manifest::Rails::Rails
       ''
     end
   end
-  
+
   # Creates a sandbox environment so that ENV changes are reverted afterwards
   OLDENV = {}
   def sandbox_environment
