@@ -436,7 +436,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            default_rubygems_version = (fetch(:ruby) == 'src192' ? '1.8.7' : '1.4.2')
+            default_rubygems_version = '1.8.11'
             version = fetch(:rubygems_version, default_rubygems_version)
             run [
               'cd /tmp',
