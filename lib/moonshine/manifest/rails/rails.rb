@@ -190,7 +190,7 @@ module Moonshine::Manifest::Rails::Rails
       :ensure => "#{configuration[:deploy_to]}/shared/assets",
       :require => file("#{configuration[:deploy_to]}/shared/assets")
     rake 'assets:precompile',
-      :require => file("#{rails_root}/public/assets")
+      :require => [file("#{rails_root}/public/assets"), exec('rails_gems')]
   end
 
   # Creates package("#{name}") with <tt>:provider</tt> set to <tt>:gem</tt>.
