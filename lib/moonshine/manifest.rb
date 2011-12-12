@@ -150,14 +150,16 @@ class Moonshine::Manifest < ShadowPuppet::Manifest
   def self.template(pathname, b = binding)
     pathname = Pathname.new(pathname) unless pathname.kind_of?(Pathname)
 
-    template_contents = if local_template(pathname).exist?
-                          template_contents = local_template(pathname).read
-                        elsif pathname.exist?
-                          template_contents = pathname.read
-                        else
-                          raise LoadError, "Can't find template #{pathname}"
-                        end
-    ERB.new(template_contents).result(b)
+    pathname = if local_template(pathname).exist?
+                 local_template(pathname)
+               elsif pathname.exist?
+                 pathname
+               else
+                 raise LoadError, "Can't find template #{pathname}"
+               end
+    erb = ERB.new(pathname.read)
+    erb.filename = pathname.to_s
+    erb.result(b)
   end
 
   def template(pathname, b = binding)
