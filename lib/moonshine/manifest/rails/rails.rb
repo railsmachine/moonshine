@@ -269,7 +269,7 @@ module Moonshine::Manifest::Rails::Rails
   def rake(name, options = {})
     exec("#{try_bundle_exec} rake #{name}", {
       :command => "#{try_bundle_exec} rake #{name}",
-      :alias => "rake #{name}",
+      :alias => "rake#{name}",
       :user => configuration[:user],
       :cwd => rails_root,
       :environment => "RAILS_ENV=#{ENV['RAILS_ENV']}",
@@ -283,7 +283,7 @@ module Moonshine::Manifest::Rails::Rails
   def try_bundle_exec
     gemfile_path = rails_root.join('Gemfile')
     if gemfile_path.exist?
-      'bundle exec'
+      'bundle exec '
     else
       ''
     end
