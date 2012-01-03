@@ -211,7 +211,7 @@
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteCond %{SCRIPT_FILENAME} !maintenance.html
-  RewriteRule ^.*$ - [R=503,L]
+  RewriteRule ^.*$ /system/maintenance.html [R=<%= configuration[:passenger][:maintenance_status_code] || 503 %>,L]
 <% end %>
 
   # Rewrite index to check for static
@@ -441,7 +441,7 @@
   RewriteCond %{REQUEST_URI} !\.(css|jpg|png|gif)$
   RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
   RewriteCond %{SCRIPT_FILENAME} !maintenance.html
-  RewriteRule ^.*$ - [R=503,L]
+  RewriteRule ^.*$ /system/maintenance.html [R=<%= configuration[:passenger][:maintenance_status_code] || 503 %>,L]
 <% end %>
 
   # Rewrite index to check for static
