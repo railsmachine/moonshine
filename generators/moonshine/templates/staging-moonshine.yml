@@ -5,7 +5,7 @@
 # Primary domain application will be accessed as 
 :domain: <%= staging_domain %>
 
-# Domain aliases for applaction. One common use of this is for asset hosts.
+# Domain aliases for application. One common use of this is for asset hosts.
 #:domain_aliases:
 #  - assets1.<%= staging_domain %>
 #  - assets2.<%= staging_domain %>
