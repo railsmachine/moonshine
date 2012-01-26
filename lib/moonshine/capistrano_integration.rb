@@ -455,6 +455,7 @@ module Moonshine
           end
 
           task :install_moonshine_deps do
+            sudo 'gem install activesupport --version "~> 3.1.3"' 
             sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
             sudo 'gem install shadow_puppet --no-rdoc --no-ri --version "~> 0.5.0"'
