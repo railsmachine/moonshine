@@ -479,10 +479,11 @@ module Moonshine
           task :install_moonshine_deps do
             sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
-            sudo 'gem install shadow_puppet --no-rdoc --no-ri --version "~> 0.5.0"'
+
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.1')
+            sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
-              default_bundler_version = '1.0.21'
-              bundler_version = fetch(:bundler_version, default_bundler_version)
+              bundler_version = fetch(:bundler_version, '1.0.21')
               sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}'"
             end
           end
