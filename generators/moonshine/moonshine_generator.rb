@@ -8,7 +8,7 @@ class MoonshineGenerator < Rails::Generator::Base
 
   default_options :user => 'rails',
                   :domain => 'yourapp.com',
-                  :ruby => 'ree187',
+                  :ruby => default_ruby,
                   :multistage => false
 
   def initialize(runtime_args, runtime_options = {})

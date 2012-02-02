@@ -3,8 +3,15 @@
 #  and in `app/manifest/<%=  file_name%>.rb` via `configuration`
 
 # ruby to install at `cap deploy:setup` time. If you change this value, you
-# need to run `cap ruby:upgrade`. Currently allowed values include: mri,
-# src187, ree, ree187
+# need to run `cap ruby:upgrade`.
+#
+# As of time of generating, these are valid values:
+# * mri (as installed by Ubuntu)
+# * src187
+# * ree
+# * ree187
+# * src192
+# * src193
 :ruby: <%= ruby %>
 
 # Name of your application. Should be something with only alphanumerics, hypens

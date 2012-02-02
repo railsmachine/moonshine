@@ -133,7 +133,7 @@ describe "MoonshineGenerator" do
       end
     end
 
-    context "run with --ruby ree187" do
+    context "run with --ruby ree" do
       before do
         run %w(--ruby ree)
       end
@@ -151,6 +151,32 @@ describe "MoonshineGenerator" do
       it "configures ree187 as the ruby vm" do
         configuration[:ruby].should == 'ree187'
       end
+    end
+
+    context "run on 1.9.2" do
+      before do
+        MoonshineGenerator.stub!(:ruby_version).and_return("1.9.2")
+        run
+      end
+
+      it "configures src192 as the ruby vm" do
+        pending "stubbing doesn't seem to take effect"
+        configuration[:ruby].should == 'src192'
+      end
+
+    end
+
+    context "run on 1.9.3" do
+      before do
+        MoonshineGenerator.stub!(:ruby_version).and_return("1.9.3")
+        run
+      end
+
+      it "configures src193 as the ruby vm" do
+        pending "stubbing doesn't seem to take effect"
+        configuration[:ruby].should == 'src193'
+      end
+
     end
   end
 
