@@ -61,7 +61,12 @@ ExtendedStatus On
 </IfModule>
 STATUS
 
-
+    file '/etc/apache2/envvars',
+      :ensure => :present,
+      :content => template(rails_template_dir.join('apache.envvars.erb'), binding),
+      :mode => '644',
+      :require => package('apache2-mpm-worker'),
+      :notify => service('apache2')
 
     file '/etc/apache2/mods-available/status.conf',
       :ensure => :present,
