@@ -49,17 +49,19 @@
   <% end %>
 
   <% if configuration[:assets] && configuration[:assets][:enabled] %>
-  <LocationMatch "^/assets/.*$">
-    # Some browsers still send conditional-GET requests if there's a
-    # Last-Modified header or an ETag header even if they haven't
-    # reached the expiry date sent in the Expires header.
-    Header unset Last-Modified
-    Header unset ETag
-    FileETag None
-    # RFC says only cache for 1 year
-    ExpiresActive On
-    ExpiresDefault "access plus 1 year"
-  </LocationMatch>
+    # Recommendations for asset pipline: http://guides.rubyonrails.org/asset_pipeline.html#in-production
+    <LocationMatch "^/assets/.*$">
+      Header unset ETag
+      FileETag None
+      # RFC says only cache for 1 year
+      ExpiresActive On
+      ExpiresDefault "access plus 1 year"
+    </LocationMatch>
+  <% else %>
+    # Using the Rails Asset pipeline? Enable it with:
+    #
+    #   :assets:
+    #     :enabled: true
   <% end %>
 
   ##
@@ -309,17 +311,19 @@
   <% end %>
 
   <% if configuration[:assets] && configuration[:assets][:enabled] %>
-  <LocationMatch "^/assets/.*$">
-    # Some browsers still send conditional-GET requests if there's a
-    # Last-Modified header or an ETag header even if they haven't
-    # reached the expiry date sent in the Expires header.
-    Header unset Last-Modified
-    Header unset ETag
-    FileETag None
-    # RFC says only cache for 1 year
-    ExpiresActive On
-    ExpiresDefault "access plus 1 year"
-  </LocationMatch>
+    # Recommendations for asset pipline: http://guides.rubyonrails.org/asset_pipeline.html#in-production
+    <LocationMatch "^/assets/.*$">
+      Header unset ETag
+      FileETag None
+      # RFC says only cache for 1 year
+      ExpiresActive On
+      ExpiresDefault "access plus 1 year"
+    </LocationMatch>
+  <% else %>
+    # Using the Rails Asset pipeline? Enable it with:
+    #
+    #   :assets:
+    #     :enabled: true
   <% end %>
 
   ##
