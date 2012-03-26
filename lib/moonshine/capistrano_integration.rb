@@ -455,8 +455,7 @@ module Moonshine
           end
 
           task :install_rubygems do
-            default_rubygems_version = (fetch(:ruby) =~ /^src19/ ? '1.8.7' : '1.4.2')
-            version = fetch(:rubygems_version, default_rubygems_version)
+            version = fetch(:rubygems_version, '1.8.21')
             run [
               'cd /tmp',
               "sudo rm -rf rubygems-#{version}* || true",
@@ -483,7 +482,7 @@ module Moonshine
             shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.1')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
-              bundler_version = fetch(:bundler_version, '1.0.21')
+              bundler_version = fetch(:bundler_version, '1.1.3')
               sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}'"
             end
           end
