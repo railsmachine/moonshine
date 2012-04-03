@@ -44,7 +44,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   def default_stack
     recipe :apache_server
     recipe :passenger_gem, :passenger_configure_gem_path, :passenger_apache_module, :passenger_site
-    case database_environment[:adapter]
+    case database_environment && database_environment[:adapter]
     when 'mysql', 'mysql2'
       recipe :mysql_server, :mysql_gem, :mysql_database, :mysql_user, :mysql_fixup_debian_start
     when 'postgresql'
