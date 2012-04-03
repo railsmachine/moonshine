@@ -313,11 +313,13 @@ module Moonshine
 
               links << "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{directory}/#{filename} #{latest_release}/#{file}"
             end
-            
-            mkdir_command = "mkdir -p " + dirs.uniq.map {|dir| "'#{latest_release}/#{dir}'"}.join(" ")
-            ln_commands = links.map {|l| "(#{l})"}.join(" && ")
-            
-            run "#{mkdir_command} && #{ln_commands}"
+
+            if (dirs + links).any?
+              mkdir_command = "mkdir -p " + dirs.uniq.map {|dir| "'#{latest_release}/#{dir}'"}.join(" ")
+              ln_commands = links.map {|l| "(#{l})"}.join(" && ")
+              
+              run "#{mkdir_command} && #{ln_commands}"
+            end
           end
         end
 
