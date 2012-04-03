@@ -303,15 +303,21 @@ module Moonshine
   Symlinks uploaded local configurations into the release directory.
           DESC
           task :symlink do
+            dirs, links = [], []
             fetch(:shared_config).each do |file|
               file = Pathname.new(file)
 
               filename = file.basename
               directory = file.dirname
+              dirs << directory
 
-              run "mkdir -p '#{latest_release}/#{directory}'"
-              run "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{directory}/#{filename} #{latest_release}/#{file}"
+              links << "ls #{latest_release}/#{file} 2> /dev/null || ln -nfs #{shared_path}/#{directory}/#{filename} #{latest_release}/#{file}"
             end
+            
+            mkdir_command = "mkdir -p " + dirs.uniq.map {|dir| "'#{latest_release}/#{dir}'"}.join(" ")
+            ln_commands = links.map {|l| "(#{l})"}.join(" && ")
+            
+            run "#{mkdir_command} && #{ln_commands}"
           end
         end
 
@@ -439,7 +445,7 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
-            pv = "1.9.3-p0"
+            pv = "1.9.3-p125"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
