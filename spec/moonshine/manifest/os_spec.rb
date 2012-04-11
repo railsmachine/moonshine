@@ -90,6 +90,9 @@ describe Moonshine::Manifest::Rails::Os do
 
     @manifest.should have_package("unattended-upgrades")
     @manifest.should have_file("/etc/apt/apt.conf.d/10periodic").with_content(
+      /APT::Periodic::Enable "0"/
+    )
+    @manifest.should have_file("/etc/apt/apt.conf.d/10periodic").with_content(
       /APT::Periodic::Unattended-Upgrade "1"/
     )
     @manifest.should have_file("/etc/apt/apt.conf.d/50unattended-upgrades").with_content(

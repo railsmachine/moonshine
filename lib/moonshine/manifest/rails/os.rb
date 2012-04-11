@@ -135,6 +135,7 @@ from installing any gems, packages, or dependencies directly on the server.
   def security_updates
     configure(:unattended_upgrade => {:allowed_origins => [distro_unattended_security_origin].compact})
     unattended_config = <<-CONFIG
+APT::Periodic::Enable "#{configuration[:unattended_upgrade][:enable]||0}";
 APT::Periodic::Update-Package-Lists "#{configuration[:unattended_upgrade][:package_lists]||1}";
 APT::Periodic::Unattended-Upgrade "#{configuration[:unattended_upgrade][:interval]||1}";
 CONFIG
