@@ -403,13 +403,15 @@ module Moonshine
 
           task :ree187 do
             remove_ruby_from_apt
+
+            ree_release = fetch(:ree_187_release, '2012.02')
             run [
               'cd /tmp',
-              'sudo rm -rf ruby-enterprise-1.8.7-2011.12* || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
-              'wget -q http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-2011.12.tar.gz',
-              'tar xzf ruby-enterprise-1.8.7-2011.12.tar.gz',
-              'sudo /tmp/ruby-enterprise-1.8.7-2011.12/installer --dont-install-useful-gems --no-dev-docs -a /usr'
+              "sudo rm -rf ruby-enterprise-1.8.7-#{ree_release}* || true",
+              "sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true",
+              "wget -q http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
+              "tar xzf ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
+              "sudo /tmp/ruby-enterprise-1.8.7-#{ree_release}/installer --dont-install-useful-gems --no-dev-docs -a /usr"
             ].join(' && ')
           end
 
