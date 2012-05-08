@@ -125,12 +125,7 @@ module Moonshine
 
           desc 'Apply the Moonshine manifest for this application'
           task :apply, :except => { :no_release => true } do
-            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
-          end
-
-          desc 'No-op apply the Moonshine manifest for this application'
-          task :noop_apply, :except => { :no_release => true } do
-            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet --noop #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
+            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{'--noop' if fetch(:noop)} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
           desc 'Update code and then run a console. Useful for debugging deployment.'
@@ -155,11 +150,7 @@ module Moonshine
           end
 
           before 'deploy:symlink' do
-            if fetch(:noop)
-              noop_apply
-            else
-              apply if fetch(:moonshine_apply, true) == true
-            end
+            apply if fetch(:moonshine_apply, true) == true
           end
 
           after 'deploy' do
