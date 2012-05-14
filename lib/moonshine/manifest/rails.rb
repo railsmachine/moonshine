@@ -55,7 +55,7 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
     recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
     recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates, :apt_sources, :hostname
 
-    if configuration[:assets] && configuration[:assets][:enabled]
+    if configuration[:assets] && (configuration[:assets][:enabled] || configuration[:assets][:precompile])
       recipe :rails_asset_pipeline
     end
   end
