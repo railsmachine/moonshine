@@ -29,16 +29,18 @@ module Moonshine::Manifest::Rails::Apache
       a2enmod('deflate')
     end
 
-    if configuration[:apache][:users]
-      htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd"
-      
+    htpasswd = configuration[:apache][:htpasswd] || "#{configuration[:deploy_to]}/shared/config/htpasswd"
+
+    if configuration[:apache][:users].present?
       file htpasswd, :ensure => :file, :owner => configuration[:user], :mode => '644'
       
       configuration[:apache][:users].each do |user,pass|
         exec "htpasswd #{user}",
           :command => "htpasswd -b #{htpasswd} #{user} #{pass}",
-          :unless  => "grep '#{user}' #{htpasswd}"
+          :require => file(htpasswd)
       end
+    else
+      file htpasswd, :ensure => :absent
     end
 
     apache2_conf = template(rails_template_dir.join('apache2.conf.erb'), binding)
