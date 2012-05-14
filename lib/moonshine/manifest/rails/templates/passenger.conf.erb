@@ -147,3 +147,28 @@ PassengerMaxRequests <%= configuration[:passenger][:max_requests] || 0 %>
 # on every request.
 
 PassengerStatThrottleRate <%= configuration[:passenger][:stat_throttle_rate] || 0 %>
+
+##  PassengerBufferResponse
+#
+# When turned on, application-generated responses are buffered in memory. By
+# buffering responses, protection is provided against slow HTTP clients that
+# can not read your response immediately.
+#
+# For example, consider an HTTP client that’s on a dial-up modem link, and
+# your application instance generates a 2 MB response. If response buffering
+# is turned off then your application instance will be blocked until the entire
+# 2 MB has been sent out to the HTTP client. This disallows your application
+# instance to do any useful work in the mean time. By enabling response buffering,
+# Phusion Passenger will read the application response as quickly as possible and will take care of slow clients.
+#
+# However, keep in mind that enabling this option will make streaming responses impossible.
+#
+# When response buffering is turned on, Phusion Passenger will wait until the
+# application is done sending the entire response before forwarding it to the client.
+# The client will not receive anything for 10 seconds, after which it receives the
+# entire response at once. When response buffering is turned off, it works as
+# expected: the client receives an "entry X" message every second for 10 seconds.
+#
+# The PassengerBufferResponse directive should be turned off if responses can be huge.
+# Because entire responses are buffered in memory when turned on.
+PassengerBufferResponse <%= passenger_config_boolean(configuration[:passenger][:buffer_response], true)%>
