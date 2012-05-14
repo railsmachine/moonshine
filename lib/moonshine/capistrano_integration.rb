@@ -149,8 +149,17 @@ module Moonshine
             app.symlinks.update
           end
 
-          before 'deploy:symlink' do
-            apply if fetch(:moonshine_apply, true) == true
+          # FIXME hackish way to workaround capistrano API change
+          # see https://github.com/capistrano/capistrano/issues/157 for some details
+          require 'capistrano/version'
+          if Capistrano::Version::MAJOR > 2 || (Capistrano::Version::MAJOR == 2 && Capistrano::Version::MINOR > 9)
+            before 'deploy:create_symlink' do
+              apply if fetch(:moonshine_apply, true) == true
+            end
+          else
+            before 'deploy:symlink' do
+              apply if fetch(:moonshine_apply, true) == true
+            end
           end
 
           after 'deploy' do
