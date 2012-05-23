@@ -6,8 +6,11 @@ Unattended-Upgrade::Allowed-Origins {
 };
 
 // List of packages to not update
+<% package_blacklist = configuration[:unattended_upgrade][:package_blacklist] || ['redis-server', 'mysql-server', 'riak', 'mongodb-10gen'] %>
+
+
 Unattended-Upgrade::Package-Blacklist {
-<% configuration[:unattended_upgrade][:package_blacklist].to_a.each do |blacklist| %>
+<% package_blacklist.each do |blacklist| %>
 "<%= blacklist %>";
 <% end %>
 };
