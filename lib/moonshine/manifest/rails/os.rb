@@ -49,12 +49,16 @@ As the configuration of this server is managed with Moonshine, please refrain
 from installing any gems, packages, or dependencies directly on the server.
 ----------------
 """
-    file '/var/run/motd',
-      :mode => '644',
-      :content => `uname -snrvm`+motd_contents
+    if ubuntu_intrepid?
+      file '/var/run/motd',
+        :mode => '644',
+        :content => `uname -snrvm`+motd_contents
+    end
+
     file '/etc/motd.tail',
       :mode => '644',
       :content => motd_contents
+
   end
 
   #### Hostname
