@@ -171,4 +171,6 @@ PassengerStatThrottleRate <%= configuration[:passenger][:stat_throttle_rate] || 
 #
 # The PassengerBufferResponse directive should be turned off if responses can be huge.
 # Because entire responses are buffered in memory when turned on.
+<% if supports_passenger_buffer_response? %>
 PassengerBufferResponse <%= passenger_config_boolean(configuration[:passenger][:buffer_response], true)%>
+<% end %>

@@ -103,6 +103,17 @@ module Moonshine::Manifest::Rails::Passenger
 
 private
 
+  def supports_passenger_buffer_response?
+    if configuration[:passenger][:version] 
+      major, minor, patch = configuration[:passenger][:version].split('.').map {|version| version.to_i }
+
+      # introduced in 3.0.11
+      major >= 3 && minor >= 0 && patch >= 11
+    else # blessed version does support it
+      true
+    end
+  end
+
   def passenger_config_boolean(key, default = true)
     if key.nil?
       default ? 'On' : 'Off'
