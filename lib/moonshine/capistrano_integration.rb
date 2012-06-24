@@ -118,14 +118,14 @@ module Moonshine
             upload moonshine_yml_path.to_s, '/tmp/moonshine.yml'
             upload File.join(File.dirname(__FILE__), '..', 'moonshine_setup_manifest.rb'), '/tmp/moonshine_setup_manifest.rb'
 
-            sudo "#{'bundle exec' if fetch(:bundle_exec_shadow_puppet)} shadow_puppet /tmp/moonshine_setup_manifest.rb"
+            sudo "#{'bundle exec' if fetch(:bundle_exec_shadow_puppet, false)} shadow_puppet /tmp/moonshine_setup_manifest.rb"
             sudo 'rm /tmp/moonshine_setup_manifest.rb'
             sudo 'rm /tmp/moonshine.yml'
           end
 
           desc 'Apply the Moonshine manifest for this application'
           task :apply, :except => { :no_release => true } do
-            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} #{'bundle exec' if fetch(:bundle_exec_shadow_puppet)} shadow_puppet #{'--noop' if fetch(:noop)} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
+            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} #{'bundle exec' if fetch(:bundle_exec_shadow_puppet, false)} shadow_puppet #{'--noop' if fetch(:noop)} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
           desc 'Update code and then run a console. Useful for debugging deployment.'
