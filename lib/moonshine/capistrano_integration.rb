@@ -33,6 +33,10 @@ module Moonshine
         set :app_symlinks, []
         set :ruby, :ree
 
+        set :asset_env, "RAILS_GROUPS=assets"
+        set :assets_prefix, "assets"
+        set :assets_role, [:app]
+
         # know the path to rails logs
         set :rails_log do
           "#{shared_path}/log/#{fetch(:rails_env)}.log"
@@ -70,6 +74,11 @@ module Moonshine
 
       capistrano_config.load do
         namespace :moonshine do
+          desc "Enable moonshine for this deploy"
+          task :default do
+            set :moonshine_apply, true
+          end
+
           desc "[internal]: populate capistrano with settings from moonshine.yml"
           task :configure do
             moonshine_yml.each do |key, value|
@@ -159,6 +168,18 @@ module Moonshine
           else
             before 'deploy:symlink' do
               apply if fetch(:moonshine_apply, true) == true
+            end
+          end
+
+          before 'deploy' do
+            if !moonshine_apply
+              if File.exist?('Gemfile')
+                capistrano_config.require 'bundler/capistrano'
+
+                if File.exist?('app/assets')
+                  capistrano_config.load 'deploy/assets'
+                end
+              end
             end
           end
 
@@ -350,6 +371,55 @@ module Moonshine
           DESC
           task :setup, :except => { :no_release => true } do
             moonshine.bootstrap
+          end
+
+          # copy-pasta from https://github.com/capistrano/capistrano/blob/master/lib/capistrano/recipes/deploy/assets.rb
+          namespace :assets do
+            desc <<-DESC
+      [internal] This task will set up a symlink to the shared directory \
+      for the assets directory. Assets are shared across deploys to avoid \
+      mid-deploy mismatches between old application html asking for assets \
+      and getting a 404 file not found error. The assets cache is shared \
+      for efficiency. If you customize the assets path prefix, override the \
+      :assets_prefix variable to match.
+    DESC
+            task :symlink, :roles => assets_role, :except => { :no_release => true } do
+              run <<-CMD
+        rm -rf #{latest_release}/public/#{assets_prefix} &&
+        mkdir -p #{latest_release}/public &&
+        mkdir -p #{shared_path}/assets &&
+        ln -s #{shared_path}/assets #{latest_release}/public/#{assets_prefix}
+      CMD
+            end
+
+            desc <<-DESC
+      Run the asset precompilation rake task. You can specify the full path \
+      to the rake executable by setting the rake variable. You can also \
+      specify additional environment variables to pass to rake via the \
+      asset_env variable. The defaults are:
+
+        set :rake,      "rake"
+        set :rails_env, "production"
+        set :asset_env, "RAILS_GROUPS=assets"
+    DESC
+            task :precompile, :roles => assets_role, :except => { :no_release => true } do
+              run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile"
+            end
+
+            desc <<-DESC
+      Run the asset clean rake task. Use with caution, this will delete \
+      all of your compiled assets. You can specify the full path \
+      to the rake executable by setting the rake variable. You can also \
+      specify additional environment variables to pass to rake via the \
+      asset_env variable. The defaults are:
+
+        set :rake,      "rake"
+        set :rails_env, "production"
+        set :asset_env, "RAILS_GROUPS=assets"
+    DESC
+            task :clean, :roles => assets_role, :except => { :no_release => true } do
+              run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:clean"
+            end
           end
         end
 
