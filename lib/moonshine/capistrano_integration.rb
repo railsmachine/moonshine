@@ -172,7 +172,7 @@ module Moonshine
           end
 
           before 'deploy' do
-            if !moonshine_apply
+            if ! fetch(:moonshine_apply, true)
               if File.exist?('Gemfile')
                 capistrano_config.require 'bundler/capistrano'
 
