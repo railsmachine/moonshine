@@ -37,6 +37,8 @@ module Moonshine
         set :assets_prefix, "assets"
         set :assets_role, [:app]
 
+        set :bundle_roles, [:app, :resque, :dj]
+
         # know the path to rails logs
         set :rails_log do
           "#{shared_path}/log/#{fetch(:rails_env)}.log"
