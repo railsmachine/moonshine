@@ -477,11 +477,21 @@ module Moonshine
             remove_ruby_from_apt
 
             ree_release = fetch(:ree_187_release, '2012.02')
+            ree_src_uri = case ree_release
+                          when '2010.02'
+                            "http://rubyforge.org/frs/download.php/71096/ruby-enterprise-1.8.7-2010.02.tar.gz/noredirect "
+                          when '2010.01'
+                            'http://rubyforge.org/frs/download.php/68719/ruby-enterprise-1.8.7-2010.01.tar.gz/noredirect'
+                          when '2009.01'
+                            'http://rubyforge.org/frs/download.php/66162/ruby-enterprise-1.8.7-2009.10.tar.gz/noredirect'
+                          else
+                            "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-#{ree_release}.tar.gz"
+                          end
             run [
               'cd /tmp',
               "sudo rm -rf ruby-enterprise-1.8.7-#{ree_release}* || true",
               "sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true",
-              "wget -q http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
+              "wget -q #{ree_src_uri} -O ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
               "tar xzf ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
               "sudo /tmp/ruby-enterprise-1.8.7-#{ree_release}/installer --dont-install-useful-gems --no-dev-docs -a /usr"
             ].join(' && ')
