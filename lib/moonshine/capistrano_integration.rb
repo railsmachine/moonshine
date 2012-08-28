@@ -610,6 +610,80 @@ module Moonshine
             sudo 'apt-get update'
           end
         end
+
+        namespace :ssl do
+          desc "Create a private key and cerfiticate request for SSL"
+          task :create do
+            csr = (moonshine_yml[:ssl] && moonshine_yml[:ssl][:csr]) || {}
+
+
+            enough_csr_details = true
+
+            csr[:length] ||= 2048
+            enough_csr_details &= csr[:country] && !csr[:country].empty?
+            enough_csr_details &= csr[:state] && !csr[:state].empty?
+            enough_csr_details &= csr[:locality] && !csr[:locality].empty?
+            enough_csr_details &= csr[:organization] && !csr[:organization].empty?
+            enough_csr_details &= csr[:domain] && !csr[:domain].empty?
+
+            if enough_csr_details
+              puts "We have all the details we need! Generating private key and csr now..."
+
+              run_locally "mkdir -p config/ssl"
+
+              filesystem_safe_domain = csr[:domain].gsub('*', 'star')
+
+              run_locally "cd config/ssl && openssl req -new -nodes -days 365 -newkey rsa:#{csr[:length]} -subj '/C=#{csr[:country]}/ST=#{csr[:state]}/L=#{csr[:locality]}/O=#{csr[:organization]}/CN=#{csr[:domain]}' -keyout #{filesystem_safe_domain}.key -out #{filesystem_safe_domain}.csr"
+
+
+              puts <<-MESSAGE
+Your csr & key have been generated and saved in config/ssl:
+
+ * config/ssl/#{filesystem_safe_domain}.csr
+ * config/ssl/#{filesystem_safe_domain}.key
+
+Once you've chosen a certificate authority, they will ask for the contents of the csr, included below:
+
+#{File.read("config/ssl/#{filesystem_safe_domain}.csr")}
+
+IMPORTANT: keep these files in a safe place (ie check into version control)
+
+ * the csr is needed to re-issue the certificate when it expires
+ * the key is needed at deploy time to use the purchased certificate
+              MESSAGE
+            else
+              already_has_ssl_configuration = moonshine_yml[:ssl]
+              
+              where_to_paste = if already_has_ssl_configuration
+                                 "the :ssl section of config/moonshine.yml"
+                               else
+                                 "config/moonshine.yml"
+                               end
+
+    
+              domain_template = if csr[:domain]
+                                  csr[:domain]
+                                else
+                                  domain = moonshine_yml[:domain] || 'yourdomain.com'
+                                  "#{domain} # FIXME update with correct domain. Do not include www at beginning. Add `*.` at the beginning for wildcard}"
+                                end
+              puts <<-ERROR
+Not enough details to generate a CSR! Copy & paste the following into #{where_to_paste}, and rerun `cap ssl:create`: 
+
+#{':ssl:' unless already_has_ssl_configuration}
+  :csr:
+    :length: #{csr[:length] || 2048}
+    :country: #{csr[:country] || 'US # FIXME update with correct country'}
+    :state: #{csr[:state] || 'Your State # FIXME update with correct state, no abbreivations'}
+    :locality: #{csr[:locality] || 'Your City # FIXME update with correct city/locality, no abbreivations'}
+    :organization: #{csr[:organization] || 'Your Organization # FIXME update with correct company name, ie your registered company name. Some certificate authorities are more strict about the correctness of this than others'}
+    :domain: #{domain_template}
+ERROR
+              exit 1
+              
+            end
+          end
+        end
       end
     end
   end
