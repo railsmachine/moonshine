@@ -37,7 +37,7 @@ module Moonshine
         set :assets_prefix, "assets"
         set :assets_role, [:app]
 
-        set :bundle_roles, [:app, :resque, :dj]
+        set :bundle_roles, [:app, :resque, :dj, :db]
 
         # know the path to rails logs
         set :rails_log do
@@ -182,6 +182,12 @@ module Moonshine
                   capistrano_config.load 'deploy/assets'
                 end
               end
+            end
+          end
+
+          before 'deploy:migrations' do
+            if File.exist?('Gemfile')
+              capistrano_config.require 'bundler/capistrano'
             end
           end
 
@@ -531,7 +537,7 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
-            pv = "1.9.3-p194"
+            pv = "1.9.3-p125"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -612,7 +618,6 @@ module Moonshine
         end
 
         namespace :ssl do
-          desc "Create a private key and cerfiticate request for SSL"
           task :create do
             csr = (moonshine_yml[:ssl] && moonshine_yml[:ssl][:csr]) || {}
 
@@ -637,6 +642,7 @@ module Moonshine
 
 
               puts <<-MESSAGE
+
 Your csr & key have been generated and saved in config/ssl:
 
  * config/ssl/#{filesystem_safe_domain}.csr
