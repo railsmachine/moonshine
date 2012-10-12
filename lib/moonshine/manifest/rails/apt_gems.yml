@@ -1,37 +1,52 @@
 curb:
 - libcurl4-openssl-dev
+
 mysql:
 - libmysqlclient15-dev
-sqlite3-ruby:
+
+'sqlite3-ruby':
 - sqlite3
 - libsqlite3-dev
+
+# nokogiri and things that depend on it
 nokogiri:
 - libxml2-dev
 - libxslt1-dev
+fog:
+- libxml2-dev
+- libxslt1-dev
+
 rmagick:
 - imagemagick
 - libmagick9-dev
+
 paperclip:
 - imagemagick
 - libmagick9-dev
-thoughtbot-paperclip:
+'thoughtbot-paperclip':
 - imagemagick
 - libmagick9-dev
+
 mini_magick:
 - imagemagick
 - libmagick9-dev
+
 postgres:
 - postgresql-client
 - postgresql-contrib
 - libpq-dev
+
 libxml-ruby:
 - libxml2
 - libxml2-dev
+
 image_science:
 - libfreeimage3
 - libfreeimage-dev
+
 geoip_city:
 - libgeoip-dev
+
 memcached:
 - libsasl2-2
 - libsasl2-dev
