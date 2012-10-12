@@ -58,7 +58,7 @@
 - system
 - log
 - pids
-- config
+- tmp
 
 # Specify native dependencies of gems. Moonshine comes with some preconfigured
 # defaults, but this allows you to add to them. Please file an issue at
