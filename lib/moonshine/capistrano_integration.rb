@@ -39,6 +39,10 @@ module Moonshine
 
         set :bundle_roles, [:app, :resque, :dj, :db, :sidekiq]
 
+        if File.exist?('app/assets')
+          set :normalize_asset_timestamps, false
+        end
+
         # know the path to rails logs
         set :rails_log do
           "#{shared_path}/log/#{fetch(:rails_env)}.log"
