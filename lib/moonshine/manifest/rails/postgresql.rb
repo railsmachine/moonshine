@@ -26,7 +26,7 @@ module Moonshine::Manifest::Rails::Postgresql
     configure(:postgresql => {})
     file "/etc/postgresql/#{postgresql_version}/main/pg_hba.conf",
       :ensure  => :present,
-      :content => template(File.join(File.dirname(__FILE__), 'templates', 'pg_hba.conf.erb')),
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'pg_hba.conf.erb'), binding),
       :require => package('postgresql'),
       :mode    => '600',
       :owner   => 'postgres',
@@ -34,7 +34,7 @@ module Moonshine::Manifest::Rails::Postgresql
       :notify  => service("postgresql")
     file "/etc/postgresql/#{postgresql_version}/main/postgresql.conf",
       :ensure  => :present,
-      :content => template(File.join(File.dirname(__FILE__), 'templates', 'postgresql.conf.erb')),
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'postgresql.conf.erb'), binding),
       :require => package('postgresql'),
       :mode    => '600',
       :owner   => 'postgres',
