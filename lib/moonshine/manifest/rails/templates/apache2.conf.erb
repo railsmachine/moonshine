@@ -121,13 +121,13 @@ KeepAliveTimeout <%= configuration[:apache][:keep_alive_timeout] %>
 # ThreadsPerChild: constant number of worker threads in each server process
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule mpm_worker_module>
-    StartServers          2
+    StartServers         <%= configuration[:apache][:start_servers] || '2' %>
     MaxClients           <%= configuration[:apache][:max_clients] %>
     ServerLimit          <%= configuration[:apache][:server_limit] %>
-    MinSpareThreads      25
-    MaxSpareThreads      75 
-    ThreadsPerChild      25
-    MaxRequestsPerChild   0
+    MinSpareThreads      <%= configuration[:apache][:min_spare_threads] || '25' %>
+    MaxSpareThreads      <%= configuration[:apache][:max_spare_threads] || '75' %> 
+    ThreadsPerChild      <%= configuration[:apache][:threads_per_child] || '25' %>
+    MaxRequestsPerChild  <%= configuration[:max_requests_per_child] || '0' %>
 </IfModule>
 
 # These need to be set in /etc/apache2/envvars
