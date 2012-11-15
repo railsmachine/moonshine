@@ -12,11 +12,10 @@ namespace :moonshine do
       hash
     end
     version = case
-      when defined?(RAILS_GEM_VERSION) then RAILS_GEM_VERSION
-      when Rails.respond_to?(:version) then Rails.version
+      when defined?(RAILS_GEM_VERSION) then { :version => RAILS_GEM_VERSION }
+      when Rails.respond_to?(:version) then { :version => Rails.version }
     end
-    version = version ? { :version => version } : {}
-    gem_array << { :name => 'rails'}.merge! version
+    gem_array << { :name => 'rails'}.merge!(version || {})
     config_path = File.join(Dir.pwd, 'config', 'gems.yml')
     File.open( config_path, 'w' ) do |out|
       YAML.dump(gem_array, out )
