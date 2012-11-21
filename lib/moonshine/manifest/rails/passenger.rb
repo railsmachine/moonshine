@@ -1,11 +1,27 @@
 module Moonshine::Manifest::Rails::Passenger
 
-  BLESSED_VERSION = '3.0.11'
+  BLESSED_VERSION = '3.0.17'
 
   # Install the passenger gem
   def passenger_gem
     configure(:passenger => {})
-    if configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
+    package 'libcurl4-openssl-dev', :ensure => :installed
+    
+    if configuration[:passenger][:enterprise]
+      package "passenger",
+        :provider => :gem, 
+        :ensure => :absent
+
+      exec 'install passenger-enterprise-server gem',
+        :command => "gem install #{configuration[:passenger][:gemfile]}",
+        :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
+        :cwd => rails_root, 
+        :require => [ package('libcurl4-openssl-dev'), package('passenger')]
+
+      file '/etc/passenger-enterprise-license',
+        :ensure => :present,
+        :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger-enterprise-license'))
+    elsif configuration[:passenger][:version] && configuration[:passenger][:version] < "3.0"
       package "passenger",
         :ensure => configuration[:passenger][:version],
         :provider => :gem
@@ -14,13 +30,11 @@ module Moonshine::Manifest::Rails::Passenger
         :ensure => BLESSED_VERSION,
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
-      package 'libcurl4-openssl-dev', :ensure => :installed
     elsif configuration[:passenger][:version]
       package "passenger",
         :ensure => (configuration[:passenger][:version]),
         :provider => :gem,
         :require => [ package('libcurl4-openssl-dev') ]
-      package 'libcurl4-openssl-dev', :ensure => :installed
     end
   end
 
@@ -94,7 +108,10 @@ module Moonshine::Manifest::Rails::Passenger
 
   def passenger_configure_gem_path
     configure(:passenger => {})
-    if configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
+    if configuration[:passenger][:enterprise]
+      raise "You must define a version for passenger enterprise in moonshine.yml" if configuration[:passenger][:version].blank?
+      configure(:passenger => {:path => "#{Gem.dir}/gems/passenger-enterprise-server-#{configuration[:passenger][:version]}"})
+    elsif configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
       configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{BLESSED_VERSION}" })
     elsif configuration[:passenger][:version]
       configure(:passenger => { :path => "#{Gem.dir}/gems/passenger-#{configuration[:passenger][:version]}" })
