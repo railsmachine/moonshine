@@ -51,5 +51,6 @@ This is what a passenger enterprise block in moonshine.yml should look like (in 
 
 <pre><code>:passenger:
   :version: 3.0.18
+  :enterprise: true
   :gemfile: vendor/gems/passenger-enterprise-server-3.0.18.gem
   :rolling_restarts: true</code></pre>
