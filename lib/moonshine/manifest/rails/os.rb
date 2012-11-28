@@ -217,6 +217,23 @@ CONFIG
       super(name, hash)
     end
   end
+  
+  #### Resolv.conf
+  
+  # This allows you to manage /etc/resolv.conf, adding, removing and re-ordering nameservers.
+  
+  def resolv_conf
+    configure(:resolv => {})
+    if configuration[:resolv][:nameservers].nil? || configuration[:resolv][:nameservers].empty?
+      configuration[:resolv][:nameservers] = ['8.8.4.4','8.8.8.8','208.67.222.222','208.67.220.220']
+    end
+    
+    file '/etc/resolv.conf',
+      :ensure => :present,
+      :mode => '744',
+      :owner => 'root',
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'resolv.conf.erb'))
+  end
 
 private
 
