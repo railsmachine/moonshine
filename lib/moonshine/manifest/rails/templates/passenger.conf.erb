@@ -174,3 +174,50 @@ PassengerStatThrottleRate <%= configuration[:passenger][:stat_throttle_rate] || 
 <% if supports_passenger_buffer_response? %>
 PassengerBufferResponse <%= passenger_config_boolean(configuration[:passenger][:buffer_response], true)%>
 <% end %>
+
+## PassengerFriendlyErrorPages
+# Phusion Passenger can display friendly error pages whenever an application fails to start. 
+# This friendly error page presents the startup error message, some suggestions for solving the problem, and a backtrace. 
+# This feature is very useful during application development and useful for less experienced system administrators, 
+# but the page might reveal potentially sensitive information, depending on the application. 
+# Experienced system administrators who are using Phusion Passenger on serious production servers should consider turning this feature off.
+
+PassengerFriendlyErrorPages <%= passenger_config_boolean(configuration[:passenger][:friendly_error_pages], false) %>
+
+<% if configuration[:passenger][:enterprise] %>
+
+## PassengerMaxRequestTime
+# The maximum amount of time, in seconds, that an application process may take to process a request. 
+# If the request takes longer than this amount of time, then the application process will be forcefully shut down, and possibly restarted upon the next request. 
+# A value of 0 means that there is no time limit.
+
+PassengerMaxRequestTime <%= configuration[:passenger][:max_request_time] || '0' %>
+
+## PassengerMemoryLimit
+# The maximum amount of memory that an application process may use, in megabytes. 
+# Once an application process has surpassed its memory limit, it will process all the requests currently present in its queue and then shut down. 
+# A value of 0 means that there is no maximum: the application’s memory usage will not be checked.
+
+PassengerMemoryLimit <%= configuration[:passenger][:memory_limit] || '0' %>
+
+## 
+
+## PassengerRollingRestarts
+#
+# Enables or disables support for rolling restarts. Normally when you restart an application (by touching restart.txt), Phusion Passenger would shut down all application processes and spawn a new one. The spawning of a new application process could take a while, and any requests that come in during this time will be blocked until this first application process has spawned.
+
+PassengerRollingRestarts <%= passenger_config_boolean(configuration[:passenger][:rolling_restarts], false) %>
+
+## PassengerResistDeploymentErrors
+
+PassengerResistDeploymentErrors <%= passenger_config_boolean(configuration[:passenger][:resist_deployment_errors], false) %>
+
+<% if configuration[:passenger][:debug_log_file] %>
+## PassengerDebugLogFile
+# By default, passenger debug and error messages go to the webserver log file.  
+# If you want them to go somewhere else, this is the place.
+
+PassengerDebugLogFile <%= configuration[:passenger][:debug_log_file] %>
+<% end %>
+
+<% end %>
