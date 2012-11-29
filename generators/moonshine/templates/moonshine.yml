@@ -42,6 +42,7 @@
 #:scm: git
 # Reposistory URI for checking out code at deploy time
 :repository: <%= repository %>
+:deploy_via: remote_cache
 
 # Use :app_symlinks to setup directories under public/ that you want to persist
 # across deployments. They'll be symlinked to the shared directory.
