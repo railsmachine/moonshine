@@ -55,9 +55,22 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
     recipe :rails_rake_environment, :rails_gems, :rails_directories, :rails_bootstrap, :rails_migrations, :rails_logrotate
     recipe :ntp, :time_zone, :postfix, :cron_packages, :motd, :security_updates, :apt_sources, :hostname
 
-    if configuration[:assets] && (configuration[:assets][:enabled] || configuration[:assets][:precompile])
+    if precompile_asset_pipeline?
       recipe :rails_asset_pipeline
     end
+  end
+
+  def asset_pipeline_enabled?
+    asset_configuration = configuration[:assets] || {}
+    enabled = asset_configuration[:enabled] != false
+    rails_root.join('app/assets').exist? && enabled
+  end
+
+  def precompile_asset_pipeline?
+    asset_configuration = configuration[:assets] || {}
+    precompile = asset_configuration[:precompile] != false
+
+    asset_pipeline_enabled? && precompile
   end
 
   def rails_template_dir

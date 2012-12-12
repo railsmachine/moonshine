@@ -48,7 +48,7 @@
   </Location>
   <% end %>
 
-  <% if configuration[:assets] %>
+  <% if asset_pipeline_enabled? %>
     # Recommendations for asset pipline: http://guides.rubyonrails.org/asset_pipeline.html#in-production
     <LocationMatch "^/assets/.*$">
       Header unset ETag
@@ -310,7 +310,7 @@
   </Location>
   <% end %>
 
-  <% if configuration[:assets] %>
+  <% if asset_pipeline_enabled? %>
     # Recommendations for asset pipline: http://guides.rubyonrails.org/asset_pipeline.html#in-production
     <LocationMatch "^/assets/.*$">
       Header unset ETag
