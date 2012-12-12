@@ -161,8 +161,10 @@ module Moonshine::Manifest::Rails::Rails
       "#{configuration[:deploy_to]}/releases"
     ]
     if configuration[:shared_children].is_a?(Array)
-      shared_dirs = configuration[:shared_children].map { |d| "#{configuration[:deploy_to]}/shared/#{d}" }
-      dirs += shared_dirs
+      shared_children_with_parents = configuration[:shared_children].map do |d|
+        d.split("/").inject([]) {|these_dirs, dir| these_dirs.empty? ? [dir] : these_dirs << "#{these_dirs.last}/#{dir}" }
+      end.flatten
+      dirs += shared_children_with_parents.map {|d| "#{configuration[:deploy_to]}/shared/#{d}" }
     end
 
     if configuration[:app_symlinks].is_a?(Array)
