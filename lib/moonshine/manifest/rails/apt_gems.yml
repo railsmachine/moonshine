@@ -15,6 +15,21 @@ nokogiri:
 fog:
 - libxml2-dev
 - libxslt1-dev
+sunspot_rails:
+- libxml2-dev
+- libxslt1-dev
+blue_state_digital:
+- libxml2-dev
+- libxslt1-dev
+aws-sdk:
+- libxml2-dev
+- libxslt1-dev
+capybara:
+- libxml2-dev
+- libxslt1-dev
+xpath:
+- libxml2-dev
+- libxslt1-dev
 
 rmagick:
 - imagemagick
