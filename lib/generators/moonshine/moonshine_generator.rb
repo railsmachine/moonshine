@@ -11,6 +11,8 @@ class MoonshineGenerator < Rails::Generators::Base
   class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
   class_option :repository, :default => 'git@github.com:username/your_app_name.git', :desc => 'git or subversion repository to deploy from', :type => :string
 
+  class_option :skip_manifest, :default => false, :desc => 'skip generating a manifest', :type => :boolean
+
   class_option :ruby, :default => default_ruby, :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187, src192, src193', :type => :string
   class_option :multistage, :default => false, :desc => 'setup multistage deployment environment', :type => :boolean
 
@@ -21,7 +23,7 @@ class MoonshineGenerator < Rails::Generators::Base
   def manifest
     template "Capfile", "Capfile"
     template "readme.templates", "app/manifests/templates/README"
-    template "moonshine.rb", "app/manifests/#{file_name}.rb"
+    template "moonshine.rb", "app/manifests/#{file_name}.rb" unless skip_manifest?
     template "moonshine.yml", "config/moonshine.yml"
     template "deploy.rb", "config/deploy.rb"
 
@@ -63,7 +65,7 @@ After the Moonshine generator finishes don't forget to:
 Use this file to manage configuration related to deploying and running the app: 
 domain name, git repos, package dependencies for gems, and more.
  
-- Edit app/manifests/#{file_name}.rb
+- #{skip_manifest? ? 'Create' : 'Edit'} app/manifests/#{file_name}.rb
 Use this to manage the configuration of everything else on the server:
 define the server 'stack', cron jobs, mail aliases, configuration files 
  
@@ -110,6 +112,10 @@ protected
 
   def server
     options[:server] || options[:domain]
+  end
+
+  def skip_manifest?
+    options[:skip_manifest]
   end
 
   def staging_server
