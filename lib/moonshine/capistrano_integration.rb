@@ -556,6 +556,26 @@ module Moonshine
             ].join(' && ')
           end
 
+          task :src193falcon do
+            remove_ruby_from_apt
+            pv = "1.9.3-p327"
+            p = "ruby-#{pv}"
+            run [
+              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
+              "tar zxvf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              "curl https://raw.github.com/gist/4136373/falcon-gc.diff | patch -p1",
+              'export CFLAGS="-march=core2 -O2 -pipe -fomit-frame-pointer"',
+              "./configure --prefix=/usr",
+              "make",
+              "sudo make install"
+            ].join(' && ')
+          end
+
           task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
