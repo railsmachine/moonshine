@@ -541,7 +541,7 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
-            pv = "1.9.3-p125"
+            pv = "1.9.3-p327"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
