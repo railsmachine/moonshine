@@ -613,7 +613,7 @@ module Moonshine
         namespace :apache do
           desc 'Restarts the Apache web server'
           task :restart do
-            sudo 'service apache2 restart'
+            sudo 'service apache2 status && service apache2 restart'
           end
         end
 
