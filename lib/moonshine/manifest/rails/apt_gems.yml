@@ -31,21 +31,23 @@ xpath:
 - libxml2-dev
 - libxslt1-dev
 
+
+<% imagemagick_dev_package = Facter.lsbdistid == 'Ubuntu' &&  Facter.lsbdistrelease.to_f == 8.10 ? 'libmagick9-dev' : 'libmagickwand-dev' %> 
 rmagick:
 - imagemagick
-- libmagick9-dev
+- <%= imagemagick_dev_package %>
 paperclip:
 - imagemagick
-- libmagick9-dev
+- <%= imagemagick_dev_package %>
 'thoughtbot-paperclip':
 - imagemagick
-- libmagick9-dev
+- <%= imagemagick_dev_package %>
 mini_magick:
 - imagemagick
-- libmagick9-dev
+- <%= imagemagick_dev_package %>
 dragonfly:
 - imagemagick
-- libmagick9-dev
+- <%= imagemagick_dev_package %>
 
 postgres:
 - postgresql-client

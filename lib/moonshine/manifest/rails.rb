@@ -15,10 +15,6 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   end
   recipe :validate_platform
 
-  def self.apt_gems_path
-    Pathname.new(__FILE__).dirname + 'rails/apt_gems.yml'
-  end
-  configure(:apt_gems => YAML.load_file(apt_gems_path.to_s))
 
   require 'moonshine/manifest/rails/passenger'
   require 'moonshine/manifest/rails/mysql'
@@ -35,6 +31,12 @@ class Moonshine::Manifest::Rails < Moonshine::Manifest
   include Moonshine::Manifest::Rails::Apache
   include Moonshine::Manifest::Rails::Rails
   include Moonshine::Manifest::Rails::Os
+
+  def self.apt_gems_path
+    Pathname.new(__FILE__).dirname + 'rails/apt_gems.yml'
+  end
+
+  configure(:apt_gems => YAML::load(ERB.new(apt_gems_path.read).result(binding)))
 
   # A super recipe for installing Apache, Passenger, a database,
   # Rails, NTP, Cron, Postfix. To customize your stack, call the
