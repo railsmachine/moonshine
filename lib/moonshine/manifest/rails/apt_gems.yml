@@ -30,6 +30,9 @@ capybara:
 xpath:
 - libxml2-dev
 - libxslt1-dev
+feedzirra:
+- libxml2-dev
+- libxslt1-dev
 
 
 <% imagemagick_dev_package = Facter.lsbdistid == 'Ubuntu' &&  Facter.lsbdistrelease.to_f == 8.10 ? 'libmagick9-dev' : 'libmagickwand-dev' %> 
