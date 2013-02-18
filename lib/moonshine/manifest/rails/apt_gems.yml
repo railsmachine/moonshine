@@ -72,3 +72,6 @@ memcached:
 - libsasl2-2
 - libsasl2-dev
 - libsasl2-modules
+
+charlock_holmes:
+- libicu-dev
