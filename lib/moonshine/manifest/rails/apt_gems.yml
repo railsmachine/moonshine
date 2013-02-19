@@ -1,8 +1,9 @@
 curb:
 - libcurl4-openssl-dev
 
+<% libmysql_dev_package = Facter.lsbdistid == 'Ubuntu' &&  Facter.lsbdistrelease.to_f == 8.10 ? 'libmysqlclient15-dev' : 'libmysqlclient-dev' %> 
 mysql:
-- libmysqlclient15-dev
+- <%= libmysql_dev_package %>
 
 'sqlite3-ruby':
 - sqlite3
