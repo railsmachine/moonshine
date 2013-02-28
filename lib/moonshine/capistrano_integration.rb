@@ -114,6 +114,8 @@ module Moonshine
   Moonshine dependencies. Called by deploy:setup.
           DESC
           task :bootstrap do
+            aptget.update
+            aptget.upgrade
             ruby.install
             vcs.install
             moonshine.setup_directories
@@ -638,6 +640,10 @@ module Moonshine
         namespace :aptget do
           task :update do
             sudo 'apt-get update'
+          end
+
+          task :upgrade do
+            sudo 'apt-get upgrade -q -y'
           end
         end
 
