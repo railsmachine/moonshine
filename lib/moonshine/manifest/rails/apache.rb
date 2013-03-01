@@ -13,8 +13,8 @@ module Moonshine::Manifest::Rails::Apache
       :max_requests_per_child => 0,
       :timeout => 300,
       :trace_enable => 'On',
-      :gzip => false,
-      :gzip_types => ['text/html', 'text/plain', 'text/xml', 'text/css', 'application/x-javascript', 'application/javascript', 'application/json']
+      :gzip => true,
+      :gzip_types => ['text/html', 'text/plain', 'text/xml', 'text/css', 'text/javascript', 'text/json', 'application/x-javascript', 'application/javascript', 'application/json']
     }
   end
 
