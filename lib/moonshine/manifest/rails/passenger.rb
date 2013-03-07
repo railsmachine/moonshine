@@ -56,19 +56,13 @@ module Moonshine::Manifest::Rails::Passenger
         file("/usr/local/src")
       ]
 
-    lib_dir = "ext"
-
-    if passenger_major_version >= 3 && passenger_minor_version >= 9
-      lib_dir = "libout"
-    end
-
     # Build Passenger from source
     exec "build_passenger",
       :cwd => configuration[:passenger][:path],
       :command => 'sudo /usr/bin/ruby -S rake clean apache2',
       :unless => [
-        "ls `passenger-config --root`/#{lib_dir}/apache2/mod_passenger.so",
-        "ls `passenger-config --root`/#{lib_dir}/ruby/ruby-*/passenger_native_support.so",
+        "ls `passenger-config --root`/#{passenger_lib_dir}/apache2/mod_passenger.so",
+        "ls `passenger-config --root`/#{passenger_lib_dir}/ruby/ruby-*/passenger_native_support.so",
         "ls `passenger-config --root`/agents/PassengerLoggingAgent"
         ].join(" && "),
       :require => [
@@ -79,7 +73,7 @@ module Moonshine::Manifest::Rails::Passenger
       ],
       :timeout => 108000
 
-    load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/#{lib_dir}/apache2/mod_passenger.so"
+    load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/#{passenger_lib_dir}/apache2/mod_passenger.so"
 
     file '/etc/apache2/mods-available/passenger.load',
       :ensure => :present,
@@ -99,7 +93,7 @@ module Moonshine::Manifest::Rails::Passenger
 
     a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load"), exec('a2enmod headers')]
   end
-
+  
   # Creates and enables a vhost configuration named after your application.
   # Also ensures that the <tt>000-default</tt> vhost is disabled.
   def passenger_site
