@@ -56,13 +56,19 @@ module Moonshine::Manifest::Rails::Passenger
         file("/usr/local/src")
       ]
 
+    lib_dir = "ext"
+
+    if passenger_major_version >= 3 && passenger_minor_version >= 9
+      lib_dir = "libout"
+    end
+
     # Build Passenger from source
     exec "build_passenger",
       :cwd => configuration[:passenger][:path],
       :command => 'sudo /usr/bin/ruby -S rake clean apache2',
       :unless => [
-        "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
-        "ls `passenger-config --root`/ext/ruby/ruby-*/passenger_native_support.so",
+        "ls `passenger-config --root`/#{lib_dir}/apache2/mod_passenger.so",
+        "ls `passenger-config --root`/#{lib_dir}/ruby/ruby-*/passenger_native_support.so",
         "ls `passenger-config --root`/agents/PassengerLoggingAgent"
         ].join(" && "),
       :require => [
@@ -73,7 +79,7 @@ module Moonshine::Manifest::Rails::Passenger
       ],
       :timeout => 108000
 
-    load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so"
+    load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/#{lib_dir}/apache2/mod_passenger.so"
 
     file '/etc/apache2/mods-available/passenger.load',
       :ensure => :present,
@@ -122,12 +128,35 @@ module Moonshine::Manifest::Rails::Passenger
 
 private
 
+  def passenger_major_version
+    return @major_version unless @major_version.nil?
+    version_string = configuration[:passenger][:version] || BLESSED_VERSION
+    @major_version = version_string.split('.').first.to_i
+  end
+
+  def passenger_minor_version
+    return @minor_version unless @minor_version.nil?
+    version_string = configuration[:passenger][:version] || BLESSED_VERSION
+    @minor_version = version_string.split('.')[1].to_i
+  end
+
+  def passenger_patch_version
+    return @patch_version unless @patch_version.nil?
+    version_string = configuration[:passenger][:version] || BLESSED_VERSION
+    @patch_version = version_string.split('.')[2].to_i    
+  end
+
+  def passenger_lib_dir
+    if (passenger_major_version >= 3 && passenger_minor_version >= 9) || passenger_major_version >=4
+      'libout'
+    else
+      'ext'
+    end
+  end
+
   def supports_passenger_buffer_response?
     if configuration[:passenger][:version] 
-      major, minor, patch = configuration[:passenger][:version].split('.').map {|version| version.to_i }
-
-      # introduced in 3.0.11
-      major >= 3 && minor >= 0 && patch >= 11
+      passenger_major_version >= 4 || (passenger_major_version >=3 && passenger_minor_version > 0) || (passenger_major_version >= 3 && passenger_minor_version >= 0 && passenger_patch_version >= 11)
     else # blessed version does support it
       true
     end
