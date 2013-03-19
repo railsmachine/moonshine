@@ -279,13 +279,13 @@ private
 
     package "logrotate", :ensure => :installed, :require => package("cron"), :notify => service("cron")
 
-    safename = log_or_glob.gsub(/[^a-zA-Z]/, '')
+    logrotated_file = options[:logrotated_file] || (log_or_glob.gsub(/[^a-zA-Z]/, '') + '.conf')
 
-    file "/etc/logrotate.d/#{safename}.conf",
+    file "/etc/logrotate.d/#{logrotated_file}",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), "templates", "logrotate.conf.erb"), binding),
       :notify => service("cron"),
-      :alias => "logrotate_#{safename}"
+      :alias => "logrotate_#{logrotated_file}"
   end
 
 end

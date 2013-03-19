@@ -81,7 +81,28 @@ STATUS
       :require => exec('a2enmod status'),
       :content => status,
       :notify => service("apache2")
+
     file '/etc/logrotate.d/varlogapachelog.conf', :ensure => :absent
+
+    logrotate_options = configuration[:apache][:logrotate] || {}
+    logrotate_options[:frequency] ||= 'weekly'
+    logrotate_options[:count] ||= '52'
+    logrotate "/var/log/apache2/*.log",
+      :logrotated_file => 'apache2',
+      :options => [
+        logrotate_options[:frequency],
+        'missingok',
+        "rotate #{logrotate_options[:count]}",
+        'compress',
+        'delaycompress',
+        'notifempty',
+        'create 640 root adm',
+        'sharedscripts'
+      ], :postrotate => <<-POSTROTATE
+                if [ -f "`. /etc/apache2/envvars ; echo ${APACHE_PID_FILE:-/var/run/apache2.pid}`" ]; then
+                        /etc/init.d/apache2 reload > /dev/null
+                fi
+POSTROTATE
 
   end
 
