@@ -33,7 +33,7 @@ module Moonshine::Manifest::Rails::Mysql
 
   # Install the <tt>mysql</tt> rubygem and dependencies
   def mysql_gem
-    gem(mysql_gem_name, :alias => 'mysql')
+    gem(mysql_gem_name)
   end
 
   # GRANT the database user specified in the current <tt>database_environment</tt>
