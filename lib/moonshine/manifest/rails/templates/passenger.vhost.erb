@@ -69,6 +69,8 @@
   ## here in your VirtualHost entry or in the global configuration.
   ##
 
+<% if passenger_major_version < 4 %>
+
   ## RailsAutoDetect
   #
   # Set whether Phusion Passenger should automatically detect whether
@@ -77,6 +79,8 @@
   # Options: <on|off>
 
   RailsAutoDetect <%= passenger_config_boolean(configuration[:passenger][:rails_auto_detect]) %>
+
+<% end %>
 
   ## RailsBaseURI
   #
