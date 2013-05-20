@@ -81,12 +81,16 @@ STATUS
       :require => exec('a2enmod status'),
       :content => status,
       :notify => service("apache2")
+      
+    recipe :apache_logrotate
+  end
 
+  def apache_logrotate
     file '/etc/logrotate.d/varlogapachelog.conf', :ensure => :absent
 
     logrotate_options = configuration[:apache][:logrotate] || {}
-    logrotate_options[:frequency] ||= 'weekly'
-    logrotate_options[:count] ||= '52'
+    logrotate_options[:frequency] ||= 'daily'
+    logrotate_options[:count] ||= '365'
     logrotate "/var/log/apache2/*.log",
       :logrotated_file => 'apache2',
       :options => [
@@ -97,13 +101,10 @@ STATUS
         'delaycompress',
         'notifempty',
         'create 640 root adm',
-        'sharedscripts'
-      ], :postrotate => <<-POSTROTATE
-                if [ -f "`. /etc/apache2/envvars ; echo ${APACHE_PID_FILE:-/var/run/apache2.pid}`" ]; then
-                        /etc/init.d/apache2 reload > /dev/null
-                fi
-POSTROTATE
-
+        'sharedscripts',
+        'copytruncate'
+      ], 
+      :postrotate => 'true'
   end
 
 private
