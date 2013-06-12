@@ -190,6 +190,7 @@ module Moonshine::Manifest::Rails::Rails
       :mode => '775'
     file "#{rails_root}/public/assets",
       :ensure => "#{configuration[:deploy_to]}/shared/assets",
+      :owner => configuration[:user],
       :require => file("#{configuration[:deploy_to]}/shared/assets")
     rake 'assets:precompile',
       :require => [file("#{rails_root}/public/assets"), exec('rails_gems')]
