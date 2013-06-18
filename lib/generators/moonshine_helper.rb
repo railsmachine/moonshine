@@ -15,6 +15,16 @@ module MoonshineGeneratorHelpers
       RUBY_VERSION
     end
 
+    def options
+      @@options ||= {}
+    end
+
+    def default_options(opts={})
+      opts.each do |k,v|
+        options[k] = v
+      end
+    end
+
     def default_ruby
       case ruby_version
       when /^1\.8/

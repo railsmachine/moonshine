@@ -1,8 +1,16 @@
 require 'rbconfig'
 require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'generators', 'moonshine_helper')
 
-class MoonshineGenerator < Rails::Generator::Base
+if Rails.version.split(".").first.to_i > 2
+  cls = Rails::Generators::Base
+else
+  cls = Rails::Generator::Base
+end
+
+class MoonshineGenerator < cls
   include MoonshineGeneratorHelpers
+
+  source_root(File.join(File.dirname(__FILE__), 'templates'))
 
   attr_reader :file_name, :klass_name
 
@@ -11,7 +19,7 @@ class MoonshineGenerator < Rails::Generator::Base
                   :ruby => default_ruby,
                   :multistage => false
 
-  def initialize(runtime_args, runtime_options = {})
+  def initialize(runtime_args, runtime_options = {}, config = {})
     name = if runtime_args.first && runtime_args.first !~ /^--/
              runtime_args.shift
            else
@@ -23,57 +31,58 @@ class MoonshineGenerator < Rails::Generator::Base
   end
 
   def gems
-    gem_array = returning Array.new do |hash|
-      Rails.configuration.gems.map do |gem|
-        hash = { :name => gem.name }
-        hash.merge!(:source => gem.source) if gem.source
-        hash.merge!(:version => gem.requirement.to_s) if gem.requirement
-        hash
-      end if Rails.respond_to?( 'configuration' )
+    gem_array = []
+
+    Gem.loaded_specs.each do |name,spec|
+      gem_array << { :name => name, :version => spec.version, :source => spec.source }
     end
+    
     if (RAILS_GEM_VERSION rescue false)
       gem_array << {:name => 'rails', :version => RAILS_GEM_VERSION }
     else
       gem_array << {:name => 'rails'}
     end
+    
     gem_array
   end
 
   def manifest
-    recorded_session = record do |m|
-      m.template  'Capfile', 'Capfile'
-      m.directory 'app/manifests'
-      m.template  'moonshine.rb', "app/manifests/#{file_name}.rb"
-      m.directory 'app/manifests/templates'
-      m.template  'readme.templates', 'app/manifests/templates/README'
+  #  recorded_session = record do |m|
+      template  'Capfile', 'Capfile'
+      empty_directory 'app/manifests'
+      template  'moonshine.rb', "app/manifests/#{file_name}.rb"
+      empty_directory 'app/manifests/templates'
+      template  'readme.templates', 'app/manifests/templates/README'
 
-      m.directory 'config'
-      m.template  'moonshine.yml', 'config/moonshine.yml'
-      m.template  'gems.yml', 'config/gems.yml', :assigns => { :gems => gems }
+      inside 'config' do
 
-      m.template  'deploy.rb', 'config/deploy.rb'
+      end
+      template  'moonshine.yml', 'config/moonshine.yml'
+      template  'gems.yml', 'config/gems.yml', :assigns => { :gems => gems }
+
+      template  'deploy.rb', 'config/deploy.rb'
 
       production_env_path = Pathname.new("#{rails_root_path}/config/environments/production.rb")
       if production_env_path.exist?
         production_env = production_env_path.read
         unless production_env.include?('ActionMailer::Base.delivery_method')
-          m.gsub_file 'config/environments/production.rb', /\z/, "\n# Use postfix for mail delivery \nActionMailer::Base.delivery_method = :sendmail "
+          gsub_file 'config/environments/production.rb', /\z/, "\n# Use postfix for mail delivery \nActionMailer::Base.delivery_method = :sendmail "
         end
       end
 
       if options[:multistage]
-        m.directory 'config/deploy'
-        m.template 'staging-deploy.rb', 'config/deploy/staging.rb'
-        m.template 'production-deploy.rb', 'config/deploy/production.rb'
+        empty_directory 'config/deploy'
+        template 'staging-deploy.rb', 'config/deploy/staging.rb'
+        template 'production-deploy.rb', 'config/deploy/production.rb'
 
-        m.directory 'config/moonshine'
-        m.template 'staging-moonshine.yml', 'config/moonshine/staging.yml'
-        m.template 'production-moonshine.yml', 'config/moonshine/production.yml'
+        empty_directory 'config/moonshine'
+        template 'staging-moonshine.yml', 'config/moonshine/staging.yml'
+        template 'production-moonshine.yml', 'config/moonshine/production.yml'
 
-        m.directory 'config/environments/'
-        m.template 'staging-environment.rb', 'config/environments/staging.rb'
+        directory 'config/environments/'
+        template 'staging-environment.rb', 'config/environments/staging.rb'
       end
-    end
+  #  end
     
     intro = <<-INTRO
     
@@ -90,7 +99,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
     INTRO
     puts intro if File.basename($0) == 'generate'
     
-    recorded_session
+   # recorded_session
   end
 
   def application
@@ -98,10 +107,11 @@ define the server 'stack', cron jobs, mail aliases, configuration files
   end
 
   def repository
-    options[:repository] ||= begin
-                               detected_repo = `git config remote.origin.url`.chomp
-                               !detected_repo.blank? ? detected_repo : 'git@github.com:username/your_app_name.git'
-                             end
+    'git@github.com:username/your_app_name.git'
+    # options[:repository] ||= begin
+    #                            detected_repo = `git config remote.origin.url`.chomp
+    #                            !detected_repo.blank? ? detected_repo : 'git@github.com:username/your_app_name.git'
+    #                          end
   end
 
   def user
