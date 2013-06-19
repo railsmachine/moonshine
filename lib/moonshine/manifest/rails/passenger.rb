@@ -79,17 +79,17 @@ module Moonshine::Manifest::Rails::Passenger
       :ensure => :present,
       :content => load_template,
       :require => [exec("build_passenger")],
-      :notify => service("apache2"),
+      :notify => apache_notifies,
       :alias => "passenger_load"
 
     file '/etc/apache2/mods-available/passenger.conf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.conf.erb')),
       :require => [exec("build_passenger")],
-      :notify => service("apache2"),
+      :notify => apache_notifies,
       :alias => "passenger_conf"
 
-    a2enmod 'headers', :notify => service('apache2')
+    a2enmod 'headers', :notify => apache_notifies
 
     a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load"), exec('a2enmod headers')]
   end
@@ -100,7 +100,7 @@ module Moonshine::Manifest::Rails::Passenger
     file "/etc/apache2/sites-available/#{configuration[:application]}",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.vhost.erb')),
-      :notify => service("apache2"),
+      :notify => apache_notifies,
       :alias => "passenger_vhost",
       :require => exec("a2enmod passenger")
 

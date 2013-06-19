@@ -11,6 +11,8 @@ module Moonshine::Manifest::Rails::Apache
       :max_spare_threads => 75,
       :threads_per_child => 25,
       :max_requests_per_child => 0,
+      :restart_on_change => true,
+      :reload_on_change => false,
       :timeout => 300,
       :trace_enable => 'On',
       :gzip => true,
@@ -18,11 +20,31 @@ module Moonshine::Manifest::Rails::Apache
     }
   end
 
+  def apache_notifies
+    if configuration[:apache][:restart_on_change]
+      [service('apache2')]
+    elsif configuration[:apache][:reload_on_change]
+      [service('apache2')]
+    else
+      []
+    end
+  end
+  
+  def apache_service_restart
+    if configuration[:apache][:restart_on_change]
+      '/etc/init.d/apache2 restart'
+    elsif configuration[:apache][:reload_on_change]
+      '/etc/init.d/apache2 reload'
+    else
+      '/etc/init.d/apache2 restart'
+    end
+  end
+
   # Installs Apache 2.2 and enables mod_rewrite and mod_status. Enables mod_ssl
   # if <tt>configuration[:ssl]</tt> is present
   def apache_server
     package "apache2-mpm-worker", :ensure => :installed
-    service "apache2", :require => package("apache2-mpm-worker"), :restart => '/etc/init.d/apache2 restart', :ensure => :running
+    service "apache2", :require => package("apache2-mpm-worker"), :restart => apache_service_restart, :ensure => :running
     a2enmod('rewrite')
     a2enmod('status')
     a2enmod('expires')
@@ -54,7 +76,7 @@ module Moonshine::Manifest::Rails::Apache
       :content => apache2_conf,
       :mode => '644',
       :require => package('apache2-mpm-worker'),
-      :notify => service('apache2')
+      :notify => apache_notifies
 
     status = <<-STATUS
 <IfModule mod_status.c>
@@ -73,14 +95,14 @@ STATUS
       :content => template(rails_template_dir.join('apache.envvars.erb'), binding),
       :mode => '644',
       :require => package('apache2-mpm-worker'),
-      :notify => service('apache2')
+      :notify => apache_notifies
 
     file '/etc/apache2/mods-available/status.conf',
       :ensure => :present,
       :mode => '644',
       :require => exec('a2enmod status'),
       :content => status,
-      :notify => service("apache2")
+      :notify => apache_notifies
       
     recipe :apache_logrotate
   end
@@ -117,7 +139,7 @@ private
         :command => "/usr/sbin/a2ensite #{site}",
         :unless => "ls /etc/apache2/sites-enabled/#{site}",
         :require => package("apache2-mpm-worker"),
-        :notify => service("apache2")
+        :notify => apache_notifies
       }.merge(options)
     )
   end
@@ -130,7 +152,7 @@ private
         :command => "/usr/sbin/a2dissite #{site}",
         :onlyif => "ls /etc/apache2/sites-enabled/#{site}",
         :require => package("apache2-mpm-worker"),
-        :notify => service("apache2")
+        :notify => apache_notifies
       }.merge(options)
     )
   end
@@ -143,7 +165,7 @@ private
         :command => "/usr/sbin/a2enmod #{mod}",
         :unless => "ls /etc/apache2/mods-enabled/#{mod}.load",
         :require => package("apache2-mpm-worker"),
-        :notify => service("apache2")
+        :notify => apache_notifies
       }.merge(options)
     )
   end
@@ -156,7 +178,7 @@ private
         :command => "/usr/sbin/a2enmod #{mod}",
         :onlyif => "ls /etc/apache2/mods-enabled/#{mod}.load",
         :require => package("apache2-mpm-worker"),
-        :notify => service("apache2")
+        :notify => apache_notifies
       }.merge(options)
     )
   end
