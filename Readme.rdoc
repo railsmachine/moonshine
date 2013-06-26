@@ -49,8 +49,8 @@ We've added support for Passenger Enterprise Edition!  In order to install it, y
 
 This is what a passenger enterprise block in moonshine.yml should look like (in addition to your usual Passenger settings):
 
-<pre><code>:passenger:
-  :version: 3.0.18
-  :enterprise: true
-  :gemfile: vendor/gems/passenger-enterprise-server-3.0.18.gem
-  :rolling_restarts: true</code></pre>
+  :passenger:
+    :version: 4.0.5
+    :enterprise: true
+    :gemfile: vendor/gems/passenger-enterprise-server-4.0.5.gem
+    :rolling_restarts: true
