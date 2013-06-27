@@ -10,7 +10,7 @@ Once you're a bit more comfortable with Moonshine, you'll find our documentation
 
 ## Requirements
 
-* A server running Ubuntu 8.10 or 10.04 LTS (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
+* A server running Ubuntu 8.10, 10.04 LTS or 12.04 LTS (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
 * A Rails 2.3 or Rails 3 app. Rails 4 is supported with the [plugger](http://github.com/railsmachine/plugger) gem.
 * A user on this server that can:
   * Execute commands via sudo
