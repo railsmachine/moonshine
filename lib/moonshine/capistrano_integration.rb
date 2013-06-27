@@ -593,7 +593,7 @@ module Moonshine
 
           task :install_deps do
             aptget.update
-            sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget'
+            sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline-dev wget'
             if fetch(:ruby) ==  'src193'
               sudo 'apt-get install -q -y libyaml-dev'
             end
@@ -603,7 +603,7 @@ module Moonshine
             sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
 
-            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.1')
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.3')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')
