@@ -78,6 +78,10 @@ module Moonshine::Manifest::Rails::Apache
       :require => package('apache2-mpm-worker'),
       :notify => apache_notifies
 
+    file '/etc/apache2/conf.d/other-vhosts-access-log',
+      :ensure => :absent,
+      :require => package('apache2-mpm-worker')
+
     status = <<-STATUS
 <IfModule mod_status.c>
 ExtendedStatus On
