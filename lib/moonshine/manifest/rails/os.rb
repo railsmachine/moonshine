@@ -241,10 +241,14 @@ private
 
   # Some parts of the server may need configured differently based on
   # the version of Ubuntu they're running. Moonshine currently supports
-  # 8.10 and 10.04, so we provide helpers to detect those versions.
+  # 8.10, 10.04 & 12.04, so we provide helpers to detect those versions.
 
   def ubuntu_lucid?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
+  end
+  
+  def ubuntu_precise?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 12.04
   end
 
   def ubuntu_intrepid?
@@ -255,6 +259,7 @@ private
     case Facter.lsbdistrelease.to_f
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
+    when 12.04 then 'Ubuntu precise-security'
     end
   end
 

@@ -82,7 +82,13 @@ private
   end
 
   def mysql_version
-    ubuntu_lucid? ? 5.1 : 5
+    if ubuntu_lucid?
+      5.1
+    elsif ubuntu_precise?
+      5.5
+    else
+      5.0
+    end
   end
 
   def mysql_gem_name
