@@ -23,7 +23,6 @@ relay-log-index          = <%= configuration[:mysql][:relay_log_index] || "#{log
 replicate-same-server-id = <%= configuration[:mysql][:replicate_same_server_id] || '0' %>
 <% if configuration[:mysql][:skip_name_resolve ] || false %>skip-name-resolve<% end %>
 
-
 ######### innodb options
 innodb_buffer_pool_size           = <%= configuration[:mysql][:innodb_buffer_pool_size] || '128M' %>
 innodb_additional_mem_pool_size   = <%= configuration[:mysql][:innodb_additional_mem_pool_size] || '16M' %>
