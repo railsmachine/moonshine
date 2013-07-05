@@ -141,7 +141,9 @@ private
   end
 
   def passenger_lib_dir
-    if (passenger_major_version >= 3 && passenger_minor_version >= 9) || passenger_major_version >=4
+    if (passenger_major_version > 4) || (passenger_major_version == 4 && passenger_minor_version > 0) || (passenger_major_version == 4 && passenger_minor_version == 0 && passenger_patch_version >= 6 )
+      'buildout'
+    elsif (passenger_major_version == 3 && passenger_minor_version >= 9) || (passenger_major_version == 4 && passenger_minor_version == 0 && passenger_patch_version <= 5 )
       'libout'
     else
       'ext'
