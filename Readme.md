@@ -37,6 +37,10 @@ Add <code>gem 'plugger'</code> to your Gemfile and bundle install, then:
     $ plugger install git://github.com/railsmachine/moonshine.git
     $ script/rails generate moonshine
 
+If you get errors about not being able to find shadow_puppet during deploys, you'll also need to add the following to your Gemfile:
+
+    gem 'shadow_puppet', :require => false
+
 ## Running Tests
 
 It's easy enough:
