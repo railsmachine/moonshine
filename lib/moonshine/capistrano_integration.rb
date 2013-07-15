@@ -135,7 +135,16 @@ module Moonshine
             upload moonshine_yml_path.to_s, '/tmp/moonshine.yml'
             upload File.join(File.dirname(__FILE__), '..', 'moonshine_setup_manifest.rb'), '/tmp/moonshine_setup_manifest.rb'
 
-            sudo 'shadow_puppet /tmp/moonshine_setup_manifest.rb'
+            if fetch(:stage)
+              shadow_puppet_line = "DEPLOY_STAGE=#{fetch(:stage)} "
+            else
+              shadow_puppet_line = ""
+            end
+
+            shadow_puppet_line << "shadow_puppet /tmp/moonshine_setup_manifest.rb"
+            
+
+            sudo shadow_puppet_line
             sudo 'rm /tmp/moonshine_setup_manifest.rb'
             sudo 'rm /tmp/moonshine.yml'
           end
