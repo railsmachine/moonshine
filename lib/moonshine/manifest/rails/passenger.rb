@@ -63,7 +63,7 @@ module Moonshine::Manifest::Rails::Passenger
       :unless => [
         "ls `passenger-config --root`/#{passenger_lib_dir}/apache2/mod_passenger.so",
         "ls `passenger-config --root`/#{passenger_lib_dir}/ruby/ruby-*/passenger_native_support.so",
-        "ls `passenger-config --root`/agents/PassengerLoggingAgent"
+        "ls `passenger-config --root`/#{passenger_agents_dir}/PassengerLoggingAgent"
         ].join(" && "),
       :require => [
         package("passenger"),
@@ -147,6 +147,14 @@ private
       'libout'
     else
       'ext'
+    end
+  end
+
+  def passenger_agents_dir
+    if (passenger_major_version > 4) || (passenger_major_version == 4 && passenger_minor_version > 0) || (passenger_major_version == 4 && passenger_minor_version == 0 && passenger_patch_version >= 6 )
+      "#{passenger_lib_dir}/agents"
+    else
+      'agents'
     end
   end
 
