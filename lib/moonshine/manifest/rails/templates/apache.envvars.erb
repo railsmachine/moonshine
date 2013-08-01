@@ -21,3 +21,4 @@ export <%= variable %>="<%= value %>"
 ## The command to get the status for 'apache2ctl status'.
 ## Some packages providing 'www-browser' need '--dump' instead of '-dump'.
 #export APACHE_LYNX='www-browser -dump'
+<% if ubuntu_precise? %>export APACHE_RUN_DIR=/var/run/apache2<% end %>
