@@ -68,5 +68,6 @@ log_slow_queries      = <%= configuration[:mysql][:log_slow_queries] || '/var/lo
 <% end %>
 <% end %>
 long_query_time       = <%= configuration[:mysql][:long_query_time] || '5' %>
+bind_address          = <%= configuraiton[:mysql][:bind_address] || '127.0.0.1' %>
 
 <%= configuration[:mysql][:extra] %>
