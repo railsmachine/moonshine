@@ -453,12 +453,19 @@ module Moonshine
 
         namespace :ruby do
 
-          desc 'Forces a reinstall of Ruby and restarts Apache/Passenger'
+          desc <<-DESC
+      Forces a reinstall of Ruby and restarts Apache/Passenger'
+      The gems installed with bundler have been removed.
+      You must perform a deploy to reinstall these gems with 'bundle install'.
+    DESC
           task :upgrade do
             install
             sudo 'gem pristine --all'
+            sudo "rm -rf #{shared_path}/bundle/*"
             passenger.compile
             apache.restart
+            puts "The gems installed with bundler have been removed."
+            puts "You must perform a deploy to reinstall these gems with 'bundle install'."
           end
 
           desc 'Install Ruby + Rubygems'
