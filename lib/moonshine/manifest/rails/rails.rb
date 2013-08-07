@@ -233,7 +233,7 @@ module Moonshine::Manifest::Rails::Rails
     hash.merge!(:alias => options[:alias]) if options[:alias]
     #fixup the version required
     exact_dep = Gem::Dependency.new(name, options[:version] || '>0')
-    matches = Gem.source_index.search(exact_dep)
+    matches = Gem::Specification.find_all_by_name(name) # Gem.source_index.search(exact_dep)
     installed_spec = matches.first
     if installed_spec
       if options[:version]
