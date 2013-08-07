@@ -1,6 +1,7 @@
 module Moonshine::Manifest::Rails::Apache
   def self.included(manifest)
-    manifest.configure :apache => {
+    manifest.configure :apache => {}
+    defaults = {
       :keep_alive => 'Off',
       :max_keep_alive_requests => 100,
       :keep_alive_timeout => 15,
@@ -18,6 +19,12 @@ module Moonshine::Manifest::Rails::Apache
       :gzip => true,
       :gzip_types => ['text/html', 'text/plain', 'text/xml', 'text/css', 'text/javascript', 'text/json', 'application/x-javascript', 'application/javascript', 'application/json']
     }
+    if manifest.configuration[:apache]
+      manifest.configuration[:apache].each do |k,v|
+        defaults[k.to_sym] = v
+      end
+    end
+    manifest.configure :apache => defaults
   end
 
   def apache_notifies
