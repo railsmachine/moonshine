@@ -71,12 +71,13 @@ module Moonshine
       end
 
       def update_moonshine
-        if File.exist?("#{RAILS_ROOT}/.svn")
+        rails_root = Dir.pwd
+        if File.exist?("#{rails_root}/.svn")
           puts "Updating #{@remote}'s #{pretty_repo @repo} plugin"
-          if `cd #{RAILS_ROOT} && svn stat -q --ignore-externals`.empty?
+          if `cd #{rails_root} && svn stat -q --ignore-externals`.empty?
             command = [
               "svn up",
-              "cd #{RAILS_ROOT}",
+              "cd #{rails_root}",
               "svn rm vendor/plugins/#{@repo}",
               "svn commit -m 'cleaning #{@repo} before update'",
               "#{@plugin_cmd} install git://github.com/#{@remote}/#{@repo}.git",
@@ -87,13 +88,13 @@ module Moonshine
             puts "You have changes in your project directory. Please commit before updating #{@repo}."
           end
 
-        elsif File.exist?("#{RAILS_ROOT}/.gitmodules") && 
-          File.open("#{RAILS_ROOT}/.gitmodules") {|f| f.grep /#{@repo}\.git/}.any? &&
-          File.exist?("#{RAILS_ROOT}/vendor/plugins/#{@repo}/.git")
+        elsif File.exist?("#{rails_root}/.gitmodules") && 
+          File.open("#{rails_root}/.gitmodules") {|f| f.grep /#{@repo}\.git/}.any? &&
+          File.exist?("#{rails_root}/vendor/plugins/#{@repo}/.git")
 
           puts "Updating #{@remote}'s #{pretty_repo @repo} submodule"
           command = [
-            "cd #{RAILS_ROOT}/vendor/plugins/#{@repo}",
+            "cd #{rails_root}/vendor/plugins/#{@repo}",
             "git pull origin master"
           ]
 
@@ -101,7 +102,7 @@ module Moonshine
 
           puts "Updating #{@remote}'s #{pretty_repo @repo} plugin"
           command = [
-            "cd #{RAILS_ROOT}",
+            "cd #{rails_root}",
             "#{@plugin_cmd} install --force git://github.com/#{@remote}/#{@repo}.git"
           ]
         end
