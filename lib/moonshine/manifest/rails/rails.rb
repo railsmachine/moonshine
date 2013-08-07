@@ -127,6 +127,13 @@ module Moonshine::Manifest::Rails::Rails
          "--without '#{bundle_install_without_groups}'",
          '--binstubs'
       ]
+      
+      exec 'accept github key',
+        :command => 'ssh git@github.com -o StrictHostKeyChecking=no || true',
+        :before => exec('bundle install'),
+        :user => configuration[:user],
+        :unless => 'ssh-keygen -F github.com | grep github.com'
+      
       exec 'bundle install',
         :command => "bundle install #{bundle_install_options.join(' ')}",
         :cwd => rails_root,
