@@ -12,6 +12,9 @@
 # * ree187
 # * src192
 # * src193
+# * src193falcon - This is p327 + falcon patch and provides some serious performance benefits compared to stock 1.9.3.
+# * src193railsexpress - This is p448 + the railsexpress patches and in early testing is even faster than just the falcon patch.
+
 :ruby: <%= ruby %>
 
 # Name of your application. Should be something with only alphanumerics, hypens
