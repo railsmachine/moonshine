@@ -8,7 +8,8 @@ module Moonshine::Manifest::Rails::Passenger
     package 'libcurl4-openssl-dev', :ensure => :installed
     
     if configuration[:passenger][:enterprise]
-      package "passenger",
+      package "remove passenger",
+        :name => "passenger",
         :provider => :gem, 
         :ensure => :absent
 
@@ -18,7 +19,7 @@ module Moonshine::Manifest::Rails::Passenger
         :command => "gem install #{configuration[:passenger][:gemfile]}",
         :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
         :cwd => rails_root, 
-        :require => [ package('libcurl4-openssl-dev'), package('passenger')]
+        :require => [ package('libcurl4-openssl-dev'), package('remove passenger')]
 
       file '/etc/passenger-enterprise-license',
         :ensure => :present,
