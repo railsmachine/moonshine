@@ -124,9 +124,12 @@ module Moonshine::Manifest::Rails::Rails
       bundle_install_options = [
          '--deployment',
          "--path #{configuration[:deploy_to]}/shared/bundle",
-         "--without '#{bundle_install_without_groups}'",
-         '--binstubs'
+         "--without '#{bundle_install_without_groups}'"
       ]
+      
+      unless configuration[:bundler][:disable_binstubs]
+        bundle_install_options << '--binstubs'
+      end
       
       exec 'accept github key',
         :command => 'ssh git@github.com -o StrictHostKeyChecking=no || true',

@@ -74,3 +74,13 @@ This is what a passenger enterprise block in moonshine.yml should look like (in 
 
 We've been torturing ourselves trying to turn Moonshine into a gem ever since it was announced that Rails 4 was dropping support for plugins.  Moonshine is... different... and we think it actually makes sense as a plugin.  So, instead of turning Moonshine, and the dozens of Moonshine plugins we've written, into a gem, we decided to add plugin support back to Rails 4!  That's where [plugger](http://github.com/railsmachine/plugger) comes in. Just add it to your Gemfile and <code>bundle install</code> and voila, plugins are *back*!
 
+### Getting rid of that annoying message when you run rails console
+
+With Rails 4, it doesn't want you to use the <code>--binstubs</code> argument for bundler, so it's now optional.  If you're using Moonshine and Rails 4, add this to config/moonshine.yml, and you'll be all set:
+
+<pre><code>:bundler:
+  :disable_binstubs: true</code></pre>
+  
+After your next deploy, you should be able to run rails console without that annoying error message.
+
+
