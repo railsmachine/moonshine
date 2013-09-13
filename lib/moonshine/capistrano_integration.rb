@@ -628,25 +628,6 @@ module Moonshine
             ].join(' && ')
           end
 
-          task :src200 do
-            remove_ruby_from_apt
-            pv = '2.0.0-p247'
-            p = "ruby-#{pv}"
-            run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
-              'cd /tmp',
-              "sudo rm -rf #{p}* || true",
-              'sudo mkdir -p /usr/lib/ruby/gems/2.0/gems || true',
-              "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
-              "tar zxvf #{p}.tar.gz",
-              "cd /tmp/#{p}",
-              'export CFLAGS="-march=core2 -O2 -pipe -fomit-frame-pointer"',
-              "./configure --prefix=/usr",
-              "make",
-              "sudo make install"
-            ].join(' && ')
-          end
-
           task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
