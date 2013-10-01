@@ -60,14 +60,15 @@ For help or general discussion, visit the [Moonshine newsgroup](http://groups.go
 
 ## Passenger Enterprise Support
 
-We've added support for Passenger Enterprise Edition!  In order to install it, you need to make a few changes to moonshine.yml.  Since you have to download the gem from Phusion, you now need to tell us where it is.  You also need to put your license file in app/manifests/templates and call it <code>passenger-enterprise-license</code> so we can put it in the right place during install.
+We've added support for Passenger Enterprise Edition!  In order to install it, you need to make a few changes to moonshine.yml.  Phusion now provides a gem server for Passenger Enterprise. You will need to put your license file in app/manifests/templates and call it <code>passenger-enterprise-license</code> so we can put it in the right place during install.
 
 This is what a passenger enterprise block in moonshine.yml should look like (in addition to your usual Passenger settings):
 
     :passenger:
       :version: 4.0.10
       :enterprise: true
-      :gemfile: vendor/gems/passenger-enterprise-server-4.0.10.gem
+      :order_reference: YOUR-ORDER-REFERENCE-NUMBER
+      :order_password: YOUR-ORDER-PASSWORD
       :rolling_restarts: true
     
 ## A Word on Rails 4

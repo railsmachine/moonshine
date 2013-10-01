@@ -13,13 +13,36 @@ module Moonshine::Manifest::Rails::Passenger
         :provider => :gem, 
         :ensure => :absent
 
-      raise "Passenger Enterprise enabled, but no gemfile specified. Update config/moonshine.yml with :gemfile for :passenger and try again" unless configuration[:passenger][:gemfile]
+      if configuration[:passenger][:order_reference]
+        order_reference = configuration[:passenger][:order_reference]
+        order_password = configuration[:passenger][:order_password]
 
-      exec 'install passenger-enterprise-server gem',
-        :command => "gem install #{configuration[:passenger][:gemfile]}",
-        :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
-        :cwd => rails_root, 
-        :require => [ package('libcurl4-openssl-dev'), package('remove passenger')]
+        source_url = "https://#{order_reference}:#{order_password}@www.phusionpassenger.com/enterprise_gems/"
+
+        exec 'configure passenger enterprise gem source',
+          :command => "gem source --add #{source_url}",
+          :unless => "gem source | grep '#{source_url}'"
+
+        if configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
+          package 'passenger-enterprise-server',
+            :ensure => BLESSED_VERSION,
+            :provider => :gem,
+            :require => [ package('libcurl4-openssl-dev'), package('passenger'), exec('configure passenger enterprise gem source') ]
+        elsif configuration[:passenger][:version]
+          package 'passenger-enterprise-server',
+            :ensure => configuration[:passenger][:version],
+            :provider => :gem,
+            :require => [ package('libcurl4-openssl-dev'), package('passenger'), exec('configure passenger enterprise gem source') ]
+        end
+      else
+        raise "Passenger Enterprise enabled, but no gemfile specified. Update config/moonshine.yml with :gemfile for :passenger and try again" unless configuration[:passenger][:gemfile]
+
+        exec 'install passenger-enterprise-server gem',
+          :command => "gem install #{configuration[:passenger][:gemfile]}",
+          :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
+          :cwd => rails_root,
+          :require => [ package('libcurl4-openssl-dev'), package('passenger')]
+      end
 
       file '/etc/passenger-enterprise-license',
         :ensure => :present,
