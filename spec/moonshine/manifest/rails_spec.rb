@@ -450,6 +450,21 @@ describe Moonshine::Manifest::Rails do
     @manifest.should exec_command('/usr/bin/createdb -O pg_username pg_database')
   end
 
+  specify "#postgresql_hstore" do
+    @manifest.should_receive(:postgresql_version).and_return('8.4')
+    @manifest.should_receive(:database_environment).at_least(:once).and_return({
+      :username => 'pg_username',
+      :database => 'pg_database',
+      :password => 'pg_password'
+    })
+
+    @manifest.postgresql_server
+    @manifest.postgresql_user
+    @manifest.postgresql_database
+
+    @manifest.should exec_command('/usr/bin/psql -U postgres -d pg_database -f /usr/share/postgresql/8.4/contrib/hstore.sql')
+  end
+
   describe "#gem" do
     before do
       @manifest.gem 'rmagick'

@@ -68,6 +68,13 @@ module Moonshine::Manifest::Rails::Postgresql
       :notify   => exec('rails_bootstrap')
   end
 
+  # Include contrib module
+  def postgresql_hstore
+    exec "postgresql_hstore",
+      :command => "/usr/bin/psql -U postgres -d #{database_environment[:database]} -f /usr/share/postgresql/#{postgresql_version}/contrib/hstore.sql",
+      :user => 'postgres'
+  end
+
 private
 
   def psql(query, options = {})
