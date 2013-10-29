@@ -8,10 +8,9 @@ module Moonshine::Manifest::Rails::Passenger
     package 'libcurl4-openssl-dev', :ensure => :installed
     
     if configuration[:passenger][:enterprise]
-      package "remove passenger",
-        :name => "passenger",
-        :provider => :gem, 
-        :ensure => :absent
+      exec 'remove passenger',
+        :command => 'gem uninstall passenger --all',
+        :onlyif => "gem list | grep 'passenger '"
 
       if configuration[:passenger][:order_reference]
         order_reference = configuration[:passenger][:order_reference]
@@ -24,15 +23,17 @@ module Moonshine::Manifest::Rails::Passenger
           :unless => "gem source | grep '#{source_url}'"
 
         if configuration[:passenger][:version].nil? || configuration[:passenger][:version] == :latest
-          package 'passenger-enterprise-server',
+          package 'passenger',
+            :name => 'passenger-enterprise-server',
             :ensure => BLESSED_VERSION,
             :provider => :gem,
-            :require => [ package('libcurl4-openssl-dev'), package('passenger'), exec('configure passenger enterprise gem source') ]
+            :require => [ package('libcurl4-openssl-dev'), exec('remove passenger'), exec('configure passenger enterprise gem source') ]
         elsif configuration[:passenger][:version]
-          package 'passenger-enterprise-server',
+          package 'passenger',
+            :name => 'passenger-enterprise-server',
             :ensure => configuration[:passenger][:version],
             :provider => :gem,
-            :require => [ package('libcurl4-openssl-dev'), package('passenger'), exec('configure passenger enterprise gem source') ]
+            :require => [ package('libcurl4-openssl-dev'), exec('remove passenger'), exec('configure passenger enterprise gem source') ]
         end
       else
         raise "Passenger Enterprise enabled, but no gemfile specified. Update config/moonshine.yml with :gemfile for :passenger and try again" unless configuration[:passenger][:gemfile]
@@ -41,7 +42,7 @@ module Moonshine::Manifest::Rails::Passenger
           :command => "gem install #{configuration[:passenger][:gemfile]}",
           :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
           :cwd => rails_root,
-          :require => [ package('libcurl4-openssl-dev'), package('passenger')]
+          :require => [ package('libcurl4-openssl-dev'), exec('remove passenger')]
       end
 
       file '/etc/passenger-enterprise-license',
