@@ -12,11 +12,17 @@ module Moonshine::Manifest::Rails::Passenger
         :command => 'gem uninstall passenger --all',
         :onlyif => "gem list | grep 'passenger '"
 
-      if configuration[:passenger][:order_reference]
-        order_reference = configuration[:passenger][:order_reference]
-        order_password = configuration[:passenger][:order_password]
-
-        source_url = "https://#{order_reference}:#{order_password}@www.phusionpassenger.com/enterprise_gems/"
+      if configuration[:passenger][:download_token] or configuration[:passenger][:order_reference]
+        if configuration[:passenger][:download_token]
+          download_token = configuration[:passenger][:download_token]
+          source_url = "https://download:#{download_token}@www.phusionpassenger.com/enterprise_gems/"
+        elsif configuration[:passenger][:order_reference]
+          order_reference = configuration[:passenger][:order_reference]
+          order_password = configuration[:passenger][:order_password]
+          source_url = "https://#{order_reference}:#{order_password}@www.phusionpassenger.com/enterprise_gems/"
+          puts "WARNING: Phusion has deprecated using ORDER REFERENCE/ORDER PASSWORD for authentication to their gem server."
+          puts "Please set the :passenger: => :download_token: setting in your moonshine.yml before December 1, 2013."
+        end
 
         exec 'configure passenger enterprise gem source',
           :command => "gem source --add #{source_url}",
