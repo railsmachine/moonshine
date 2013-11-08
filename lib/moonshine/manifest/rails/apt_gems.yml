@@ -1,7 +1,16 @@
 curb:
 - libcurl4-openssl-dev
 
-<% libmysql_dev_package = Facter.lsbdistid == 'Ubuntu' &&  Facter.lsbdistrelease.to_f == 8.10 ? 'libmysqlclient15-dev' : 'libmysqlclient-dev' %> 
+<%
+if configuration[:mariadb] && Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 12.04 # That means we're installing mariadb instead of mysql, so we need to use the libmariadbclient-dev instead.
+  libmysql_dev_package = 'libmariadbclient-dev'
+elsif Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 8.10
+  libmysql_dev_package = 'libmysqlclient15-dev'
+else
+  libmysql_dev_package = 'libmysqlclient-dev'
+end
+%>
+
 mysql:
 - <%= libmysql_dev_package %>
 
