@@ -200,7 +200,7 @@ PassengerMaxRequestTime <%= configuration[:passenger][:max_request_time] || '0' 
 ## PassengerMemoryLimit
 # The maximum amount of memory that an application process may use, in megabytes. 
 # Once an application process has surpassed its memory limit, it will process all the requests currently present in its queue and then shut down. 
-# A value of 0 means that there is no maximum: the application’s memory usage will not be checked.
+# A value of 0 means that there is no maximum: the application's memory usage will not be checked.
 
 PassengerMemoryLimit <%= configuration[:passenger][:memory_limit] || '0' %>
 
