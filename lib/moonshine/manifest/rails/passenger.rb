@@ -44,6 +44,11 @@ module Moonshine::Manifest::Rails::Passenger
       else
         raise "Passenger Enterprise enabled, but no gemfile specified. Update config/moonshine.yml with :gemfile for :passenger and try again" unless configuration[:passenger][:gemfile]
 
+        package "remove passenger",
+          :name => "passenger",
+          :provider => :gem,
+          :ensure => :absent
+
         exec 'install passenger-enterprise-server gem',
           :command => "gem install #{configuration[:passenger][:gemfile]}",
           :unless => "gem list | grep passenger-enterprise-server | grep #{configuration[:passenger][:version]}",
