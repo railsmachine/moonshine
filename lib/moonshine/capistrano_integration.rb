@@ -142,7 +142,7 @@ module Moonshine
             end
 
             shadow_puppet_line << "shadow_puppet /tmp/moonshine_setup_manifest.rb"
-            
+
 
             sudo shadow_puppet_line
             sudo 'rm /tmp/moonshine_setup_manifest.rb'
@@ -361,7 +361,7 @@ module Moonshine
             if (dirs + links).any?
               mkdir_command = "mkdir -p " + dirs.uniq.map {|dir| "'#{latest_release}/#{dir}'"}.join(" ")
               ln_commands = links.map {|l| "(#{l})"}.join(" && ")
-              
+
               run "#{mkdir_command} && #{ln_commands}"
             end
           end
@@ -643,7 +643,7 @@ module Moonshine
             sudo 'gem install rake --no-rdoc --no-ri'
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
 
-            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.3')
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.4')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')
@@ -729,14 +729,14 @@ IMPORTANT: keep these files in a safe place (ie check into version control)
               MESSAGE
             else
               already_has_ssl_configuration = moonshine_yml[:ssl]
-              
+
               where_to_paste = if already_has_ssl_configuration
                                  "the :ssl section of config/moonshine.yml"
                                else
                                  "config/moonshine.yml"
                                end
 
-    
+
               domain_template = if csr[:domain]
                                   csr[:domain]
                                 else
@@ -744,7 +744,7 @@ IMPORTANT: keep these files in a safe place (ie check into version control)
                                   "#{domain} # FIXME update with correct domain. Do not include www at beginning. Add `*.` at the beginning for wildcard}"
                                 end
               puts <<-ERROR
-Not enough details to generate a CSR! Copy & paste the following into #{where_to_paste}, and rerun `cap ssl:create`: 
+Not enough details to generate a CSR! Copy & paste the following into #{where_to_paste}, and rerun `cap ssl:create`:
 
 #{':ssl:' unless already_has_ssl_configuration}
   :csr:
@@ -756,7 +756,7 @@ Not enough details to generate a CSR! Copy & paste the following into #{where_to
     :domain: #{domain_template}
 ERROR
               exit 1
-              
+
             end
           end
         end
