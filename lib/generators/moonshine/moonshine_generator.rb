@@ -35,7 +35,18 @@ class MoonshineGenerator < Rails::Generators::Base
     template "moonshine.yml", "config/moonshine.yml"
     template "deploy.rb", "config/deploy.rb"
 
-    if ActiveSupport::VERSION::MAJOR == 3 && ActiveSupport::VERSION::MINOR >= 1
+    if ActiveSupport::VERSION::MAJOR == 4
+      app_manifests_load_prevention_string = <<-EOS
+      # don't attempt to auto-require the moonshine manifests into the rails env
+      # config.paths.app.manifests 'app/manifests', :eager_load => false
+      path_rejector = lambda { |s| s.include?("app/manifests") }
+      config.eager_load_paths = config.eager_load_paths.reject(&path_rejector)
+
+      # Remove the path from being lazily loaded
+      ActiveSupport::Dependencies.autoload_paths.reject!(&path_rejector)    
+EOS
+
+    elsif ActiveSupport::VERSION::MAJOR == 3 && ActiveSupport::VERSION::MINOR >= 1
       app_manifests_load_prevention_string = <<-EOS
 
   # don't attempt to auto-require the moonshine manifests into the rails env
