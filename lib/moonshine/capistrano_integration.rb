@@ -654,13 +654,13 @@ module Moonshine
 
         namespace :apache do
           desc 'Restarts the Apache web server'
-          task :restart do
+          task :restart, :roles => [:app, :web] do
             sudo 'service apache2 restart'
           end
         end
 
         namespace :passenger do
-          task :compile do
+          task :compile, :roles => :app do
             run 'gem list -i passenger && cd /usr/local/src/passenger && sudo /usr/bin/ruby -S rake clean apache2 || true'
           end
         end
