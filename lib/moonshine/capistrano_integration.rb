@@ -462,8 +462,6 @@ module Moonshine
             install
             sudo 'gem pristine --all'
             sudo "rm -rf #{shared_path}/bundle/*"
-            passenger.compile
-            apache.restart
             puts "The gems installed with bundler have been removed."
             puts "You must perform a deploy to reinstall these gems with 'bundle install'."
           end
