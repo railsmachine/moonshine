@@ -1,0 +1,181 @@
+diff --git a/test/etc/test_etc.rb b/test/etc/test_etc.rb
+index c105122..a67b397 100644
+--- a/test/etc/test_etc.rb
++++ b/test/etc/test_etc.rb
+@@ -76,6 +76,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrgid
++    skip "Broken Etc.getgrgid on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRGID']=='1'
+     # group database is not unique on GID, and which entry will be
+     # returned by getgrgid() is not specified.
+     groups = Hash.new {[]}
+@@ -92,6 +93,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrnam
++    skip "Broken Etc.getgrnam on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRNAM']=='1'
+     groups = {}
+     Etc.group do |s|
+       groups[s.name] ||= s unless /\A\+/ =~ s.name
+diff --git a/test/ruby/test_process.rb b/test/ruby/test_process.rb
+index c760e8e..f0ae216 100644
+--- a/test/ruby/test_process.rb
++++ b/test/ruby/test_process.rb
+@@ -1554,6 +1554,7 @@ class TestProcess < Test::Unit::TestCase
+ 
+   def test_execopts_gid
+     skip "Process.groups not implemented on Windows platform" if windows?
++    skip "Broken Etc.getgrgid on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRGID']=='1'
+     feature6975 = '[ruby-core:47414]'
+ 
+     [30000, *Process.groups.map {|g| g = Etc.getgrgid(g); [g.name, g.gid]}].each do |group, gid|
+diff --git a/test/webrick/test_filehandler.rb b/test/webrick/test_filehandler.rb
+index cc27b34..f40d6f7 100644
+--- a/test/webrick/test_filehandler.rb
++++ b/test/webrick/test_filehandler.rb
+@@ -21,6 +21,10 @@ class WEBrick::TestFileHandler < Test::Unit::TestCase
+     end
+   end
+ 
++  def webrick_config_http
++    WEBrick::Config::HTTP.merge(:ServerName => "localhost")
++  end
++
+   def make_range_request(range_spec)
+     msg = <<-END_OF_REQUEST
+       GET / HTTP/1.0
+@@ -31,9 +35,9 @@ class WEBrick::TestFileHandler < Test::Unit::TestCase
+   end
+ 
+   def make_range_response(file, range_spec)
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(make_range_request(range_spec))
+-    res = WEBrick::HTTPResponse.new(WEBrick::Config::HTTP)
++    res = WEBrick::HTTPResponse.new(webrick_config_http)
+     size = File.size(file)
+     handler = default_file_handler(file)
+     handler.make_partial_content(req, res, file, size)
+diff --git a/test/webrick/test_httprequest.rb b/test/webrick/test_httprequest.rb
+index 0ce6b4f..b34cddd 100644
+--- a/test/webrick/test_httprequest.rb
++++ b/test/webrick/test_httprequest.rb
+@@ -3,11 +3,15 @@ require "stringio"
+ require "test/unit"
+ 
+ class TestWEBrickHTTPRequest < Test::Unit::TestCase
++  def webrick_config_http
++    WEBrick::Config::HTTP.merge(:ServerName => "localhost")
++  end
++
+   def test_simple_request
+     msg = <<-_end_of_message_
+ GET /
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg))
+     assert(req.meta_vars) # fails if @header was not initialized and iteration is attempted on the nil reference
+   end
+@@ -17,12 +21,12 @@ GET /
+       GET /
+       foobar    # HTTP/0.9 request don't have header nor entity body.
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal("GET", req.request_method)
+     assert_equal("/", req.unparsed_uri)
+     assert_equal(WEBrick::HTTPVersion.new("0.9"), req.http_version)
+-    assert_equal(WEBrick::Config::HTTP[:ServerName], req.host)
++    assert_equal(webrick_config_http[:ServerName], req.host)
+     assert_equal(80, req.port)
+     assert_equal(false, req.keep_alive?)
+     assert_equal(nil, req.body)
+@@ -34,12 +38,12 @@ GET /
+       GET / HTTP/1.0
+ 
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal("GET", req.request_method)
+     assert_equal("/", req.unparsed_uri)
+     assert_equal(WEBrick::HTTPVersion.new("1.0"), req.http_version)
+-    assert_equal(WEBrick::Config::HTTP[:ServerName], req.host)
++    assert_equal(webrick_config_http[:ServerName], req.host)
+     assert_equal(80, req.port)
+     assert_equal(false, req.keep_alive?)
+     assert_equal(nil, req.body)
+@@ -51,14 +55,14 @@ GET /
+       GET /path HTTP/1.1
+ 
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal("GET", req.request_method)
+     assert_equal("/path", req.unparsed_uri)
+     assert_equal("", req.script_name)
+     assert_equal("/path", req.path_info)
+     assert_equal(WEBrick::HTTPVersion.new("1.1"), req.http_version)
+-    assert_equal(WEBrick::Config::HTTP[:ServerName], req.host)
++    assert_equal(webrick_config_http[:ServerName], req.host)
+     assert_equal(80, req.port)
+     assert_equal(true, req.keep_alive?)
+     assert_equal(nil, req.body)
+@@ -69,7 +73,7 @@ GET /
+     msg = <<-_end_of_message_
+       GET /#{"a"*2084} HTTP/1.1
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     assert_raise(WEBrick::HTTPStatus::RequestURITooLarge){
+       req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     }
+@@ -122,7 +126,7 @@ GET /
+ 
+       hogehoge
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal("POST", req.request_method)
+     assert_equal("/foo/baz", req.path)
+@@ -139,7 +143,7 @@ GET /
+       Host: test.ruby-lang.org
+ 
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal(URI.parse("http://test.ruby-lang.org/path"), req.request_uri)
+     assert_equal("test.ruby-lang.org", req.host)
+@@ -150,7 +154,7 @@ GET /
+       Host: 192.168.1.1
+ 
+     _end_of_message_
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg.gsub(/^ {6}/, "")))
+     assert_equal(URI.parse("http://192.168.1.1/path"), req.request_uri)
+     assert_equal("192.168.1.1", req.host)
+@@ -343,7 +347,7 @@ GET /
+ 
+     _end_of_message_
+     msg.gsub!(/^ {6}/, "")
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg))
+     assert req['expect']
+     l = msg.size
+@@ -359,7 +363,7 @@ GET /
+ 
+     _end_of_message_
+     msg.gsub!(/^ {6}/, "")
+-    req = WEBrick::HTTPRequest.new(WEBrick::Config::HTTP)
++    req = WEBrick::HTTPRequest.new(webrick_config_http)
+     req.parse(StringIO.new(msg))
+     assert !req['expect']
+     l = msg.size

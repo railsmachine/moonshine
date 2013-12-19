@@ -1,0 +1,15 @@
+diff --git a/eval_error.c b/eval_error.c
+index c7ccf82..50b9c40 100644
+--- a/eval_error.c
++++ b/eval_error.c
+@@ -177,8 +177,8 @@ error_print(void)
+         int skip = eclass == rb_eSysStackError;
+ 
+ #define TRACE_MAX (TRACE_HEAD+TRACE_TAIL+5)
+-#define TRACE_HEAD 8
+-#define TRACE_TAIL 5
++#define TRACE_HEAD 100
++#define TRACE_TAIL 100
+ 
+ 	for (i = 1; i < len; i++) {
+ 	    if (RB_TYPE_P(ptr[i], T_STRING)) {

@@ -616,6 +616,54 @@ module Moonshine
             ].join(' && ')
           end
 
+          task :src200 do
+            remove_ruby_from_apt
+            pv = "2.0.0-p353"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo mkdir -p /usr/lib/ruby/gems/2.0.0/gems || true',
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.1.11')
+            set :bundler_version, fetch(:bundler_version, '1.3.5')
+          end
+
+          task :src200railsexpress do
+            set :ruby_patches_path, rails_root.join('vendor', 'plugins', 'moonshine', 'patches')
+            if ruby_patches_path.exist?
+              run 'mkdir -p /tmp/moonshine'
+              upload ruby_patches_path.to_s, "/tmp/moonshine/patches", :via => :scp, :recursive => true
+            end
+            remove_ruby_from_apt
+            pv = "2.0.0-p353"
+            p = "ruby-#{pv}"
+            run [
+              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo mkdir -p /usr/lib/ruby/gems/2.0.0/gems || true',
+              "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/02-railsexpress-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.1.11')
+            set :bundler_version, fetch(:bundler_version, '1.3.5')
+          end
+
           task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
@@ -638,10 +686,10 @@ module Moonshine
           end
 
           task :install_moonshine_deps do
-            sudo 'gem install rake --no-rdoc --no-ri'
+            sudo 'gem install rake --no-rdoc --no-ri' unless fetch(:ruby).start_with?('src200')
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
 
-            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.5')
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.6.6')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')
