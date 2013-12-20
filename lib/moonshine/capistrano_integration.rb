@@ -18,6 +18,7 @@ module Moonshine
         ssh_options[:forward_agent] = true
         default_run_options[:pty] = true
         set :noop, false
+        set :nopuppetrollback, false
 
         # fix common svn error
         set :scm, :subversion if !! repository =~ /^svn/
@@ -151,7 +152,7 @@ module Moonshine
 
           desc 'Apply the Moonshine manifest for this application'
           task :apply, :except => { :no_release => true } do
-            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{'--noop' if fetch(:noop)} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
+            sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{'--noop' if fetch(:noop)} #{'--ignore' if fetch(:nopuppetrollback)} #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
           desc 'Update code and then run a console. Useful for debugging deployment.'
@@ -449,6 +450,11 @@ module Moonshine
         desc "does a no-op deploy. great for testing a potential deploy before running it!"
         task :noop do
           set :noop, true
+        end
+
+        desc "tells shadow_puppet to ignore failed Puppet tasks so that a failed Puppet task won't cause a rollback"
+        task :nopuppetrollback do
+          set :nopuppetrollback, true
         end
 
         namespace :ruby do
