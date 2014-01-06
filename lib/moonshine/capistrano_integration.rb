@@ -586,7 +586,7 @@ module Moonshine
             set :ruby_patches_path, rails_root.join('vendor', 'plugins', 'moonshine', 'patches')
             if ruby_patches_path.exist?
               run 'mkdir -p /tmp/moonshine'
-              upload ruby_patches_path.to_s, "/tmp/moonshine/patches", :via => :scp, :recursive => true
+              upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
             pv = "1.9.3-p484"
@@ -645,7 +645,7 @@ module Moonshine
             set :ruby_patches_path, rails_root.join('vendor', 'plugins', 'moonshine', 'patches')
             if ruby_patches_path.exist?
               run 'mkdir -p /tmp/moonshine'
-              upload ruby_patches_path.to_s, "/tmp/moonshine/patches", :via => :scp, :recursive => true
+              upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
             pv = "2.0.0-p353"
