@@ -42,7 +42,7 @@ module Moonshine::Manifest::Rails::Mysql
     grant =<<EOF
 GRANT ALL PRIVILEGES
 ON #{database_environment[:database]}.*
-TO #{database_environment[:username]}@localhost
+TO \\"#{database_environment[:username]}\\"@\\"localhost\\"
 IDENTIFIED BY \\"#{database_environment[:password]}\\";
 FLUSH PRIVILEGES;
 EOF
