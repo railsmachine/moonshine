@@ -15,12 +15,12 @@ module Moonshine::Manifest::Rails::Mysql
 
     file '/etc/mysql', :ensure => :directory
     file '/etc/mysql/conf.d', :ensure => :directory
-    
+
     file '/etc/mysql/conf.d/innodb.cnf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'innodb.cnf.erb')),
       :before => package('mysql-server')
-    
+
     file '/etc/mysql/conf.d/moonshine.cnf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'moonshine.cnf.erb')),
@@ -40,7 +40,7 @@ module Moonshine::Manifest::Rails::Mysql
   # permisson to access the database with the supplied password
   def mysql_user
     grant =<<EOF
-GRANT ALL PRIVILEGES 
+GRANT ALL PRIVILEGES
 ON #{database_environment[:database]}.*
 TO #{database_environment[:username]}@localhost
 IDENTIFIED BY \\"#{database_environment[:password]}\\";
