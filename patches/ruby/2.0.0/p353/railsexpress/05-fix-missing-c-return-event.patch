@@ -1,0 +1,129 @@
+diff --git a/eval.c b/eval.c
+index 096fca9..62257ae 100644
+--- a/eval.c
++++ b/eval.c
+@@ -933,7 +933,18 @@ rb_frame_caller(void)
+ void
+ rb_frame_pop(void)
+ {
++    ID mid;
++    VALUE klass;
+     rb_thread_t *th = GET_THREAD();
++    rb_control_frame_t *cfp = th->cfp;
++    if (rb_thread_method_id_and_class(th, &mid, &klass)) {
++        ID called_id = frame_called_id(cfp);
++        if (called_id) {
++            mid = called_id;
++        }
++        EXEC_EVENT_HOOK(th, RUBY_EVENT_C_RETURN, klass, mid, klass, Qnil);
++        RUBY_DTRACE_CMETHOD_RETURN_HOOK(th, klass, mid);
++    }
+     th->cfp = RUBY_VM_PREVIOUS_CONTROL_FRAME(th->cfp);
+ }
+ 
+diff --git a/test/ruby/test_settracefunc.rb b/test/ruby/test_settracefunc.rb
+index c6a23cc..5c4a902 100644
+--- a/test/ruby/test_settracefunc.rb
++++ b/test/ruby/test_settracefunc.rb
+@@ -1020,4 +1020,88 @@ class TestSetTraceFunc < Test::Unit::TestCase
+ 
+     assert_equal 4, n
+   end
++
++  def test_const_missing
++    bug59398 = '[ruby-core:59398]'
++    events = []
++    assert !defined?(MISSING_CONSTANT_59398)
++    TracePoint.new(:c_call, :c_return, :call, :return){|tp|
++      next unless tp.defined_class == Module
++      # rake/ext/module.rb aliases :const_missing and Ruby uses the aliased name
++      # but this only happens when running the full test suite
++      events << [tp.event,tp.method_id] if tp.method_id == :const_missing || tp.method_id == :rake_original_const_missing
++    }.enable{
++      MISSING_CONSTANT_59398 rescue nil
++    }
++    if events.map{|e|e[1]}.include?(:rake_original_const_missing)
++      assert_equal([
++        [:call, :const_missing],
++        [:c_call, :rake_original_const_missing],
++        [:c_return, :rake_original_const_missing],
++        [:return, :const_missing],
++      ], events, bug59398)
++    else
++      assert_equal([
++        [:c_call, :const_missing],
++        [:c_return, :const_missing]
++      ], events, bug59398)
++    end
++  end
++
++  class AliasedRubyMethod
++    def foo; 1; end;
++    alias bar foo
++  end
++  def test_aliased_ruby_method
++    events = []
++    aliased = AliasedRubyMethod.new
++    TracePoint.new(:call, :return){|tp|
++      events << [tp.event, tp.method_id]
++    }.enable{
++      aliased.bar
++    }
++    assert_equal([
++      [:call, :foo],
++      [:return, :foo]
++    ], events, "should use original method name for tracing ruby methods")
++  end
++  class AliasedCMethod < Hash
++    alias original_size size
++    def size; original_size; end
++  end
++
++  def test_aliased_c_method
++    events = []
++    aliased = AliasedCMethod.new
++    TracePoint.new(:call, :return, :c_call, :c_return){|tp|
++      events << [tp.event, tp.method_id]
++    }.enable{
++      aliased.size
++    }
++    assert_equal([
++      [:call, :size],
++      [:c_call, :original_size],
++      [:c_return, :original_size],
++      [:return, :size]
++    ], events, "should use alias method name for tracing c methods")
++  end
++
++  def test_method_missing
++    bug59398 = '[ruby-core:59398]'
++    events = []
++    assert !respond_to?(:missing_method_59398)
++    TracePoint.new(:c_call, :c_return, :call, :return){|tp|
++      next unless tp.defined_class == BasicObject
++      # rake/ext/module.rb aliases :const_missing and Ruby uses the aliased name
++      # but this only happens when running the full test suite
++      events << [tp.event,tp.method_id] if tp.method_id == :method_missing
++    }.enable{
++      missing_method_59398 rescue nil
++    }
++    assert_equal([
++      [:c_call, :method_missing],
++      [:c_return, :method_missing]
++    ], events, bug59398)
++  end
++
+ end
+diff --git a/vm_eval.c b/vm_eval.c
+index 88f05eb..50ec3c3 100644
+--- a/vm_eval.c
++++ b/vm_eval.c
+@@ -685,7 +685,7 @@ raise_method_missing(rb_thread_t *th, int argc, const VALUE *argv, VALUE obj,
+     {
+ 	exc = make_no_method_exception(exc, format, obj, argc, argv);
+ 	if (!(last_call_status & NOEX_MISSING)) {
+-	    th->cfp = RUBY_VM_PREVIOUS_CONTROL_FRAME(th->cfp);
++            rb_frame_pop();
+ 	}
+ 	rb_exc_raise(exc);
+     }
