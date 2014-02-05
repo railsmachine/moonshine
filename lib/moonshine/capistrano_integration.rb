@@ -662,6 +662,7 @@ module Moonshine
               "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/02-railsexpress-gc.patch",
               "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/03-display-more-detailed-stack-trace.patch",
               "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/05-fix-missing-c-return-event.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
