@@ -229,9 +229,9 @@ CONFIG
     end
     
     resolv_file = "/etc/resolv.conf"
-    if ubuntu_precise?
-      resolv_file = "/etc/resolvconf/resolv.conf.d/head"
-    end
+#    if ubuntu_precise?
+#      resolv_file = "/etc/resolvconf/resolv.conf.d/head"
+#    end
     
     file resolv_file,
       :ensure => :present,
