@@ -212,7 +212,23 @@
   </IfModule>
 
   RequestHeader set X-Request-Start "%t"
-
+  Header unset X-Powered-by
+  Header unset Server
+  
+  <% if configuration[:passenger][:xss_protection] %>
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "DENY"
+  Header set X-Content-Type-Options "nosniff"
+  <% end %>
+  
+  <% if configuration[:passenger][:strict_transport_security] %>
+  Header set Strict-Transport-Security "max-age=16070400; includeSubDomain"
+  <% end %>
+  
+  <% if configuration[:passenger][:content_security_policy] %>
+  Header set Content-Security-Policy "<%= configuration[:passenger][:content_security_policy] %>"
+  <% end %>
+  
   RewriteEngine On
 
   <%= configuration[:passenger][:vhost_extra] %>
@@ -458,7 +474,23 @@
   </IfModule>
 
   RequestHeader set X-Request-Start "%t"
-
+  Header unset X-Powered-by
+  Header unset Server
+  
+  <% if configuration[:passenger][:xss_protection] %>
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "DENY"
+  Header set X-Content-Type-Options "nosniff"
+  <% end %>
+  
+  <% if configuration[:passenger][:strict_transport_security] %>
+  Header set Strict-Transport-Security "max-age=16070400; includeSubDomain"
+  <% end %>
+  
+  <% if configuration[:passenger][:content_security_policy] %>
+  Header set Content-Security-Policy "<%= configuration[:passenger][:content_security_policy] %>"
+  <% end %>
+  
   RewriteEngine On
 
 <% if configuration[:ssl] %>

@@ -228,7 +228,12 @@ CONFIG
       configuration[:resolv][:nameservers] = ['8.8.4.4','8.8.8.8','208.67.222.222','208.67.220.220']
     end
     
-    file '/etc/resolv.conf',
+    resolv_file = "/etc/resolv.conf"
+    if ubuntu_precise?
+      resolv_file = "/etc/resolvconf/resolv.conf.d/head"
+    end
+    
+    file resolv_file,
       :ensure => :present,
       :mode => '744',
       :owner => 'root',
