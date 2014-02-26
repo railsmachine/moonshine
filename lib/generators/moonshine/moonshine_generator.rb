@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), '..', 'moonshine_helper')
 
 class MoonshineGenerator < Rails::Generators::Base
   include MoonshineGeneratorHelpers
-  
+
   def self.rails_root
     if Rails && Rails.root
       Rails.root
@@ -10,10 +10,10 @@ class MoonshineGenerator < Rails::Generators::Base
       Pathname.new(__FILE__).dirname.join("..","..","..","..","..","..")
     end
   end
-  
+
   desc Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'USAGE').read
   argument :name, :optional => true, :default => 'application'
- 
+
   class_option :application, :default => rails_root.basename.to_s, :desc => 'name of your application'
   class_option :user, :default => 'rails', :desc => 'User to use on remote server', :type => :string
   class_option :domain, :default => 'yourapp.com', :desc => 'Domain name of your application', :type => :string
@@ -21,13 +21,13 @@ class MoonshineGenerator < Rails::Generators::Base
 
   class_option :skip_manifest, :default => false, :desc => 'skip generating a manifest', :type => :boolean
 
-  class_option :ruby, :default => default_ruby, :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187, src192, src193, src193falcon', :type => :string
+  class_option :ruby, :default => default_ruby, :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187, src192, src193, src193falcon, src193railsexpress, src200, src200railsexpress', :type => :string
   class_option :multistage, :default => false, :desc => 'setup multistage deployment environment', :type => :boolean
 
   def self.source_root
     @_moonshine_source_root ||= Pathname.new(__FILE__).dirname.join('..', '..', '..', 'generators', 'moonshine', 'templates')
   end
-    
+
   def manifest
     template "Capfile", "Capfile"
     template "readme.templates", "app/manifests/templates/README"
@@ -43,7 +43,7 @@ class MoonshineGenerator < Rails::Generators::Base
       config.eager_load_paths = config.eager_load_paths.reject(&path_rejector)
 
       # Remove the path from being lazily loaded
-      ActiveSupport::Dependencies.autoload_paths.reject!(&path_rejector)    
+      ActiveSupport::Dependencies.autoload_paths.reject!(&path_rejector)
 EOS
 
     elsif ActiveSupport::VERSION::MAJOR == 3 && ActiveSupport::VERSION::MINOR >= 1
@@ -54,7 +54,7 @@ EOS
   config.paths['app/manifests'].skip_eager_load!
 
 EOS
-    else 
+    else
       app_manifests_load_prevention_string = <<-EOS
 
   # don't attempt to auto-require the moonshine manifests into the rails env
@@ -75,28 +75,28 @@ EOS
       template 'staging-environment.rb', 'config/environments/staging.rb'
     end
 
-    
+
     intro = <<-INTRO
-    
+
 After the Moonshine generator finishes don't forget to:
- 
+
 - Edit config/moonshine.yml
-Use this file to manage configuration related to deploying and running the app: 
+Use this file to manage configuration related to deploying and running the app:
 domain name, git repos, package dependencies for gems, and more.
- 
+
 - #{skip_manifest? ? 'Create' : 'Edit'} app/manifests/#{file_name}.rb
 Use this to manage the configuration of everything else on the server:
-define the server 'stack', cron jobs, mail aliases, configuration files 
- 
+define the server 'stack', cron jobs, mail aliases, configuration files
+
     INTRO
     puts intro if File.basename($0) == 'generate'
   end
- 
+
 protected
   def file_name
     @manifest_name ||= name.downcase.underscore + "_manifest"
   end
- 
+
   def klass_name
     @klass_name ||= file_name.classify
   end
@@ -124,7 +124,7 @@ protected
     @application ||= File.basename(rails_root_path)
   end
 
-  
+
   def staging_domain
     "staging.#{options[:domain]}"
   end
@@ -140,5 +140,5 @@ protected
   def staging_server
     "staging.#{server}"
   end
-  
+
 end
