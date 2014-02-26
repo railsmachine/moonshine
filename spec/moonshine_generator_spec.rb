@@ -178,6 +178,18 @@ describe "MoonshineGenerator" do
       end
 
     end
+
+    context "run on 2.0.0" do
+      before do
+        MoonshineGenerator.stub!(:ruby_version).and_return("2.0.0")
+        run
+      end
+
+      it "configures src200 as the ruby vm" do
+        pending "stubbing doesn't seem to take effect"
+        configuration[:ruby].should == 'src200'
+      end
+    end
   end
 
   private
