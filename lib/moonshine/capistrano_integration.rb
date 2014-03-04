@@ -229,11 +229,17 @@ module Moonshine
           desc 'Run script/console on the first application server'
           task :console, :roles => :app, :except => {:no_symlink => true} do
             input = ''
+            # Rails 2
             if capture("test -f #{current_path}/script/console; echo $?").strip == "0"
               command = "cd #{current_path} && ./script/console #{fetch(:rails_env)}"
               prompt = /^(>|\?)>/
-            else
+            # Rails 3
+            elsif capture("test -f #{current_path}/script/rails; echo $?").strip == "0"
               command = "cd #{current_path} && ./script/rails console #{fetch(:rails_env)}"
+              prompt = /:\d{3}:\d+(\*|>)/
+            # Rails 4
+            else
+              command = "cd #{current_path} && ./bin/rails console #{fetch(:rails_env)}"
               prompt = /:\d{3}:\d+(\*|>)/
             end
             run command do |channel, stream, data|
