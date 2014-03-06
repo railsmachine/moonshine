@@ -624,7 +624,7 @@ module Moonshine
 
           task :src200 do
             remove_ruby_from_apt
-            pv = "2.0.0-p353"
+            pv = "2.0.0-p451"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -637,8 +637,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.1.11')
-            set :bundler_version, fetch(:bundler_version, '1.3.5')
+            set :rubygems_version, fetch(:rubygems_version, '2.2.2')
+            set :bundler_version, fetch(:bundler_version, '1.5.3')
           end
 
           task :src200railsexpress do
@@ -648,7 +648,7 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
-            pv = "2.0.0-p353"
+            pv = "2.0.0-p451"
             p = "ruby-#{pv}"
             run [
               'sudo apt-get install autoconf libyaml-dev -y || true',
@@ -658,17 +658,17 @@ module Moonshine
               "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/02-railsexpress-gc.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/05-fix-missing-c-return-event.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/02-railsexpress-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/05-fix-missing-c-return-event.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.1.11')
-            set :bundler_version, fetch(:bundler_version, '1.3.5')
+            set :rubygems_version, fetch(:rubygems_version, '2.2.2')
+            set :bundler_version, fetch(:bundler_version, '1.5.3')
           end
 
           task :install_rubygems do

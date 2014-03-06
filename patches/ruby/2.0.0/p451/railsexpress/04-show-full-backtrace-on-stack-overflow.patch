@@ -1,5 +1,5 @@
 diff --git a/eval.c b/eval.c
-index 958daa8..096fca9 100644
+index b5f41e6..4ba414b 100644
 --- a/eval.c
 +++ b/eval.c
 @@ -444,8 +444,7 @@ setup_exception(rb_thread_t *th, int tag, volatile VALUE mesg)
