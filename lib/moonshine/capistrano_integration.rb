@@ -457,6 +457,29 @@ module Moonshine
           set :nopuppetrollback, true
         end
 
+        namespace :libyaml do
+          desc "Install libyaml from source."
+          task :install do
+            remove_libyaml_from_apt
+            pv = "0.1.5"
+            p = "yaml-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              "wget -q http://pyyaml.org/download/libyaml/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+          end
+
+          task :remove_libyaml_from_apt do
+            sudo 'apt-get remove -q -y ^.*libyaml.* || true'
+          end
+        end
+
         namespace :ruby do
 
           desc <<-DESC
@@ -563,6 +586,7 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
+            libyaml.install
             pv = "1.9.3-p484"
             p = "ruby-#{pv}"
             run [
@@ -589,10 +613,11 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
+            libyaml.install
             pv = "1.9.3-p484"
             p = "ruby-#{pv}"
             run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
@@ -624,6 +649,7 @@ module Moonshine
 
           task :src200 do
             remove_ruby_from_apt
+            libyaml.install
             pv = "2.0.0-p353"
             p = "ruby-#{pv}"
             run [
@@ -648,10 +674,11 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
+            libyaml.install
             pv = "2.0.0-p353"
             p = "ruby-#{pv}"
             run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/2.0.0/gems || true',
@@ -687,9 +714,6 @@ module Moonshine
           task :install_deps do
             aptget.update
             sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline-dev wget'
-            if fetch(:ruby) ==  'src193'
-              sudo 'apt-get install -q -y libyaml-dev'
-            end
           end
 
           task :install_moonshine_deps do
