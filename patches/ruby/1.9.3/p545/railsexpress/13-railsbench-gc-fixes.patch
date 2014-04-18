@@ -1,5 +1,5 @@
 diff --git a/gc.c b/gc.c
-index 56f0217..6e3714d 100644
+index dc7ac27..8c3d043 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -108,11 +108,6 @@ ruby_gc_params_t initial_params = {
@@ -43,7 +43,7 @@ index 56f0217..6e3714d 100644
  #if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CYGWIN__)
  #pragma pack(pop)
  #endif
-@@ -535,17 +552,6 @@ rb_gc_set_params(void)
+@@ -537,17 +554,6 @@ rb_gc_set_params(void)
  
      if (rb_safe_level() > 0) return;
  
@@ -61,7 +61,7 @@ index 56f0217..6e3714d 100644
      envp = getenv("RUBY_GC_DATA_FILE");
      if (envp != NULL) {
          FILE* data_file = fopen(envp, "w");
-@@ -559,6 +565,18 @@ rb_gc_set_params(void)
+@@ -561,6 +567,18 @@ rb_gc_set_params(void)
          ruby_unsetenv("RUBY_GC_DATA_FILE");
      }
  
@@ -80,7 +80,7 @@ index 56f0217..6e3714d 100644
      envp = getenv("RUBY_GC_MALLOC_LIMIT");
      if (envp != NULL) {
  	int malloc_limit_i = atoi(envp);
-@@ -570,7 +588,7 @@ rb_gc_set_params(void)
+@@ -572,7 +590,7 @@ rb_gc_set_params(void)
  		    malloc_limit_i, initial_malloc_limit);
  	if (malloc_limit_i > 0) {
  	    initial_malloc_limit = malloc_limit_i;
@@ -89,7 +89,7 @@ index 56f0217..6e3714d 100644
  	}
      }
  
-@@ -609,8 +627,7 @@ rb_gc_set_params(void)
+@@ -611,8 +629,7 @@ rb_gc_set_params(void)
          if (verbose_gc_stats) {
              fprintf(gc_data_file, "RUBY_HEAP_SLOTS_INCREMENT=%s\n", envp);
          }
@@ -99,7 +99,7 @@ index 56f0217..6e3714d 100644
      }
  
      envp = getenv("RUBY_HEAP_SLOTS_GROWTH_FACTOR");
-@@ -670,24 +687,6 @@ rb_objspace_free(rb_objspace_t *objspace)
+@@ -672,24 +689,6 @@ rb_objspace_free(rb_objspace_t *objspace)
  }
  #endif
  
@@ -124,7 +124,7 @@ index 56f0217..6e3714d 100644
  extern sa_table rb_class_tbl;
  
  int ruby_disable_gc_stress = 0;
-@@ -1520,7 +1519,6 @@ rb_gc_dump_file_and_line_info(int argc, VALUE *argv)
+@@ -1522,7 +1521,6 @@ rb_gc_dump_file_and_line_info(int argc, VALUE *argv)
      rb_objspace_t *objspace = &rb_objspace;
      VALUE filename, str, include_classnames = Qnil;
      char *fname = NULL;
@@ -132,7 +132,7 @@ index 56f0217..6e3714d 100644
      FILE* f = NULL;
      size_t i = 0;
  
-@@ -1778,17 +1776,15 @@ aligned_free(void *ptr)
+@@ -1780,17 +1778,15 @@ aligned_free(void *ptr)
  static void
  assign_heap_slot(rb_objspace_t *objspace)
  {
@@ -155,7 +155,7 @@ index 56f0217..6e3714d 100644
      objs = HEAP_OBJ_LIMIT;
      p = (RVALUE*)malloc(HEAP_SIZE);
      if (p == 0) {
-@@ -1903,13 +1899,17 @@ static void
+@@ -1905,13 +1901,17 @@ static void
  set_heaps_increment(rb_objspace_t *objspace)
  {
      size_t next_heaps_length = (size_t)(heaps_used * heap_slots_growth_factor);
@@ -176,7 +176,7 @@ index 56f0217..6e3714d 100644
      if (next_heaps_length > heaps_length) {
  	allocate_sorted_heaps(objspace, next_heaps_length);
      }
-@@ -2527,7 +2527,7 @@ gc_mark_children(rb_objspace_t *objspace, VALUE ptr)
+@@ -2529,7 +2529,7 @@ gc_mark_children(rb_objspace_t *objspace, VALUE ptr)
  
  #ifdef GC_DEBUG
      if (obj->file && obj->file != Qnil && is_pointer_to_heap(objspace, (void*)obj->file)) {
@@ -185,7 +185,7 @@ index 56f0217..6e3714d 100644
      }
  #endif
  
-@@ -2543,7 +2543,7 @@ gc_mark_children(rb_objspace_t *objspace, VALUE ptr)
+@@ -2545,7 +2545,7 @@ gc_mark_children(rb_objspace_t *objspace, VALUE ptr)
  
  #ifdef GC_DEBUG
      if (obj->file && obj->file != Qnil && is_pointer_to_heap(objspace, (void*)obj->file)) {
@@ -194,7 +194,7 @@ index 56f0217..6e3714d 100644
      }
  #endif
  
-@@ -3028,14 +3028,14 @@ before_gc_sweep(rb_objspace_t *objspace)
+@@ -3030,14 +3030,14 @@ before_gc_sweep(rb_objspace_t *objspace)
          MEMZERO((void*)live_counts, unsigned long, T_MASK+1);
      }
  
@@ -211,7 +211,7 @@ index 56f0217..6e3714d 100644
          objspace->heap.free_min = initial_free_min;
      }
      objspace->heap.sweep_slots = heaps;
-@@ -3067,7 +3067,11 @@ after_gc_sweep(rb_objspace_t *objspace)
+@@ -3069,7 +3069,11 @@ after_gc_sweep(rb_objspace_t *objspace)
  	if (malloc_limit < initial_malloc_limit) malloc_limit = initial_malloc_limit;
      }
      malloc_increase = 0;
@@ -224,7 +224,7 @@ index 56f0217..6e3714d 100644
      free_unused_heaps(objspace);
  
      if (gc_statistics) {
-@@ -3076,6 +3080,7 @@ after_gc_sweep(rb_objspace_t *objspace)
+@@ -3078,6 +3082,7 @@ after_gc_sweep(rb_objspace_t *objspace)
          if (verbose_gc_stats) {
              /* log gc stats if requested */
              fprintf(gc_data_file, "GC time: %lu musec\n", (unsigned long)(gc_time_accumulator-gc_time_accumulator_before_gc));
@@ -232,7 +232,7 @@ index 56f0217..6e3714d 100644
              fprintf(gc_data_file, "objects processed: %7lu\n", (unsigned long)processed);
              fprintf(gc_data_file, "live objects     : %7lu\n", (unsigned long)live_after_last_mark_phase);
              fprintf(gc_data_file, "freelist objects : %7lu\n", (unsigned long)freelist_size);
-@@ -3125,7 +3130,7 @@ rest_sweep(rb_objspace_t *objspace)
+@@ -3127,7 +3132,7 @@ rest_sweep(rb_objspace_t *objspace)
  
  static void gc_marks(rb_objspace_t *objspace);
  
@@ -241,7 +241,7 @@ index 56f0217..6e3714d 100644
  static int
  gc_lazy_sweep(rb_objspace_t *objspace)
  {
-@@ -3412,13 +3417,11 @@ gc_marks(rb_objspace_t *objspace)
+@@ -3414,13 +3419,11 @@ gc_marks(rb_objspace_t *objspace)
      struct gc_list *list;
      rb_thread_t *th = GET_THREAD();
      GC_PROF_MARK_TIMER_START;
