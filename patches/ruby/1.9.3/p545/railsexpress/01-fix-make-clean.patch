@@ -1,5 +1,5 @@
 diff --git a/lib/mkmf.rb b/lib/mkmf.rb
-index f5e4e92..77ab4e4 100644
+index 898e4a7..122cf19 100644
 --- a/lib/mkmf.rb
 +++ b/lib/mkmf.rb
 @@ -2206,7 +2206,7 @@ def init_mkmf(config = CONFIG, rbconfig = RbConfig::CONFIG)
