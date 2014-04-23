@@ -50,7 +50,7 @@ It's easy enough:
 
 [isolate-scenarios](http://github.com/technicalpickles/isolate-scenarios) is used to test against multiple versions of Rails. To run all scenarios at once:
 
-   $ isolate-scenarios rake spec
+    $ isolate-scenarios rake spec
 
 ## Getting Help
 
