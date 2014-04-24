@@ -255,6 +255,10 @@ private
   def ubuntu_precise?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 12.04
   end
+  
+  def ubuntu_trusty?
+    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 14.04
+  end
 
   def ubuntu_intrepid?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 8.10
@@ -265,6 +269,7 @@ private
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
     when 12.04 then 'Ubuntu precise-security'
+    when 14.04 then 'Ubuntu trusty-security'
     end
   end
 
