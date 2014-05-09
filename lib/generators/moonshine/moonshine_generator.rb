@@ -21,7 +21,7 @@ class MoonshineGenerator < Rails::Generators::Base
 
   class_option :skip_manifest, :default => false, :desc => 'skip generating a manifest', :type => :boolean
 
-  class_option :ruby, :default => default_ruby, :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187, src192, src193, src193falcon, src193railsexpress, src200, src200railsexpress', :type => :string
+  class_option :ruby, :default => default_ruby, :desc => 'Ruby version to install. Currently supports: mri, ree, ree187, src187, src192, src193, src193falcon, src193railsexpress, src200, src200railsexpress, src21, src21railsexpress', :type => :string
   class_option :multistage, :default => false, :desc => 'setup multistage deployment environment', :type => :boolean
 
   def self.source_root

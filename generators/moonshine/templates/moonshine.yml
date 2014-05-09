@@ -16,6 +16,8 @@
 # * src193railsexpress - This is p448 + the railsexpress patches and in early testing is even faster than just the falcon patch.
 # * src200
 # * src200railsexpress - This is Ruby 2.0.0 + the railsexpress patches.
+# * src21
+# * src21railsexpress - This is Ruby 2.1 + the railsexpress patches.
 
 :ruby: <%= ruby %>
 
