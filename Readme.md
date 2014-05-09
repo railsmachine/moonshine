@@ -50,7 +50,7 @@ It's easy enough:
 
 [isolate-scenarios](http://github.com/technicalpickles/isolate-scenarios) is used to test against multiple versions of Rails. To run all scenarios at once:
 
-   $ isolate-scenarios rake spec
+    $ isolate-scenarios rake spec
 
 ## Getting Help
 
@@ -94,4 +94,4 @@ With Rails 4, it doesn't want you to use the <code>--binstubs</code> argument fo
   
 After your next deploy, you should be able to run rails console without that annoying error message.
 
-
+All content copyright &copy; 2014, [Rails Machine LLC](http://railsmachine.com)

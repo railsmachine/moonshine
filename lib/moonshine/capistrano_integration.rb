@@ -457,6 +457,29 @@ module Moonshine
           set :nopuppetrollback, true
         end
 
+        namespace :libyaml do
+          desc "Install libyaml from source."
+          task :install do
+            remove_libyaml_from_apt
+            pv = "0.1.5"
+            p = "yaml-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              "wget -q http://pyyaml.org/download/libyaml/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+          end
+
+          task :remove_libyaml_from_apt do
+            sudo 'apt-get remove -q -y ^.*libyaml.* || true'
+          end
+        end
+
         namespace :ruby do
 
           desc <<-DESC
@@ -563,7 +586,8 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
-            pv = "1.9.3-p484"
+            libyaml.install
+            pv = "1.9.3-p545"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -589,32 +613,35 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
-            pv = "1.9.3-p484"
+            libyaml.install
+            pv = "1.9.3-p545"
             p = "ruby-#{pv}"
             run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/1.9/gems || true',
               "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
               "tar zxvf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/01-fix-make-clean.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/02-railsbench-gc.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/04-fork-support-for-gc-logging.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/05-track-live-dataset-size.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/06-webrick_204_304_keep_alive_fix.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/07-export-a-few-more-symbols-for-ruby-prof.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/08-thread-variables.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/09-faster-loading.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/10-falcon-st-opt.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/11-falcon-sparse-array.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/12-falcon-array-queue.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/13-railsbench-gc-fixes.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/14-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/15-configurable-fiber-stack-sizes.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p484/railsexpress/16-backport-psych-20.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/01-fix-make-clean.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/02-railsbench-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/04-fork-support-for-gc-logging.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/05-track-live-dataset-size.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/06-webrick_204_304_keep_alive_fix.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/07-export-a-few-more-symbols-for-ruby-prof.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/08-thread-variables.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/09-faster-loading.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/10-falcon-st-opt.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/11-falcon-sparse-array.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/12-falcon-array-queue.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/13-railsbench-gc-fixes.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/14-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/15-configurable-fiber-stack-sizes.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/16-backport-psych-20.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/17-fix-missing-c-return-event.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/18-fix-process-daemon-call.patch",
               'export CFLAGS="-march=core2 -O2 -pipe -fomit-frame-pointer"',
               "./configure --prefix=/usr",
               "make",
@@ -624,7 +651,8 @@ module Moonshine
 
           task :src200 do
             remove_ruby_from_apt
-            pv = "2.0.0-p353"
+            libyaml.install
+            pv = "2.0.0-p451"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -648,21 +676,22 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
-            pv = "2.0.0-p353"
+            libyaml.install
+            pv = "2.0.0-p451"
             p = "ruby-#{pv}"
             run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/2.0.0/gems || true',
               "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/02-railsexpress-gc.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p353/railsexpress/05-fix-missing-c-return-event.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/02-railsexpress-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/05-fix-missing-c-return-event.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
@@ -742,16 +771,13 @@ module Moonshine
           task :install_deps do
             aptget.update
             sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline-dev wget'
-            if fetch(:ruby) ==  'src193'
-              sudo 'apt-get install -q -y libyaml-dev'
-            end
           end
 
           task :install_moonshine_deps do
             sudo 'gem install rake --no-rdoc --no-ri' unless fetch(:ruby).start_with?('src2')
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
 
-            shadow_puppet_version = fetch(:shadow_puppet_version, '0.8.0.beta1')
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.8.1')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')

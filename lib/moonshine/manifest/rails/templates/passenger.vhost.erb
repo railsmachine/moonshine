@@ -273,7 +273,7 @@
   RequestHeader set X_FORWARDED_PROTO "https"
 
   SSLEngine on
-  SSLCipherSuite <%= configuration[:ssl][:cipher_suite] || 'ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL' %>
+  SSLCipherSuite <%= configuration[:ssl][:cipher_suite] || 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:AES128:AES256:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK' %>
   SSLCertificateFile    <%= configuration[:ssl][:certificate_file] || '/etc/ssl/certs/ssl-cert-snakeoil.pem' %>
   SSLCertificateKeyFile <%= configuration[:ssl][:certificate_key_file] || '/etc/ssl/private/ssl-cert-snakeoil.key' %>
   <% if configuration[:ssl][:certificate_chain_file] %>
@@ -281,9 +281,8 @@
   <% else %>
   # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
-  <% if configuration[:ssl][:protocol] %>
-  SSLProtocol <%= configuration[:ssl][:protocol] %>
-  <% end %>
+  SSLProtocol <%= configuration[:ssl][:protocol] || 'ALL -SSLv2' %>
+  SSLHonorCipherOrder <%= configuration[:ssl][:honor_cipher_order] || 'on' %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 

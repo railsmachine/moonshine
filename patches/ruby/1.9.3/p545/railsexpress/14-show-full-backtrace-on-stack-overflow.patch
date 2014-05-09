@@ -1,8 +1,8 @@
 diff --git a/eval.c b/eval.c
-index 958daa8..096fca9 100644
+index 92b02f7..708f899 100644
 --- a/eval.c
 +++ b/eval.c
-@@ -444,8 +444,7 @@ setup_exception(rb_thread_t *th, int tag, volatile VALUE mesg)
+@@ -380,8 +380,7 @@ setup_exception(rb_thread_t *th, int tag, volatile VALUE mesg)
      if (file) line = rb_sourceline();
      if (file && !NIL_P(mesg)) {
  	if (mesg == sysstack_error) {

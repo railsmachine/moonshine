@@ -106,10 +106,10 @@ index e7e0885..257d6f3 100644
  	long i;
  
 diff --git a/hash.c b/hash.c
-index 0a5f6a6..6642193 100644
+index 3111b25..dcc2cdc 100644
 --- a/hash.c
 +++ b/hash.c
-@@ -1079,7 +1079,7 @@ clear_i(VALUE key, VALUE value, VALUE dummy)
+@@ -1089,7 +1089,7 @@ clear_i(VALUE key, VALUE value, VALUE dummy)
   *
   */
  
@@ -119,7 +119,7 @@ index 0a5f6a6..6642193 100644
  {
      rb_hash_modify_check(hash);
 diff --git a/include/ruby/intern.h b/include/ruby/intern.h
-index 45ce446..659f909 100644
+index 41497a0..9601c4d 100644
 --- a/include/ruby/intern.h
 +++ b/include/ruby/intern.h
 @@ -65,6 +65,7 @@ VALUE rb_ary_tmp_new(long);
@@ -130,7 +130,7 @@ index 45ce446..659f909 100644
  VALUE rb_ary_aref(int, VALUE*, VALUE);
  VALUE rb_ary_subseq(VALUE, long, long);
  void rb_ary_store(VALUE, long, VALUE);
-@@ -459,6 +460,7 @@ VALUE rb_hash_lookup(VALUE, VALUE);
+@@ -460,6 +461,7 @@ VALUE rb_hash_lookup(VALUE, VALUE);
  VALUE rb_hash_lookup2(VALUE, VALUE, VALUE);
  VALUE rb_hash_fetch(VALUE, VALUE);
  VALUE rb_hash_aset(VALUE, VALUE, VALUE);
@@ -139,7 +139,7 @@ index 45ce446..659f909 100644
  VALUE rb_hash_delete(VALUE,VALUE);
  typedef VALUE rb_hash_update_func(VALUE newkey, VALUE oldkey, VALUE value);
 diff --git a/internal.h b/internal.h
-index aaee133..c41ca3e 100644
+index 6afea9c..513b412 100644
 --- a/internal.h
 +++ b/internal.h
 @@ -94,6 +94,8 @@ VALUE rb_home_dir(const char *user, VALUE result);
@@ -712,7 +712,7 @@ index 58a9ee2..ec75096 100644
 +  end
  end
 diff --git a/vm.c b/vm.c
-index 80123c8..97dc21b 100644
+index ae0286f..adc60d8 100644
 --- a/vm.c
 +++ b/vm.c
 @@ -1592,7 +1592,12 @@ rb_vm_mark(void *ptr)
