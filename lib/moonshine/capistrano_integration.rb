@@ -702,6 +702,7 @@ module Moonshine
 
           task :src21 do
             remove_ruby_from_apt
+            libyaml.install
             pv = "2.1.2"
             p = "ruby-#{pv}"
             run [
@@ -728,6 +729,7 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
+            libyaml.install
             pv = "2.1.2"
             p = "ruby-#{pv}"
             run [
