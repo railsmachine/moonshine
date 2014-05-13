@@ -731,7 +731,7 @@ module Moonshine
             pv = "2.1.2"
             p = "ruby-#{pv}"
             run [
-              'sudo apt-get install autoconf libyaml-dev -y || true',
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo mkdir -p /usr/lib/ruby/gems/2.1.2/gems || true',
