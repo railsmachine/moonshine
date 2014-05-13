@@ -721,8 +721,6 @@ module Moonshine
           end
 
           task :src21railsexpress do
-            puts "Ruby 2.1+railsexpress is not currently available."
-            exit 1
             set :ruby_patches_path, rails_root.join('vendor', 'plugins', 'moonshine', 'patches')
             if ruby_patches_path.exist?
               run 'mkdir -p /tmp/moonshine'
@@ -750,7 +748,6 @@ module Moonshine
               "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/08-funny-falcon-stc-pool-allocation.patch",
               "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/09-aman-opt-aset-aref-str.patch",
               "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/10-funny-falcon-method-cache.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/11-backport-r44370.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
