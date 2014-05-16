@@ -229,15 +229,23 @@ CONFIG
     end
     
     resolv_file = "/etc/resolv.conf"
-#    if ubuntu_precise?
-#      resolv_file = "/etc/resolvconf/resolv.conf.d/head"
-#    end
+    require_array = []
+    if ubuntu_precise? || ubuntu_trusty?
+      resolv_file = "/etc/resolvconf/resolv.conf.d/head"
+      
+      package "resolvconf", :ensure => :installed
+      
+      file "/etc/resolvconf/resolv.conf.d", :ensure => :directory
+      
+      require_array = [package('resolvconf'), file("/etc/resolvconf/resolv.conf.d")]
+    end
     
     file resolv_file,
       :ensure => :present,
       :mode => '744',
       :owner => 'root',
-      :content => template(File.join(File.dirname(__FILE__), 'templates', 'resolv.conf.erb'))
+      :content => template(File.join(File.dirname(__FILE__), 'templates', 'resolv.conf.erb')),
+      :require => require_array
   end
 
 private
