@@ -587,7 +587,7 @@ module Moonshine
           task :src193 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "1.9.3-p545"
+            pv = "1.9.3-p547"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -614,7 +614,7 @@ module Moonshine
             end
             remove_ruby_from_apt
             libyaml.install
-            pv = "1.9.3-p545"
+            pv = "1.9.3-p547"
             p = "ruby-#{pv}"
             run [
               'sudo apt-get install autoconf -y || true',
@@ -624,24 +624,24 @@ module Moonshine
               "wget -q http://ftp.ruby-lang.org/pub/ruby/1.9/#{p}.tar.gz",
               "tar zxvf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/01-fix-make-clean.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/02-railsbench-gc.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/04-fork-support-for-gc-logging.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/05-track-live-dataset-size.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/06-webrick_204_304_keep_alive_fix.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/07-export-a-few-more-symbols-for-ruby-prof.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/08-thread-variables.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/09-faster-loading.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/10-falcon-st-opt.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/11-falcon-sparse-array.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/12-falcon-array-queue.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/13-railsbench-gc-fixes.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/14-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/15-configurable-fiber-stack-sizes.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/16-backport-psych-20.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/17-fix-missing-c-return-event.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p545/railsexpress/18-fix-process-daemon-call.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/01-fix-make-clean.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/02-railsbench-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/04-fork-support-for-gc-logging.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/05-track-live-dataset-size.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/06-webrick_204_304_keep_alive_fix.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/07-export-a-few-more-symbols-for-ruby-prof.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/08-thread-variables.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/09-faster-loading.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/10-falcon-st-opt.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/11-falcon-sparse-array.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/12-falcon-array-queue.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/13-railsbench-gc-fixes.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/14-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/15-configurable-fiber-stack-sizes.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/16-backport-psych-20.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/17-fix-missing-c-return-event.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/18-fix-process-daemon-call.patch",
               'export CFLAGS="-march=core2 -O2 -pipe -fomit-frame-pointer"',
               "./configure --prefix=/usr",
               "make",
