@@ -1,5 +1,5 @@
 diff --git a/common.mk b/common.mk
-index b26ba72..27aba65 100644
+index 2e57492..b2a2e71 100644
 --- a/common.mk
 +++ b/common.mk
 @@ -639,7 +639,8 @@ file.$(OBJEXT): {$(VPATH)}file.c $(RUBY_H_INCLUDES) {$(VPATH)}io.h \

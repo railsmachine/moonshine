@@ -424,7 +424,7 @@ index ca02989..cf135c1 100644
      return ary;
  }
 diff --git a/common.mk b/common.mk
-index 27aba65..379c71d 100644
+index b2a2e71..ec79502 100644
 --- a/common.mk
 +++ b/common.mk
 @@ -79,6 +79,7 @@ COMMONOBJS    = array.$(OBJEXT) \
