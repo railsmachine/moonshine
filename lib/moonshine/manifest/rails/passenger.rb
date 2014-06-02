@@ -6,7 +6,7 @@ module Moonshine::Manifest::Rails::Passenger
   def passenger_gem
     configure(:passenger => {})
     package 'libcurl4-openssl-dev', :ensure => :installed
-    
+
     if configuration[:passenger][:enterprise]
       exec 'remove passenger',
         :command => 'gem uninstall passenger --all',
@@ -17,11 +17,9 @@ module Moonshine::Manifest::Rails::Passenger
           download_token = configuration[:passenger][:download_token]
           source_url = "https://download:#{download_token}@www.phusionpassenger.com/enterprise_gems/"
         elsif configuration[:passenger][:order_reference]
-          order_reference = configuration[:passenger][:order_reference]
-          order_password = configuration[:passenger][:order_password]
-          source_url = "https://#{order_reference}:#{order_password}@www.phusionpassenger.com/enterprise_gems/"
-          puts "WARNING: Phusion has deprecated using ORDER REFERENCE/ORDER PASSWORD for authentication to their gem server."
+          puts "WARNING: Phusion has removed using ORDER REFERENCE/ORDER PASSWORD for authentication to their gem server."
           puts "Please set the :passenger: => :download_token: setting in your moonshine.yml before December 1, 2013."
+          exit 1
         end
 
         exec 'configure passenger enterprise gem source',
@@ -129,7 +127,7 @@ module Moonshine::Manifest::Rails::Passenger
 
     a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load"), exec('a2enmod headers')]
   end
-  
+
   # Creates and enables a vhost configuration named after your application.
   # Also ensures that the <tt>000-default</tt> vhost is disabled.
   def passenger_site
@@ -173,7 +171,7 @@ private
   def passenger_patch_version
     return @patch_version unless @patch_version.nil?
     version_string = configuration[:passenger][:version] || BLESSED_VERSION
-    @patch_version = version_string.split('.')[2].to_i    
+    @patch_version = version_string.split('.')[2].to_i
   end
 
   def passenger_lib_dir
@@ -195,7 +193,7 @@ private
   end
 
   def supports_passenger_buffer_response?
-    if configuration[:passenger][:version] 
+    if configuration[:passenger][:version]
       passenger_major_version >= 4 || (passenger_major_version >=3 && passenger_minor_version > 0) || (passenger_major_version >= 3 && passenger_minor_version >= 0 && passenger_patch_version >= 11)
     else # blessed version does support it
       true

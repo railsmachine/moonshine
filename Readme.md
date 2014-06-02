@@ -67,8 +67,7 @@ This is what a passenger enterprise block in moonshine.yml should look like (in 
     :passenger:
       :version: 4.0.10
       :enterprise: true
-      :order_reference: YOUR-ORDER-REFERENCE-NUMBER
-      :order_password: YOUR-ORDER-PASSWORD
+      :download_token: YOUR-PASSENGER-ENTERPRISE-DOWNLOAD-TOKEN
       :rolling_restarts: true
     
 ## A Word on Rails 4
