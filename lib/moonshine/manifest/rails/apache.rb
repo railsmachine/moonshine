@@ -36,7 +36,7 @@ module Moonshine::Manifest::Rails::Apache
       []
     end
   end
-  
+
   def apache_service_restart
     if configuration[:apache][:restart_on_change]
       '/etc/init.d/apache2 restart'
@@ -67,7 +67,7 @@ module Moonshine::Manifest::Rails::Apache
 
     if configuration[:apache][:users].present?
       file htpasswd, :ensure => :file, :owner => configuration[:user], :mode => '644'
-      
+
       configuration[:apache][:users].each do |user,pass|
         exec "htpasswd #{user}",
           :command => "htpasswd -b #{htpasswd} #{user} #{pass}",
@@ -114,7 +114,7 @@ STATUS
       :require => exec('a2enmod status'),
       :content => status,
       :notify => apache_notifies
-      
+
     recipe :apache_logrotate
   end
 
@@ -136,7 +136,7 @@ STATUS
         'create 640 root adm',
         'sharedscripts',
         'copytruncate'
-      ], 
+      ],
       :postrotate => 'true'
   end
 
@@ -161,7 +161,7 @@ private
   def a2dissite(site, options = {})
     exec("a2dissite #{site}", {
         :command => "/usr/sbin/a2dissite #{site}",
-        :onlyif => "ls /etc/apache2/sites-enabled/#{site}",
+        :onlyif => "ls /etc/apache2/sites-enabled/#{site} || ls /etc/apache2/sites-enabled/#{site}.conf",
         :require => package("apache2-mpm-worker"),
         :notify => apache_notifies
       }.merge(options)
@@ -193,5 +193,5 @@ private
       }.merge(options)
     )
   end
-  
+
 end

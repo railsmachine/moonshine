@@ -14,7 +14,7 @@ collation_server        = <%= configuration[:mysql][:collation_server] || 'utf8_
 ######### replication
 server-id                = <%= configuration[:mysql][:server_id] || '1' %>
 auto-increment-increment = <%= configuration[:mysql][:auto_increment_increment] || '10' %>
-auto-increment-offset    = <%= configuration[:mysql][:auto_increment_offset] || configuration[:mysql][:server_id] || '1' %><% if configuration[:mysql][:version] > 5 %>
+auto-increment-offset    = <%= configuration[:mysql][:auto_increment_offset] || configuration[:mysql][:server_id] || '1' %><% if configuration[:mysql][:version] > 5 or ubuntu_trusty? %>
 binlog_format            = mixed<% end %>
 log-bin                  = <%= configuration[:mysql][:log_bin] || "#{log_prefix}-bin" %>
 log-bin-index            = <%= configuration[:mysql][:log_bin_index] || "#{log_prefix}-bin" %>
