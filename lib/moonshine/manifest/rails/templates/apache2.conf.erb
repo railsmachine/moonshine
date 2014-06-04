@@ -54,7 +54,11 @@ ServerRoot "/etc/apache2"
 #
 #<IfModule !mpm_winnt.c>
 #<IfModule !mpm_netware.c>
+<% if ubuntu_trusty? %>
+Mutex default
+<% else %>
 LockFile /var/lock/apache2/accept.lock
+<% end %>
 #</IfModule>
 #</IfModule>
 
@@ -192,8 +196,10 @@ LogLevel warn
 Include /etc/apache2/mods-enabled/*.load
 Include /etc/apache2/mods-enabled/*.conf
 
+<% unless ubuntu_trusty? %>
 # Include all the user configurations:
 Include /etc/apache2/httpd.conf
+<% end %>
 
 # Include ports listing
 Include /etc/apache2/ports.conf
@@ -282,7 +288,11 @@ CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined
 # see README.Debian for details.
 
 # Include generic snippets of statements
+<% if ubuntu_trusty? %>
+Include /etc/apache2/conf-enabled/
+<% else %>
 Include /etc/apache2/conf.d/
+<% end %>
 
 # Include the virtual host configurations:
 Include /etc/apache2/sites-enabled/
