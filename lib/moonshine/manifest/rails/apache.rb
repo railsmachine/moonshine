@@ -148,7 +148,7 @@ private
   def a2ensite(site, options = {})
     exec("a2ensite #{site}", {
         :command => "/usr/sbin/a2ensite #{site}",
-        :unless => "ls /etc/apache2/sites-enabled/#{site}",
+        :unless => "ls /etc/apache2/sites-enabled/#{site}#{ '.conf' if ubuntu_trusty? }",
         :require => package("apache2-mpm-worker"),
         :notify => apache_notifies
       }.merge(options)
@@ -161,7 +161,7 @@ private
   def a2dissite(site, options = {})
     exec("a2dissite #{site}", {
         :command => "/usr/sbin/a2dissite #{site}",
-        :onlyif => "ls /etc/apache2/sites-enabled/#{site} || ls /etc/apache2/sites-enabled/#{site}.conf",
+        :onlyif => "ls /etc/apache2/sites-enabled/#{site}#{ '.conf' if ubuntu_trusty? }",
         :require => package("apache2-mpm-worker"),
         :notify => apache_notifies
       }.merge(options)
