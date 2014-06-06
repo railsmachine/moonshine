@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.join(File.dirname(__FILE__), '../spec_helper.rb')
 
 describe "A manifest with the <%= module_name %> plugin" do
 

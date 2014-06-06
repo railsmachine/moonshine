@@ -9,5 +9,5 @@ require 'shadow_puppet/test'
 
 class <%= module_name %>Manifest < Moonshine::Manifest::Rails
   path = Pathname.new(__FILE__).dirname.join('..', 'moonshine', 'init.rb')
-  Kernel.eval(File.read(path), binding, path)
+  Kernel.eval(File.read(path), binding, path.to_s)
 end
