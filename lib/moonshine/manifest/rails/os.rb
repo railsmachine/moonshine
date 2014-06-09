@@ -3,7 +3,7 @@
 
 module Moonshine::Manifest::Rails::Os
   #### Cron
-  
+
   # Ensures the cron package is installed and the service is running.
   #
   # Cron jobs can be defined inside any manifest or recipe like so:
@@ -62,12 +62,12 @@ from installing any gems, packages, or dependencies directly on the server.
   end
 
   #### Hostname
-  
+
   # This recipe is used to configure the hostname on a server via the
   # `/etc/hostname` file. Generally, this requires a restart to take
   # effect. We default back to `Facter.fqdn` (the current hostname) as
   # a default value to avoid any unanticipated changes.
-  
+
   def hostname
     file '/etc/hostname',
       :ensure  => :present,
@@ -112,6 +112,19 @@ from installing any gems, packages, or dependencies directly on the server.
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644'
+
+    myhostname = configuration[:myhostname] || configuration[:mailname] || Facter.fqdn || Facter.hostname || ''
+    mydomain_parts = myhostname.split('.')
+    mydomain_parts.shift
+    mydomain = mydomain_parts.join('.')
+    mydestination = configuration[:mydestination] || "#{myhostname}, localhost.#{mydomain}, #{mydomain}, localhost"
+    file '/etc/postfix/main.cf',
+      :ensure  => :present,
+      :content => template(File.join(File.dirname(__FILE__), "templates", "main.cf.erb"), binding),
+      :owner   => 'root',
+      :group   => 'root',
+      :mode    => '644',
+      :notify  => service('postfix')
   end
 
   #### NTP
@@ -217,29 +230,29 @@ CONFIG
       super(name, hash)
     end
   end
-  
+
   #### Resolv.conf
-  
+
   # This allows you to manage /etc/resolv.conf, adding, removing and re-ordering nameservers.
-  
+
   def resolv_conf
     configure(:resolv => {})
     if configuration[:resolv][:nameservers].nil? || configuration[:resolv][:nameservers].empty?
       configuration[:resolv][:nameservers] = ['8.8.4.4','8.8.8.8','208.67.222.222','208.67.220.220']
     end
-    
+
     resolv_file = "/etc/resolv.conf"
     require_array = []
     if ubuntu_precise? || ubuntu_trusty?
       resolv_file = "/etc/resolvconf/resolv.conf.d/head"
-      
+
       package "resolvconf", :ensure => :installed
-      
+
       file "/etc/resolvconf/resolv.conf.d", :ensure => :directory
-      
+
       require_array = [package('resolvconf'), file("/etc/resolvconf/resolv.conf.d")]
     end
-    
+
     file resolv_file,
       :ensure => :present,
       :mode => '744',
@@ -259,11 +272,11 @@ private
   def ubuntu_lucid?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
   end
-  
+
   def ubuntu_precise?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 12.04
   end
-  
+
   def ubuntu_trusty?
     Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 14.04
   end
