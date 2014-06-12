@@ -39,11 +39,11 @@ module Moonshine::Manifest::Rails::Apache
 
   def apache_service_restart
     if configuration[:apache][:restart_on_change]
-      '/etc/init.d/apache2 restart'
+      '/usr/sbin/apache2ctl -t && /etc/init.d/apache2 restart'
     elsif configuration[:apache][:reload_on_change]
-      '/etc/init.d/apache2 reload'
+      '/usr/sbin/apache2ctl -t && /etc/init.d/apache2 reload'
     else
-      '/etc/init.d/apache2 restart'
+      '/usr/sbin/apache2ctl -t && /etc/init.d/apache2 restart'
     end
   end
 
