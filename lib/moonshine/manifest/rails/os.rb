@@ -124,7 +124,8 @@ from installing any gems, packages, or dependencies directly on the server.
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644',
-      :notify  => service('postfix')
+      :notify  => service('postfix'),
+      :require => package('postfix')
   end
 
   #### NTP
