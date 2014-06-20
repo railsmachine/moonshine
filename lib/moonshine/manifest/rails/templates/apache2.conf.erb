@@ -131,7 +131,7 @@ KeepAliveTimeout <%= configuration[:apache][:keep_alive_timeout] %>
     MinSpareThreads      <%= configuration[:apache][:min_spare_threads] || '25' %>
     MaxSpareThreads      <%= configuration[:apache][:max_spare_threads] || '75' %> 
     ThreadsPerChild      <%= configuration[:apache][:threads_per_child] || '25' %>
-    MaxRequestsPerChild  <%= configuration[:max_requests_per_child] || '0' %>
+    MaxRequestsPerChild  <%= configuration[:apache][:max_requests_per_child] || '0' %>
 </IfModule>
 
 # These need to be set in /etc/apache2/envvars
