@@ -652,6 +652,7 @@ module Moonshine
               "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/17-fix-missing-c-return-event.patch",
               "patch -p1 </tmp/moonshine/patches/ruby/1.9.3/p547/railsexpress/18-fix-process-daemon-call.patch",
               'export CFLAGS="-march=core2 -O2 -pipe -fomit-frame-pointer"',
+              'autoreconf -vf',
               "./configure --prefix=/usr",
               "make",
               "sudo make install"
