@@ -451,6 +451,52 @@ module Moonshine
               run "cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:clean"
             end
           end
+
+          namespace :apache do
+            desc "Start Apache on the specified app server: cap STAGE deploy:apache:start -s host=app1"
+            task :start, :roles => :app do
+              servers = find_servers_for_task(current_task)
+              servers.each do |server|
+                if not respond_to?(:host) or server.host.include?(host)
+                  teardown_connections_to([server])
+                  sudo 'service apache2 start', :hosts => server.host
+                end
+              end
+            end
+
+            desc "Stop Apache on the specified app server: cap STAGE deploy:apache:stop -s host=app1"
+            task :stop, :roles => :app do
+              servers = find_servers_for_task(current_task)
+              servers.each do |server|
+                if not respond_to?(:host) or server.host.include?(host)
+                  teardown_connections_to([server])
+                  sudo 'service apache2 stop', :hosts => server.host
+                end
+              end
+            end
+
+            desc "Restart Apache on the specified app server: cap STAGE deploy:apache:restart -s host=app1"
+            task :restart, :roles => :app do
+              servers = find_servers_for_task(current_task)
+              servers.each do |server|
+                if not respond_to?(:host) or server.host.include?(host)
+                  teardown_connections_to([server])
+                  sudo 'service apache2 restart', :hosts => server.host
+                end
+              end
+            end
+
+            desc "Gets Apache running status on the specified app server: cap STAGE deploy:apache:status -s host=app1"
+            task :status, :roles => :app do
+              servers = find_servers_for_task(current_task)
+              servers.each do |server|
+                if not respond_to?(:host) or server.host.include?(host)
+                  teardown_connections_to([server])
+                  sudo 'service apache2 status', :hosts => server.host
+                end
+              end
+            end
+          end
         end
 
         desc "does a no-op deploy. great for testing a potential deploy before running it!"
