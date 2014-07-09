@@ -123,7 +123,7 @@ STATUS
 
     logrotate_options = configuration[:apache][:logrotate] || {}
     logrotate_options[:frequency] ||= 'daily'
-    logrotate_options[:count] ||= '365'
+    logrotate_options[:count] ||= '7'
     logrotate "/var/log/apache2/*.log",
       :logrotated_file => 'apache2',
       :options => [
