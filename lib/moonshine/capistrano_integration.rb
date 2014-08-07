@@ -518,7 +518,7 @@ module Moonshine
             run [
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
-              "wget -q http://pyyaml.org/download/libyaml/#{p}.tar.gz",
+              "wget -q http://assets.railsmachine.com/libs/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
               './configure --prefix=/usr',
