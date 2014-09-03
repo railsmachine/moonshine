@@ -64,12 +64,22 @@ We've added support for Passenger Enterprise Edition!  In order to install it, y
 
 This is what a passenger enterprise block in moonshine.yml should look like (in addition to your usual Passenger settings):
 
-    :passenger:
-      :version: 4.0.10
-      :enterprise: true
-      :download_token: YOUR-PASSENGER-ENTERPRISE-DOWNLOAD-TOKEN
-      :rolling_restarts: true
-    
+```yaml
+:passenger:
+  :version: 4.0.10
+  :enterprise: true
+  :download_token: YOUR-PASSENGER-ENTERPRISE-DOWNLOAD-TOKEN
+  :rolling_restarts: true
+```
+
+## Brightbox Ruby
+
+Compiling ruby from source is time and CPU consuming.  In an attempt to speed up ruby upgrades and make it easier to roll back to the previous version, we've added support for [Brightbox's Ruby packages](http://brightbox.com/docs/ruby/ubuntu/). Setting it up is easy, just set the ruby line in config/moonshine.yml to <code>brightbox193</code> or <code>brightbox21</code>.
+
+### Limitations
+
+* **Ubuntu 10.04**: Brightbox doesn't provide packages for Ruby 2.1.2.  If you want it, you'll need to upgrade to at least 12.04.
+  
 ## A Word on Rails 4
 
 We've been torturing ourselves trying to turn Moonshine into a gem ever since it was announced that Rails 4 was dropping support for plugins.  Moonshine is... different... and we think it actually makes sense as a plugin.  So, instead of turning Moonshine, and the dozens of Moonshine plugins we've written, into a gem, we decided to add plugin support back to Rails 4!  That's where [plugger](http://github.com/railsmachine/plugger) comes in. Just add it to your Gemfile and <code>bundle install</code> and voila, plugins are *back*!
@@ -78,9 +88,11 @@ We've been torturing ourselves trying to turn Moonshine into a gem ever since it
 
 By default, everything within the app directory is eager-loaded by the app at startup in production mode (and staging).  That's not good.  So, to keep that from happening, add this to config/application.rb inside the Application class:
 
-<pre><code>path_rejector = lambda { |s| s.include?("app/manifests") }
+```ruby
+path_rejector = lambda { |s| s.include?("app/manifests") }
 config.eager_load_paths = config.eager_load_paths.reject(&path_rejector)
-ActiveSupport::Dependencies.autoload_paths.reject!(&path_rejector)</code></pre>
+ActiveSupport::Dependencies.autoload_paths.reject!(&path_rejector)
+```
 
 That'll keep the manifests from loading when the app starts up!
 
@@ -88,8 +100,10 @@ That'll keep the manifests from loading when the app starts up!
 
 With Rails 4, it doesn't want you to use the <code>--binstubs</code> argument for bundler, so it's now optional.  If you're using Moonshine and Rails 4, add this to config/moonshine.yml, and you'll be all set:
 
-<pre><code>:bundler:
-  :disable_binstubs: true</code></pre>
+```yaml
+:bundler:
+  :disable_binstubs: true
+```
   
 After your next deploy, you should be able to run rails console without that annoying error message.
 
