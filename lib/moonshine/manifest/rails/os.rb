@@ -137,6 +137,58 @@ from installing any gems, packages, or dependencies directly on the server.
     service 'ntp', :ensure => :running, :require => package('ntp'), :pattern => 'ntpd'
   end
 
+  #### fail2ban
+  
+  # A fine alternative to denyhosts that blocks IP addresses after failed login attempts.
+  # By default, it enables ssh and ssh-ddos actions.
+  #
+  # To change settings, add the following to config/moonshine.yml:
+  #
+  #    :fail2ban:
+  #      :apache: true
+  #      :ssh_ddos: false
+
+  def fail2ban
+    
+    defaults = {
+      :ssh => true,
+      :pam_generic => false,
+      :xinetd_fail => false,
+      :ssh_ddos => true,
+      :apache => false,
+      :apache_multiport => false,
+      :apache_noscript => false,
+      :apache_overflows => false,
+      :vsftpd => false,
+      :proftpd => false,
+      :wuftpd => false,
+      :postfix => true,
+      :couriersmtp => false,
+      :courierauth => false,
+      :sasl => false
+    }
+    
+    if configuration[:fail2ban]
+      defaults.merge!(configuration[:fail2ban])
+    end
+    
+    configure :fail2ban => defaults
+    
+    package 'fail2ban', :ensure => :installed
+    
+    service 'fail2ban',
+      :ensure => :running,
+      :require => [package('fail2ban')]
+    
+    file "/etc/fail2ban/jail.conf",
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), "templates", "jail.conf.erb")),
+      :owner => 'root',
+      :notify => service('fail2ban'),
+      :require => package('fail2ban')
+      
+  end
+
   #### Time Zones
 
   # Sometimes it's desirable to have a server run in a time besides UTC.
