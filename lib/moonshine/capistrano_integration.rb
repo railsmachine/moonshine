@@ -604,6 +604,55 @@ module Moonshine
             ].join(' && ')
           end
 
+          task :brightbox21 do
+            remove_ruby_from_apt
+            run [
+              'sudo rm -f /usr/bin/ruby',
+              'sudo rm -f /usr/bin/gem',
+              'sudo rm -f /usr/bin/rake',
+              'sudo rm -f /usr/bin/rdoc',
+              'sudo rm -f /usr/bin/irb',
+              'sudo rm -f /usr/bin/erb',
+              'sudo rm -f /usr/bin/ri',
+              'sudo rm -f /usr/bin/testrb',
+              'sudo apt-get install python-software-properties software-properties-common -y',
+              'sudo apt-add-repository ppa:brightbox/ruby-ng -y',
+              'sudo apt-get update',
+              'sudo apt-get install ruby2.1 ruby2.1-dev -y'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.2.2')
+            set :bundler_version, fetch(:bundler_version, '1.6.2')
+          end
+
+          task :brightbox193 do
+            remove_ruby_from_apt
+    
+            version = capture("lsb_release -r").split(":").last.to_f
+    
+            repo_flag = ""
+            software_properties = "python-software-properties"
+    
+            if version >= 12
+              repo_flag = "-y"
+              software_properties << " software-properties-common"
+            end
+    
+            run [
+              'sudo rm -f /usr/bin/ruby',
+              'sudo rm -f /usr/bin/gem',
+              'sudo rm -f /usr/bin/rake',
+              'sudo rm -f /usr/bin/rdoc',
+              'sudo rm -f /usr/bin/irb',
+              'sudo rm -f /usr/bin/erb',
+              'sudo rm -f /usr/bin/ri',
+              'sudo rm -f /usr/bin/testrb',
+              "sudo apt-get install #{software_properties} -y",
+              "sudo apt-add-repository ppa:brightbox/ruby-ng #{repo_flag}",
+              'sudo apt-get update',
+              'sudo apt-get install build-essential ruby1.9.1 ruby1.9.1-dev -y'
+            ].join(' && ')
+          end
+
           task :src187 do
             remove_ruby_from_apt
             run [
