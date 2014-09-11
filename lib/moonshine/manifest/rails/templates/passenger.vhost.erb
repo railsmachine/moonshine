@@ -69,6 +69,14 @@
   ## here in your VirtualHost entry or in the global configuration.
   ##
 
+<% if passenger_major_version >= 4 && passenger_minor_version >= 0 && passenger_patch_version >= 26 %>
+  ## PassengerBufferUpload
+  #
+  # Uses apache for file uploads and then hands off to the app.
+  
+  PassengerBufferUpload <%= passenger_config_boolean(configuration[:passenger][:buffer_upload], true) %>
+<% end %>
+
 <% if passenger_major_version < 4 %>
 
   ## RailsAutoDetect
@@ -349,6 +357,14 @@
   ## The following options are Rails specific options. They may occur
   ## here in your VirtualHost entry or in the global configuration.
   ##
+  
+<% if passenger_major_version >= 4 && passenger_minor_version >= 0 && passenger_patch_version >= 26 %>
+  ## PassengerBufferUpload
+  #
+  # Uses apache for file uploads and then hands off to the app.
+  
+  PassengerBufferUpload <%= passenger_config_boolean(configuration[:passenger][:buffer_upload], true) %>
+<% end %>
   
   <% if passenger_major_version < 4 %>
 
