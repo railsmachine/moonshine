@@ -25,7 +25,7 @@ replicate-same-server-id = <%= configuration[:mysql][:replicate_same_server_id] 
 
 ######### innodb options
 innodb_buffer_pool_size           = <%= configuration[:mysql][:innodb_buffer_pool_size] || '128M' %>
-innodb_additional_mem_pool_size   = <%= configuration[:mysql][:innodb_additional_mem_pool_size] || '16M' %>
+innodb_additional_mem_pool_size   = <%= configuration[:mysql][:innodb_additional_mem_pool_size] || '1M' %>
 innodb_data_file_path             = <%= configuration[:mysql][:innodb_data_file_path] || 'ibdata1:10M:autoextend' %>
 innodb_file_io_threads            = <%= configuration[:mysql][:innodb_file_io_threads] || '4' %>
 innodb_thread_concurrency         = <%= configuration[:mysql][:innodb_thread_concurrency] || '4' %>
@@ -47,15 +47,15 @@ table_cache           = <%= configuration[:mysql][:table_cache] || '2048' %>
 max_allowed_packet    = <%= configuration[:mysql][:max_allowed_packet] || '32M' %>
 open_files_limit      = <%= configuration[:mysql][:open_files_limit] || '1024' %>
 max_heap_table_size   = <%= configuration[:mysql][:max_heap_table_size] || '64M' %>
-join_buffer_size      = <%= configuration[:mysql][:join_buffer_size] || '4M' %>
-read_buffer_size      = <%= configuration[:mysql][:read_buffer_size] || '4M' %>
-sort_buffer_size      = <%= configuration[:mysql][:sort_buffer_size] || '8M' %>
-read_rnd_buffer_size  = <%= configuration[:mysql][:read_rnd_buffer_size] || '8M' %>
+join_buffer_size      = <%= configuration[:mysql][:join_buffer_size] || '128K' %>
+read_buffer_size      = <%= configuration[:mysql][:read_buffer_size] || '128K' %>
+sort_buffer_size      = <%= configuration[:mysql][:sort_buffer_size] || '2M' %>
+read_rnd_buffer_size  = <%= configuration[:mysql][:read_rnd_buffer_size] || '256K' %>
 thread_cache_size     = <%= configuration[:mysql][:thread_cache_size] || '8' %>
 thread_concurrency    = <%= configuration[:mysql][:thread_concurrency] || '8' %>
-query_cache_size      = <%= configuration[:mysql][:query_cache_size] || '128M' %>
+query_cache_size      = <%= configuration[:mysql][:query_cache_size] || '64M' %>
 query_cache_limit     = <%= configuration[:mysql][:query_cache_limit] || '2M' %>
-thread_stack          = <%= configuration[:mysql][:thread_stack] || '192K' %>
+thread_stack          = <%= configuration[:mysql][:thread_stack] || '256K' %>
 transaction_isolation = <%= configuration[:mysql][:transaction_isolation] || 'READ-COMMITTED' %>
 tmp_table_size        = <%= configuration[:mysql][:tmp_table_size] || '128M' %>
 tmpdir                = <%= configuration[:mysql][:tmpdir] || '/tmp' %>
