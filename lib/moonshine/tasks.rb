@@ -48,7 +48,12 @@ module Moonshine
         @options    = options
         @remote     = (@options[:remote] || 'railsmachine')
         @repo       = "moonshine#{ '_' + @options[:plugin] if @options[:plugin]}"
-        @plugin_cmd = "ruby script/#{File.exist?('script/plugin') ? 'plugin' : 'rails plugin'}"
+        if defined?(Plugger)
+          @plugin_cmd = "plugger"
+        else
+          @plugin_cmd = "ruby script/#{File.exist?('script/plugin') ? 'plugin' : 'rails plugin'}"
+        end
+
         define
       end
 
