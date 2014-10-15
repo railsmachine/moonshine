@@ -289,7 +289,7 @@
   <% else %>
   # SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
   <% end %>
-  SSLProtocol <%= configuration[:ssl][:protocol] || 'ALL -SSLv2' %>
+  SSLProtocol <%= configuration[:ssl][:protocol] || 'ALL -SSLv2 -SSLv3' %>
   SSLHonorCipherOrder <%= configuration[:ssl][:honor_cipher_order] || 'on' %>
 
   BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
