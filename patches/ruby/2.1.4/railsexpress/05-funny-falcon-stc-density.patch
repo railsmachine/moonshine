@@ -1,5 +1,5 @@
 diff --git a/st.c b/st.c
-index 2335fdd..a5995fb 100644
+index d689c81..6f5e8be 100644
 --- a/st.c
 +++ b/st.c
 @@ -32,10 +32,10 @@ typedef struct st_packed_entry {

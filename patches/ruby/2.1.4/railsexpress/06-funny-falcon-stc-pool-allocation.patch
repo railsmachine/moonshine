@@ -1,5 +1,5 @@
 diff --git a/common.mk b/common.mk
-index 0c8b7fc..f993596 100644
+index de1b671..41fb072 100644
 --- a/common.mk
 +++ b/common.mk
 @@ -683,7 +683,8 @@ gc.$(OBJEXT): {$(VPATH)}gc.c $(RUBY_H_INCLUDES) {$(VPATH)}re.h \
@@ -22,7 +22,7 @@ index 0c8b7fc..f993596 100644
    {$(VPATH)}timev.h $(ENCODING_H_INCLUDES)
  string.$(OBJEXT): {$(VPATH)}string.c $(RUBY_H_INCLUDES) {$(VPATH)}re.h \
 diff --git a/gc.c b/gc.c
-index b9ad92b..e7da770 100644
+index 9a87bac..776d97d 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -22,6 +22,7 @@
@@ -68,7 +68,7 @@ index b9ad92b..e7da770 100644
      struct {
  	struct heap_page **sorted;
  	size_t used;
-@@ -604,7 +626,12 @@ struct heap_page {
+@@ -607,7 +629,12 @@ struct heap_page {
  #define ruby_initial_gc_stress	gc_params.gc_stress
  VALUE *ruby_initial_gc_stress_ptr = &ruby_initial_gc_stress;
  #else
@@ -82,7 +82,7 @@ index b9ad92b..e7da770 100644
  VALUE *ruby_initial_gc_stress_ptr = &rb_objspace.gc_stress;
  #endif
  
-@@ -883,6 +910,10 @@ rb_objspace_alloc(void)
+@@ -886,6 +913,10 @@ rb_objspace_alloc(void)
  
      malloc_limit = gc_params.malloc_limit_min;
  
@@ -93,7 +93,7 @@ index b9ad92b..e7da770 100644
      return objspace;
  }
  #endif
-@@ -924,6 +955,13 @@ rb_objspace_free(rb_objspace_t *objspace)
+@@ -927,6 +958,13 @@ rb_objspace_free(rb_objspace_t *objspace)
  	objspace->eden_heap.pages = NULL;
      }
      free_stack_chunks(&objspace->mark_stack);
@@ -107,7 +107,7 @@ index b9ad92b..e7da770 100644
      free(objspace);
  }
  #endif
-@@ -6424,6 +6462,28 @@ ruby_mimfree(void *ptr)
+@@ -6434,6 +6472,28 @@ ruby_mimfree(void *ptr)
      free(mem);
  }
  
@@ -316,7 +316,7 @@ index 0000000..e2ec99a
 +}
 +#endif
 diff --git a/st.c b/st.c
-index a5995fb..756f258 100644
+index 6f5e8be..37d0ebe 100644
 --- a/st.c
 +++ b/st.c
 @@ -7,6 +7,7 @@
