@@ -1,8 +1,8 @@
 diff --git a/configure.in b/configure.in
-index f49a34c..ea8a2bc 100644
+index 839c20c..72a9cfc 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -2851,6 +2851,10 @@ if test "$EXEEXT" = .exe; then
+@@ -2878,6 +2878,10 @@ if test "$EXEEXT" = .exe; then
      AC_SUBST(EXECUTABLE_EXTS)
  fi
  
@@ -1300,7 +1300,7 @@ index 71fd2ce..d3c3570 100644
      rb_define_module_function(rb_mObSpace, "undefine_finalizer", undefine_final, 1);
  
 diff --git a/include/ruby/intern.h b/include/ruby/intern.h
-index b1dff0b..732b37b 100644
+index 838beb9..f424857 100644
 --- a/include/ruby/intern.h
 +++ b/include/ruby/intern.h
 @@ -459,6 +459,8 @@ void rb_gc_call_finalizer_at_exit(void);
@@ -1313,10 +1313,10 @@ index b1dff0b..732b37b 100644
  /* hash.c */
  void st_foreach_safe(struct st_table *, int (*)(ANYARGS), st_data_t);
 diff --git a/process.c b/process.c
-index d351a39..293d911 100644
+index 458c862..2485336 100644
 --- a/process.c
 +++ b/process.c
-@@ -3450,9 +3450,11 @@ rb_f_fork(VALUE obj)
+@@ -3487,9 +3487,11 @@ rb_f_fork(VALUE obj)
      rb_pid_t pid;
  
      rb_secure(2);

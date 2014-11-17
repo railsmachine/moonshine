@@ -626,17 +626,17 @@ module Moonshine
 
           task :brightbox193 do
             remove_ruby_from_apt
-    
+
             version = capture("lsb_release -r").split(":").last.to_f
-    
+
             repo_flag = ""
             software_properties = "python-software-properties"
-    
+
             if version >= 12
               repo_flag = "-y"
               software_properties << " software-properties-common"
             end
-    
+
             run [
               'sudo rm -f /usr/bin/ruby',
               'sudo rm -f /usr/bin/gem',
@@ -757,7 +757,7 @@ module Moonshine
           task :src200 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.0.0-p481"
+            pv = "2.0.0-p598"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -784,7 +784,7 @@ module Moonshine
             end
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.0.0-p451"
+            pv = "2.0.0-p598"
             p = "ruby-#{pv}"
             run [
               'sudo apt-get install autoconf -y || true',
@@ -796,11 +796,10 @@ module Moonshine
               "wget -q http://ftp.ruby-lang.org/pub/ruby/2.0/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/02-railsexpress-gc.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p451/railsexpress/05-fix-missing-c-return-event.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p598/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p598/railsexpress/02-railsexpress-gc.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p598/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.0.0/p598/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
