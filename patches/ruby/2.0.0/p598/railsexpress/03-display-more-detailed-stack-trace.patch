@@ -1,8 +1,8 @@
 diff --git a/eval_error.c b/eval_error.c
-index c7ccf82..50b9c40 100644
+index 54d6db9..a9a1a0b 100644
 --- a/eval_error.c
 +++ b/eval_error.c
-@@ -177,8 +177,8 @@ error_print(void)
+@@ -178,8 +178,8 @@ error_print(void)
          int skip = eclass == rb_eSysStackError;
  
  #define TRACE_MAX (TRACE_HEAD+TRACE_TAIL+5)

@@ -1,28 +1,44 @@
 diff --git a/test/etc/test_etc.rb b/test/etc/test_etc.rb
-index c105122..a67b397 100644
+index c105122..22eb67c 100644
 --- a/test/etc/test_etc.rb
 +++ b/test/etc/test_etc.rb
-@@ -76,6 +76,7 @@ class TestEtc < Test::Unit::TestCase
+@@ -66,6 +66,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
+     Etc.group do |s|
+       assert_instance_of(String, s.name)
+       assert_instance_of(String, s.passwd) if s.respond_to?(:passwd)
+@@ -76,6 +77,7 @@ class TestEtc < Test::Unit::TestCase
    end
  
    def test_getgrgid
-+    skip "Broken Etc.getgrgid on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRGID']=='1'
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
      # group database is not unique on GID, and which entry will be
      # returned by getgrgid() is not specified.
      groups = Hash.new {[]}
-@@ -92,6 +93,7 @@ class TestEtc < Test::Unit::TestCase
+@@ -92,6 +94,7 @@ class TestEtc < Test::Unit::TestCase
    end
  
    def test_getgrnam
-+    skip "Broken Etc.getgrnam on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRNAM']=='1'
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
      groups = {}
      Etc.group do |s|
        groups[s.name] ||= s unless /\A\+/ =~ s.name
+@@ -102,6 +105,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group_with_low_level_api
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
+     a = []
+     Etc.group {|s| a << s }
+     b = []
 diff --git a/test/ruby/test_process.rb b/test/ruby/test_process.rb
-index c760e8e..f0ae216 100644
+index 8b79d35..d352269 100644
 --- a/test/ruby/test_process.rb
 +++ b/test/ruby/test_process.rb
-@@ -1554,6 +1554,7 @@ class TestProcess < Test::Unit::TestCase
+@@ -1564,6 +1564,7 @@ class TestProcess < Test::Unit::TestCase
  
    def test_execopts_gid
      skip "Process.groups not implemented on Windows platform" if windows?
