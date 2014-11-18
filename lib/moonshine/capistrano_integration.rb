@@ -812,7 +812,7 @@ module Moonshine
           task :src21 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.1.4"
+            pv = "2.1.5"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -841,7 +841,7 @@ module Moonshine
             remove_ruby_from_apt
             libyaml.install
 
-            pv = "2.1.4"
+            pv = "2.1.5"
             p = "ruby-#{pv}"
             run [
               'sudo apt-get install autoconf -y || true',
@@ -854,14 +854,14 @@ module Moonshine
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.1/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/02-improve-gc-stats.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/05-funny-falcon-stc-density.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/06-funny-falcon-stc-pool-allocation.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/07-aman-opt-aset-aref-str.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.4/railsexpress/08-funny-falcon-method-cache.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/02-improve-gc-stats.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/05-funny-falcon-stc-density.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/06-funny-falcon-stc-pool-allocation.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/07-aman-opt-aset-aref-str.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/08-funny-falcon-method-cache.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
