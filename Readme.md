@@ -78,7 +78,7 @@ Compiling ruby from source is time and CPU consuming.  In an attempt to speed up
 
 ### Limitations
 
-* **Ubuntu 10.04**: Brightbox doesn't provide packages for Ruby 2.1.2.  If you want it, you'll need to upgrade to at least 12.04.
+* **Ubuntu 10.04**: Brightbox doesn't provide packages for Ruby 2.1.x.  If you want it, you'll need to upgrade to at least 12.04.
   
 ## A Word on Rails 4
 
