@@ -811,7 +811,7 @@ module Moonshine
           task :src21 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.1.2"
+            pv = "2.1.5"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -839,40 +839,11 @@ module Moonshine
             end
             remove_ruby_from_apt
             libyaml.install
-            sudo 'apt-get install autoconf -y || true',
-            # Patch 06-backport-006e66b6680f60adfb434ee7397f0dbc77de7873.patch modifies configure.in
-            # which requires autoconf to be run. Ruby 2.1.x requires autoconf >= 2.67 so we exclude
-            # patch 06 if the autoconf version is less than 2.67.
-            patches = [
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/02-improve-gc-stats.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/05-fix-missing-c-return-event.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/06-backport-006e66b6680f60adfb434ee7397f0dbc77de7873.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/07-funny-falcon-stc-density.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/08-funny-falcon-stc-pool-allocation.patch",
-              #"patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/09-aman-opt-aset-aref-str.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/10-funny-falcon-method-cache.patch"
-            ]
-            autoconf_output = capture('autoconf --version')
-            autoconf_version = Gem::Version.new(autoconf_output.match(/^autoconf \(GNU Autoconf\) (\d\.\d{2})/)[1])
-            if autoconf_version < Gem::Version.new('2.67')
-              patches = [
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/01-zero-broken-tests.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/02-improve-gc-stats.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/03-display-more-detailed-stack-trace.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/05-fix-missing-c-return-event.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/07-funny-falcon-stc-density.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/08-funny-falcon-stc-pool-allocation.patch",
-                #"patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/09-aman-opt-aset-aref-str.patch",
-                "patch -p1 </tmp/moonshine/patches/ruby/2.1.2/railsexpress/10-funny-falcon-method-cache.patch"
-              ]
-            end
-            pv = "2.1.2"
+
+            pv = "2.1.5"
             p = "ruby-#{pv}"
             run [
+              'sudo apt-get install autoconf -y || true',
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
               'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
@@ -882,7 +853,14 @@ module Moonshine
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.1/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              *patches,
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/02-improve-gc-stats.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/05-funny-falcon-stc-density.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/06-funny-falcon-stc-pool-allocation.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/07-aman-opt-aset-aref-str.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/08-funny-falcon-method-cache.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
