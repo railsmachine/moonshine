@@ -188,10 +188,12 @@ PassengerBufferResponse <%= passenger_config_boolean(configuration[:passenger][:
 
 PassengerFriendlyErrorPages <%= passenger_config_boolean(configuration[:passenger][:friendly_error_pages], false) %>
 
+<% if configuration[:passenger][:start_timeout] %>
 ## PassengerStartTimeout
 # Specifies a timeout for the startup of application processes. If an application process fails to start within the
 # timeout period then it will be forcefully killed with SIGKILL, and the error will be logged.
 PassengerStartTimeout <%= configuration[:passenger][:start_timeout] || '90' %>
+<% end %>
 
 <% if configuration[:passenger][:enterprise] %>
 
