@@ -881,9 +881,9 @@ module Moonshine
               'sudo mkdir -p /usr/lib/ruby/gems/2.1.0/gems || true',
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.1/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
-              "cd /tmp/#{p}",
-              *patches,
-              './configure --prefix=/usr',
+              "cd /tmp/#{p}"]
+              +patches+
+              ['./configure --prefix=/usr',
               'make',
               'sudo make install'
             ].join(' && ')
