@@ -28,7 +28,7 @@ module Moonshine::Manifest::Rails::Mysql
       :notify => service('mysql'),
       :checksum => :md5
 
-    file '/etc/logrotate.d/varlogmysql.conf', :ensure => :absent
+    recipe :mysql_logrotate
   end
 
   # Install the <tt>mysql</tt> rubygem and dependencies
@@ -72,6 +72,28 @@ EOF
       :mode => '755',
       :owner => 'root',
       :require => package('mysql-server')
+  end
+
+  def mysql_logrotate
+    file '/etc/logrotate.d/varlogmysql.conf', :ensure => :absent
+    file '/etc/logrotate.d/mysql-server', :ensure => :absent
+
+    logrotate_options = configuration[:mysql][:logrotate] || {}
+    logrotate_options[:frequency] ||= 'daily'
+    logrotate_options[:count] ||= '7'
+    logrotate "/var/log/mysql/*.log",
+      :logrotated_file => 'apache2',
+      :options => [
+        logrotate_options[:frequency],
+        'missingok',
+        "rotate #{logrotate_options[:count]}",
+        'compress',
+        'delaycompress',
+        'notifempty',
+        'create 640 mysql adm',
+        'sharedscripts'
+      ],
+      :postrotate => 'MYADMIN="/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf"; if [ -z "`$MYADMIN ping 2>/dev/null`" ]; then if ps cax | grep -q mysqld; then exit 1; fi ; else $MYADMIN flush-logs; fi'
   end
 
 private
