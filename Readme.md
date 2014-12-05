@@ -8,6 +8,9 @@ To get started, check out our [tutorial](https://github.com/railsmachine/moonshi
 
 Once you're a bit more comfortable with Moonshine, you'll find our documentation on [the wiki](https://github.com/railsmachine/moonshine/wiki) to be helpful!
 
+## Support
+This branch will be the last to support Rails < 3 and Ruby < 1.9.3.  In the future master will no longer support or backport functionality to these deprecated version.
+
 ## Requirements
 
 * A server running Ubuntu 8.10, 10.04 LTS or 12.04 LTS (Want to see your favorite platform supported?  Fork Moonshine on GitHub!)
