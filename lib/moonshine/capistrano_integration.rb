@@ -827,8 +827,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.4.4')
-            set :bundler_version, fetch(:bundler_version, '1.7.6')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.5')
+            set :bundler_version, fetch(:bundler_version, '1.7.9')
           end
 
           task :src21railsexpress do
@@ -867,8 +867,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.4.4')
-            set :bundler_version, fetch(:bundler_version, '1.7.6')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.5')
+            set :bundler_version, fetch(:bundler_version, '1.7.9')
           end
 
           task :install_rubygems do
