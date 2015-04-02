@@ -195,6 +195,28 @@ PassengerFriendlyErrorPages <%= passenger_config_boolean(configuration[:passenge
 PassengerStartTimeout <%= configuration[:passenger][:start_timeout] || '90' %>
 <% end %>
 
+<% if passenger_major_version >= 5 %>
+## PassengerStatThrottleRate
+#
+# By default, Phusion Passenger performs several filesystem checks (or, in programmers jargon, stat() calls)
+# each time a request is processed:
+#
+#   * It checks which the application startup files are present, in order to autodetect the application type.
+#   * It checks whether restart.txt has changed or whether always_restart.txt exists, in order to determine whether
+#     the application should be restarted.
+#
+# On some systems where disk I/O is expensive, e.g. systems where the harddisk is already being heavily loaded, or
+# systems where applications are stored on NFS shares, these filesystem checks can incur a lot of overhead.
+#
+# You can decrease or almost entirely eliminate this overhead by setting PassengerStatThrottleRate. Setting this
+# option to a value of x means that the above list of filesystem checks will be performed at most once every x seconds.
+# Setting it to a value of 0 means that no throttling will take place, or in other words, that the above list of
+# filesystem checks will be performed on every request.
+# This option may be specified once, in the global server configuration. The default value is 10.
+
+PassengerStatThrottleRate <%= configuration[:passenger][:stat_throttle_rate] || '10' %>
+<% end %>
+
 <% if configuration[:passenger][:enterprise] %>
 
 ## PassengerMaxRequestTime
