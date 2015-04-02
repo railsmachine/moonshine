@@ -90,15 +90,18 @@ module Moonshine::Manifest::Rails::Passenger
         file("/usr/local/src")
       ]
 
+    conditions = ["ls `passenger-config --root`/#{passenger_lib_dir}/apache2/mod_passenger.so"]
+    if passenger_major_version == 5
+      conditions << "ls `passenger-config --root`/#{passenger_agents_dir}/PassengerAgent"
+    else
+      conditions << "ls `passenger-config --root`/#{passenger_lib_dir}/ruby/ruby-*/passenger_native_support.so"
+      conditions << "ls `passenger-config --root`/#{passenger_agents_dir}/PassengerLoggingAgent"
+    end
     # Build Passenger from source
     exec "build_passenger",
       :cwd => configuration[:passenger][:path],
       :command => 'sudo /usr/bin/ruby -S rake clean apache2',
-      :unless => [
-        "ls `passenger-config --root`/#{passenger_lib_dir}/apache2/mod_passenger.so",
-        "ls `passenger-config --root`/#{passenger_lib_dir}/ruby/ruby-*/passenger_native_support.so",
-        "ls `passenger-config --root`/#{passenger_agents_dir}/PassengerLoggingAgent"
-        ].join(" && "),
+      :unless => conditions.join(" && "),
       :require => [
         package("passenger"),
         package("apache2-mpm-worker"),
@@ -195,7 +198,9 @@ private
   end
 
   def passenger_agents_dir
-    if (passenger_major_version > 4) || (passenger_major_version == 4 && passenger_minor_version > 0) || (passenger_major_version == 4 && passenger_minor_version == 0 && passenger_patch_version >= 6 )
+    if passenger_major_version == 5
+      "#{passenger_lib_dir}/support-binaries"
+    elsif (passenger_major_version == 4 && passenger_minor_version > 0) || (passenger_major_version == 4 && passenger_minor_version == 0 && passenger_patch_version >= 6 )
       "#{passenger_lib_dir}/agents"
     else
       'agents'
