@@ -811,7 +811,7 @@ module Moonshine
           task :src21 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.1.5"
+            pv = "2.1.6"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
