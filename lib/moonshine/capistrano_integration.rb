@@ -757,7 +757,7 @@ module Moonshine
           task :src200 do
             remove_ruby_from_apt
             libyaml.install
-            pv = "2.0.0-p598"
+            pv = "2.0.0-p645"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
