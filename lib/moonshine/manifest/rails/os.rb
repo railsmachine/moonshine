@@ -138,7 +138,7 @@ from installing any gems, packages, or dependencies directly on the server.
   end
 
   #### fail2ban
-  
+
   # A fine alternative to denyhosts that blocks IP addresses after failed login attempts.
   # By default, it enables ssh and ssh-ddos actions.
   #
@@ -149,7 +149,7 @@ from installing any gems, packages, or dependencies directly on the server.
   #      :ssh_ddos: false
 
   def fail2ban
-    
+
     defaults = {
       :ssh => true,
       :pam_generic => false,
@@ -167,26 +167,26 @@ from installing any gems, packages, or dependencies directly on the server.
       :courierauth => false,
       :sasl => false
     }
-    
+
     if configuration[:fail2ban]
       defaults.merge!(configuration[:fail2ban])
     end
-    
+
     configure :fail2ban => defaults
-    
+
     package 'fail2ban', :ensure => :installed
-    
+
     service 'fail2ban',
       :ensure => :running,
       :require => [package('fail2ban')]
-    
+
     file "/etc/fail2ban/jail.conf",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), "templates", "jail.conf.erb")),
       :owner => 'root',
       :notify => service('fail2ban'),
       :require => package('fail2ban')
-      
+
   end
 
   #### Time Zones
@@ -207,6 +207,7 @@ from installing any gems, packages, or dependencies directly on the server.
       :content => zone+"\n",
       :ensure => :present
     file "/etc/localtime",
+      :backup => false,
       :ensure => "/usr/share/zoneinfo/#{zone}",
       :notify => service('ntp')
   end
