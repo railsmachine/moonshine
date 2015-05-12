@@ -827,8 +827,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.4.5')
-            set :bundler_version, fetch(:bundler_version, '1.7.9')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.6')
+            set :bundler_version, fetch(:bundler_version, '1.9.7')
           end
 
           task :src21railsexpress do
@@ -840,7 +840,7 @@ module Moonshine
             remove_ruby_from_apt
             libyaml.install
             sudo 'apt-get install autoconf -y || true',
-            pv = "2.1.5"
+            pv = "2.1.6"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -852,20 +852,20 @@ module Moonshine
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.1/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/01-zero-broken-tests.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/02-improve-gc-stats.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/03-display-more-detailed-stack-trace.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/05-funny-falcon-stc-density.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/06-funny-falcon-stc-pool-allocation.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/07-aman-opt-aset-aref-str.patch",
-              "patch -p1 </tmp/moonshine/patches/ruby/2.1.5/railsexpress/08-funny-falcon-method-cache.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/01-zero-broken-tests.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/02-improve-gc-stats.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/03-display-more-detailed-stack-trace.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/04-show-full-backtrace-on-stack-overflow.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/05-funny-falcon-stc-density.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/06-funny-falcon-stc-pool-allocation.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/07-aman-opt-aset-aref-str.patch",
+              "patch -p1 </tmp/moonshine/patches/ruby/2.1.6/railsexpress/08-funny-falcon-method-cache.patch",
               './configure --prefix=/usr',
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.4.5')
-            set :bundler_version, fetch(:bundler_version, '1.7.9')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.6')
+            set :bundler_version, fetch(:bundler_version, '1.9.7')
           end
 
           task :install_rubygems do

@@ -1,5 +1,5 @@
 diff --git a/class.c b/class.c
-index 8f11f45..ec587a1 100644
+index ae190ee..a48b39d 100644
 --- a/class.c
 +++ b/class.c
 @@ -170,6 +170,7 @@ class_alloc(VALUE flags, VALUE klass)
@@ -10,7 +10,7 @@ index 8f11f45..ec587a1 100644
      return (VALUE)obj;
  }
  
-@@ -510,6 +511,7 @@ make_singleton_class(VALUE obj)
+@@ -491,6 +492,7 @@ make_singleton_class(VALUE obj)
  {
      VALUE orig_class = RBASIC(obj)->klass;
      VALUE klass = rb_class_boot(orig_class);
@@ -19,7 +19,7 @@ index 8f11f45..ec587a1 100644
      FL_SET(klass, FL_SINGLETON);
      RBASIC_SET_CLASS(obj, klass);
 diff --git a/gc.c b/gc.c
-index 776d97d..1cf6ead 100644
+index 0052a30..155babf 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -1588,6 +1588,7 @@ obj_free(rb_objspace_t *objspace, VALUE obj)
@@ -262,7 +262,7 @@ index 212f7b0..185d3f8 100644
      /* FrozenCore (hidden) */
      fcore = rb_class_new(rb_cBasicObject);
 diff --git a/vm_method.c b/vm_method.c
-index 2270359..8d85e3f 100644
+index a8b524d2..d3c05f9 100644
 --- a/vm_method.c
 +++ b/vm_method.c
 @@ -2,15 +2,6 @@
