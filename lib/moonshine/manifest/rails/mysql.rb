@@ -105,7 +105,7 @@ private
   def mysql_version
     if ubuntu_lucid?
       5.1
-    elsif ubuntu_precise?
+    elsif ubuntu_precise? || ubuntu_trusty?
       5.5
     else
       5.0
