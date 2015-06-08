@@ -1,5 +1,5 @@
 diff --git a/gc.c b/gc.c
-index cc37327..9a87bac 100644
+index f9048e0..cf5dbfd 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -450,6 +450,8 @@ typedef struct rb_objspace {
