@@ -568,42 +568,6 @@ module Moonshine
             #TODO apt-pinning to ensure ruby is never installed via apt
           end
 
-          task :ree do
-            remove_ruby_from_apt
-            run [
-              'cd /tmp',
-              'sudo rm -rf ruby-enterprise-1.8.6-20090610* || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
-              'wget -q http://assets.railsmachine.com/other/ruby-enterprise-1.8.6-20090610.tar.gz',
-              'tar xzf ruby-enterprise-1.8.6-20090610.tar.gz',
-              'sudo /tmp/ruby-enterprise-1.8.6-20090610/installer --dont-install-useful-gems -a /usr'
-            ].join(' && ')
-          end
-
-          task :ree187 do
-            remove_ruby_from_apt
-
-            ree_release = fetch(:ree_187_release, '2012.02')
-            ree_src_uri = case ree_release
-                          when '2010.02'
-                            "http://rubyforge.org/frs/download.php/71096/ruby-enterprise-1.8.7-2010.02.tar.gz/noredirect "
-                          when '2010.01'
-                            'http://rubyforge.org/frs/download.php/68719/ruby-enterprise-1.8.7-2010.01.tar.gz/noredirect'
-                          when '2009.01'
-                            'http://rubyforge.org/frs/download.php/66162/ruby-enterprise-1.8.7-2009.10.tar.gz/noredirect'
-                          else
-                            "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-#{ree_release}.tar.gz"
-                          end
-            run [
-              'cd /tmp',
-              "sudo rm -rf ruby-enterprise-1.8.7-#{ree_release}* || true",
-              "sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true",
-              "wget -q #{ree_src_uri} -O ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
-              "tar xzf ruby-enterprise-1.8.7-#{ree_release}.tar.gz",
-              "sudo /tmp/ruby-enterprise-1.8.7-#{ree_release}/installer --dont-install-useful-gems --no-dev-docs -a /usr"
-            ].join(' && ')
-          end
-
           task :brightbox21 do
             remove_ruby_from_apt
             run [
@@ -650,21 +614,6 @@ module Moonshine
               "sudo apt-add-repository ppa:brightbox/ruby-ng #{repo_flag}",
               'sudo apt-get update',
               'sudo apt-get install build-essential ruby1.9.1 ruby1.9.1-dev -y'
-            ].join(' && ')
-          end
-
-          task :src187 do
-            remove_ruby_from_apt
-            run [
-              'cd /tmp',
-              'sudo rm -rf ruby-1.8.7-p249* || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/1.8/gems || true',
-              'wget -q ftp://ftp.ruby-lang.org/pub/ruby/1.8/ruby-1.8.7-p249.tar.bz2',
-              'tar xjf ruby-1.8.7-p249.tar.bz2',
-              'cd /tmp/ruby-1.8.7-p249',
-              './configure --prefix=/usr',
-              'make',
-              'sudo make install'
             ].join(' && ')
           end
 
@@ -868,6 +817,30 @@ module Moonshine
             set :bundler_version, fetch(:bundler_version, '1.9.7')
           end
 
+          task :src22 do
+            remove_ruby_from_apt
+            libyaml.install
+            pv = "2.2.2"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.2.0/gems || true',
+              "wget -q http://cache.ruby-lang.org/pub/ruby/2.2/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.8')
+            set :bundler_version, fetch(:bundler_version, '1.10.4')
+          end
+
           task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
@@ -890,7 +863,7 @@ module Moonshine
             sudo 'gem install rake --no-rdoc --no-ri' unless fetch(:ruby).start_with?('src2')
             sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
 
-            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.9.2')
+            shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.10.1')
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')

@@ -2,7 +2,7 @@
 # running on Ubuntu 8.10 or greater.
 class Moonshine::Manifest::Rails < Moonshine::Manifest
   def validate_platform
-    unless Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f >= 8.04
+    unless Facter.value(:lsbdistid) == 'Ubuntu' && Facter.value(:lsbdistrelease).to_f >= 8.04
       error = <<-ERROR
 
 
