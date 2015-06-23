@@ -1,4 +1,4 @@
-eequire 'spec_helper'
+require 'spec_helper'
 require 'yaml'
 
 describe "MoonshineGenerator" do
