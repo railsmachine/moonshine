@@ -68,10 +68,6 @@ describe "MoonshineGenerator" do
         configuration[:user].should == 'rails'
       end
 
-      it "configures ree as the ruby vm" do
-        configuration[:ruby].should == 'ree187'
-      end
-
       it "configures a default value for domain" do
         configuration[:domain].should == 'yourapp.com'
       end
@@ -131,39 +127,6 @@ describe "MoonshineGenerator" do
       it "configures zombo.dom for domain" do
         configuration[:domain].should == 'zombo.com'
       end
-    end
-
-    context "run with --ruby ree" do
-      before do
-        run %w(--ruby ree)
-      end
-
-      it "configures ree187 as the ruby vm" do
-        configuration[:ruby].should == 'ree'
-      end
-    end
-
-    context "run with --ruby ree187" do
-      before do
-        run %w(--ruby ree187)
-      end
-
-      it "configures ree187 as the ruby vm" do
-        configuration[:ruby].should == 'ree187'
-      end
-    end
-
-    context "run on 1.9.2" do
-      before do
-        MoonshineGenerator.stub!(:ruby_version).and_return("1.9.2")
-        run
-      end
-
-      it "configures src192 as the ruby vm" do
-        pending "stubbing doesn't seem to take effect"
-        configuration[:ruby].should == 'src192'
-      end
-
     end
 
     context "run on 1.9.3" do

@@ -65,13 +65,13 @@ from installing any gems, packages, or dependencies directly on the server.
 
   # This recipe is used to configure the hostname on a server via the
   # `/etc/hostname` file. Generally, this requires a restart to take
-  # effect. We default back to `Facter.fqdn` (the current hostname) as
+  # effect. We default back to `Facter.value(:fqdn)` (the current hostname) as
   # a default value to avoid any unanticipated changes.
 
   def hostname
     file '/etc/hostname',
       :ensure  => :present,
-      :content => (configuration[:hostname] || Facter.fqdn || Facter.hostname || ''),
+      :content => (configuration[:hostname] || Facter.value(:fqdn) || Facter.value(:hostname) || ''),
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644'
@@ -108,12 +108,12 @@ from installing any gems, packages, or dependencies directly on the server.
 
     file '/etc/mailname',
       :ensure  => :present,
-      :content => (configuration[:mailname] || Facter.fqdn || Facter.hostname || ''),
+      :content => (configuration[:mailname] || Facter.value(:fqdn) || Facter.value(:hostname) || ''),
       :owner   => 'root',
       :group   => 'root',
       :mode    => '644'
 
-    myhostname = configuration[:myhostname] || configuration[:mailname] || Facter.fqdn || Facter.hostname || ''
+    myhostname = configuration[:myhostname] || configuration[:mailname] || Facter.value(:fqdn) || Facter.value(:hostname) || ''
     mydomain_parts = myhostname.split('.')
     mydomain_parts.shift
     mydomain = mydomain_parts.join('.')
@@ -324,23 +324,23 @@ private
   # 8.10, 10.04 & 12.04, so we provide helpers to detect those versions.
 
   def ubuntu_lucid?
-    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 10.04
+    Facter.value(:lsbdistid) == 'Ubuntu' && Facter.value(:lsbdistrelease).to_f == 10.04
   end
 
   def ubuntu_precise?
-    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 12.04
+    Facter.value(:lsbdistid) == 'Ubuntu' && Facter.value(:lsbdistrelease).to_f == 12.04
   end
 
   def ubuntu_trusty?
-    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 14.04
+    Facter.value(:lsbdistid) == 'Ubuntu' && Facter.value(:lsbdistrelease).to_f == 14.04
   end
 
   def ubuntu_intrepid?
-    Facter.lsbdistid == 'Ubuntu' && Facter.lsbdistrelease.to_f == 8.10
+    Facter.value(:lsbdistid) == 'Ubuntu' && Facter.value(:lsbdistrelease).to_f == 8.10
   end
 
   def distro_unattended_security_origin
-    case Facter.lsbdistrelease.to_f
+    case Facter.value(:lsbdistrelease).to_f
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
     when 12.04 then 'Ubuntu precise-security'
