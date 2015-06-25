@@ -1,0 +1,61 @@
+diff --git a/test/etc/test_etc.rb b/test/etc/test_etc.rb
+index 374b379..f095160 100644
+--- a/test/etc/test_etc.rb
++++ b/test/etc/test_etc.rb
+@@ -68,6 +68,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
+     Etc.group do |s|
+       assert_instance_of(String, s.name)
+       assert_instance_of(String, s.passwd) if s.respond_to?(:passwd)
+@@ -78,6 +79,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrgid
++    skip "Broken Etc.getgrgid on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRGID']=='1'
+     # group database is not unique on GID, and which entry will be
+     # returned by getgrgid() is not specified.
+     groups = Hash.new {[]}
+@@ -94,6 +96,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrnam
++    skip "Broken Etc.getgrnam on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GETGRNAM']=='1'
+     groups = {}
+     Etc.group do |s|
+       groups[s.name] ||= s unless /\A\+/ =~ s.name
+@@ -104,6 +107,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group_with_low_level_api
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
+     a = []
+     Etc.group {|s| a << s }
+     b = []
+diff --git a/test/rinda/test_rinda.rb b/test/rinda/test_rinda.rb
+index b940cee..438678e 100644
+--- a/test/rinda/test_rinda.rb
++++ b/test/rinda/test_rinda.rb
+@@ -488,6 +488,7 @@ class TupleSpaceProxyTest < Test::Unit::TestCase
+   end
+ 
+   def test_take_bug_8215
++    skip "test_take_bug_8215 is broken on my machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_DRB']=='1'
+     service = DRb.start_service("druby://localhost:0", @ts_base)
+ 
+     uri = service.uri
+diff --git a/test/ruby/test_process.rb b/test/ruby/test_process.rb
+index 471f734..ade768b 100644
+--- a/test/ruby/test_process.rb
++++ b/test/ruby/test_process.rb
+@@ -1656,6 +1656,8 @@ class TestProcess < Test::Unit::TestCase
+ 
+   def test_execopts_gid
+     skip "Process.groups not implemented on Windows platform" if windows?
++    skip "Broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP']=='1'
++
+     feature6975 = '[ruby-core:47414]'
+ 
+     [30000, *Process.groups.map {|g| g = Etc.getgrgid(g); [g.name, g.gid]}].each do |group, gid|

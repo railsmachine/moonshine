@@ -15,6 +15,7 @@
 # * src21
 # * src21railsexpress - This is Ruby 2.1 + the railsexpress patches.
 # * src22
+# * src22railsexpress - This is Ruby 2.2 + the railsexpress patches.
 # * src23
 
 :ruby: <%= ruby %>
