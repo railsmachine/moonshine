@@ -120,15 +120,21 @@ module Moonshine::Manifest::Rails::Rails
         end
       end
 
-      bundle_install_without_groups = configuration[:bundler] && configuration[:bundler][:install_without_groups] || "development test"
-      bundle_install_options = [
-         '--deployment',
-         "--path #{configuration[:deploy_to]}/shared/bundle",
-         "--without '#{bundle_install_without_groups}'"
-      ]
+      bundler_defaults = {
+        :install_as_deployment => true,
+        :install_to_path => "#{configuration[:deploy_to]}/shared/bundle",
+        :install_without_groups => 'development test',
+        :disable_binstubs => false
+      }
 
-      unless configuration[:bundler][:disable_binstubs]
-        bundle_install_options << '--binstubs'
+      bundler_options = bundler_defaults.with_indifferent_access
+                                        .merge(configuration[:bundler] || {})
+
+      bundle_install_options = [].tap do |options|
+        options << '--deployment' if bundler_options[:install_as_deployment]
+        options << "--path #{configuration[:deploy_to]}/shared/bundle" if bundler_options[:install_to_path].present?
+        options << "--without '#{bundler_options[:install_without_groups]}'" if bundler_options[:install_without_groups].present?
+        options << '--binstubs' unless configuration[:bundler][:disable_binstubs]
       end
 
       exec 'accept github key',
