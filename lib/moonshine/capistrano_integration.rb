@@ -567,6 +567,26 @@ module Moonshine
             sudo 'apt-get remove -q -y ^.*ruby.* || true'
             #TODO apt-pinning to ensure ruby is never installed via apt
           end
+          
+          task :brightbox22 do
+            remove_ruby_from_apt
+            run [
+              'sudo rm -f /usr/bin/ruby',
+              'sudo rm -f /usr/bin/gem',
+              'sudo rm -f /usr/bin/rake',
+              'sudo rm -f /usr/bin/rdoc',
+              'sudo rm -f /usr/bin/irb',
+              'sudo rm -f /usr/bin/erb',
+              'sudo rm -f /usr/bin/ri',
+              'sudo rm -f /usr/bin/testrb',
+              'sudo apt-get install python-software-properties software-properties-common -y',
+              'sudo apt-add-repository ppa:brightbox/ruby-ng -y',
+              'sudo apt-get update',
+              'sudo apt-get install ruby2.2 ruby2.2-dev -y'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.4.8')
+            set :bundler_version, fetch(:bundler_version, '1.9.10')
+          end
 
           task :brightbox21 do
             remove_ruby_from_apt
