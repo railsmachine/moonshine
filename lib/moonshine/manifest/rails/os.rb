@@ -344,7 +344,7 @@ private
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
     when 12.04 then 'Ubuntu precise-security'
-    when 14.04 then 'Ubuntu trusty-security'
+    when 14.04 then '${distro_id}:${distro_codename}-security'
     end
   end
 
