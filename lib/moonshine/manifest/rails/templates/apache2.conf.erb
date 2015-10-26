@@ -155,6 +155,7 @@ AccessFileName .htaccess
     Deny from all
 </Files>
 
+<% unless ubuntu_trusty? %>
 #
 # DefaultType is the default MIME type the server will use for a document
 # if it cannot otherwise determine one, such as from filename extensions.
@@ -165,6 +166,7 @@ AccessFileName .htaccess
 # text.
 #
 DefaultType text/plain
+<% end %>
 
 
 #
