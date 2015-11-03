@@ -219,7 +219,7 @@
     BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
   </IfModule>
 
-  RequestHeader set X-Request-Start "%t"
+  RequestHeader set<%= "ifempty" if ubuntu_trusty? %> X-Request-Start "%t"
   Header unset X-Powered-by
   Header unset Server
   
@@ -488,7 +488,7 @@
     BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
   </IfModule>
 
-  RequestHeader set X-Request-Start "%t"
+  RequestHeader set<%= "ifempty" if ubuntu_trusty? %> X-Request-Start "%t"
   Header unset X-Powered-by
   Header unset Server
   
