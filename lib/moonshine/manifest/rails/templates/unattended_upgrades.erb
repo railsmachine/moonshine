@@ -15,8 +15,15 @@ Unattended-Upgrade::Package-Blacklist {
 <% end %>
 };
 
+// Automatic removal of new unused dependencies after the upgrade
+// (equivalent to apt-get autoremove)
+Unattended-Upgrade::Remove-Unused-Dependencies "<%= configuration[:unattended_upgrade][:remove_unused_dependencies] || 'true' %>";
+
+
+<% if configuration[:unattended_upgrade][:no_mail] %>
 // Send email to this address for problems or packages upgrades
 // If empty or unset then no email is sent, make sure that you
 // have a working mail setup on your system. The package 'mailx'
 // must be installed or anything that provides /usr/bin/mail.
 Unattended-Upgrade::Mail "<%= configuration[:user] %>@localhost";
+<% end %>
