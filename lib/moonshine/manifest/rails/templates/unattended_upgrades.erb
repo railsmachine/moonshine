@@ -27,3 +27,5 @@ Unattended-Upgrade::Remove-Unused-Dependencies "<%= configuration[:unattended_up
 // must be installed or anything that provides /usr/bin/mail.
 Unattended-Upgrade::Mail "<%= configuration[:user] %>@localhost";
 <% end %>
+
+<%= configuration[:unattended_upgrade][:extra] %>
