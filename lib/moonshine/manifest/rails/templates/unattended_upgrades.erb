@@ -20,7 +20,7 @@ Unattended-Upgrade::Package-Blacklist {
 Unattended-Upgrade::Remove-Unused-Dependencies "<%= configuration[:unattended_upgrade][:remove_unused_dependencies] || 'true' %>";
 
 
-<% if configuration[:unattended_upgrade][:no_mail] %>
+<% unless configuration[:unattended_upgrade][:no_mail] %>
 // Send email to this address for problems or packages upgrades
 // If empty or unset then no email is sent, make sure that you
 // have a working mail setup on your system. The package 'mailx'
