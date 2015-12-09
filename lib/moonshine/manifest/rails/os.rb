@@ -178,13 +178,25 @@ from installing any gems, packages, or dependencies directly on the server.
 
     service 'fail2ban',
       :ensure => :running,
+      :enable => true,
       :require => [package('fail2ban')]
+
+    service 'rsyslog',
+      :ensure => :running,
+      :enable => true
 
     file "/etc/fail2ban/jail.conf",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), "templates", "jail.conf.erb")),
       :owner => 'root',
       :notify => service('fail2ban'),
+      :require => package('fail2ban')
+
+    file "/etc/rsyslog.d/fail2ban.conf",
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), "templates", "fail2ban.rsyslog.conf.erb")),
+      :owner => 'root',
+      :notify => [service('fail2ban'), service('rsyslog')],
       :require => package('fail2ban')
 
   end
