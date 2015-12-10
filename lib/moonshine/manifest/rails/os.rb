@@ -267,6 +267,22 @@ CONFIG
     end
   end
 
+  #### Python Software Properties
+
+  # The python-software-properties (and software-properties-common on Ubuntu 14.04
+  # provides utilities for working with third party PPAs and Apt repos.
+
+  def python_software_properties
+    if ubuntu_trusty?
+      package 'software-properties-common',
+        :alias => 'python-software-properties',
+        :ensure => :installed
+    else
+      package 'python-software-properties',
+        :ensure => :installed
+    end
+  end
+
   #### Packages
 
   # We Override the `shadow_puppet` package method to inject a dependency on
