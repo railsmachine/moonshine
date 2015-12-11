@@ -6,7 +6,7 @@ Unattended-Upgrade::Allowed-Origins {
 };
 
 // List of packages to not update
-<% package_blacklist = configuration[:unattended_upgrade][:package_blacklist] || ['redis-server', 'mysql-server', 'riak', 'mongodb-10gen', 'mariadb-server', 'mariadb-galera-server'] %>
+<% package_blacklist = configuration[:unattended_upgrade][:package_blacklist] || ['redis-server', 'mysql-server', 'riak', 'mongodb-10gen', 'mariadb-server', 'mariadb-galera-server', 'mariadb-client', 'mariadb-client-5.5', 'mariadb-client-core-5.5', 'mariadb-common', 'mariadb-server-5.5', 'mariadb-galera-server-5.5'] %>
 
 
 Unattended-Upgrade::Package-Blacklist {
