@@ -1,5 +1,5 @@
 diff --git a/common.mk b/common.mk
-index 6508c4c..1e1e9d0 100644
+index d2a4edd..0bc8f11 100644
 --- a/common.mk
 +++ b/common.mk
 @@ -683,7 +683,8 @@ gc.$(OBJEXT): {$(VPATH)}gc.c $(RUBY_H_INCLUDES) {$(VPATH)}re.h \
@@ -22,7 +22,7 @@ index 6508c4c..1e1e9d0 100644
    {$(VPATH)}timev.h $(ENCODING_H_INCLUDES)
  string.$(OBJEXT): {$(VPATH)}string.c $(RUBY_H_INCLUDES) {$(VPATH)}re.h \
 diff --git a/gc.c b/gc.c
-index cf5dbfd..0052a30 100644
+index e4b9208..932e1d7 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -22,6 +22,7 @@
@@ -107,7 +107,7 @@ index cf5dbfd..0052a30 100644
      free(objspace);
  }
  #endif
-@@ -6434,6 +6472,28 @@ ruby_mimfree(void *ptr)
+@@ -6437,6 +6475,28 @@ ruby_mimfree(void *ptr)
      free(mem);
  }
  

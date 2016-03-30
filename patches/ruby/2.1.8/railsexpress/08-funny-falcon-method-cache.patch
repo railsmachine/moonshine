@@ -19,7 +19,7 @@ index ae190ee..a48b39d 100644
      FL_SET(klass, FL_SINGLETON);
      RBASIC_SET_CLASS(obj, klass);
 diff --git a/gc.c b/gc.c
-index 0052a30..155babf 100644
+index 932e1d7..8691f27 100644
 --- a/gc.c
 +++ b/gc.c
 @@ -1588,6 +1588,7 @@ obj_free(rb_objspace_t *objspace, VALUE obj)
@@ -139,7 +139,7 @@ index 0052a30..155babf 100644
  /*
   *  call-seq:
 diff --git a/internal.h b/internal.h
-index 1f41d23..15c715c 100644
+index 28df792..e9f6564 100644
 --- a/internal.h
 +++ b/internal.h
 @@ -261,6 +261,58 @@ typedef unsigned long rb_serial_t;
@@ -239,7 +239,7 @@ index 1f41d23..15c715c 100644
  struct method_table_wrapper {
      st_table *tbl;
      size_t serial;
-@@ -790,6 +871,7 @@ VALUE rb_extract_keywords(VALUE *orighash);
+@@ -793,6 +874,7 @@ VALUE rb_extract_keywords(VALUE *orighash);
  /* vm_method.c */
  void Init_eval_method(void);
  int rb_method_defined_by(VALUE obj, ID mid, VALUE (*cfunc)(ANYARGS));
@@ -248,10 +248,10 @@ index 1f41d23..15c715c 100644
  /* miniprelude.c, prelude.c */
  void Init_prelude(void);
 diff --git a/vm.c b/vm.c
-index 212f7b0..185d3f8 100644
+index d1867e9..29bb131 100644
 --- a/vm.c
 +++ b/vm.c
-@@ -2492,6 +2492,9 @@ Init_VM(void)
+@@ -2500,6 +2500,9 @@ Init_VM(void)
      rb_undef_alloc_func(rb_cRubyVM);
      rb_undef_method(CLASS_OF(rb_cRubyVM), "new");
      rb_define_singleton_method(rb_cRubyVM, "stat", vm_stat, -1);
