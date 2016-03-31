@@ -1,0 +1,205 @@
+diff --git a/configure.in b/configure.in
+index 28b5dc1..21fe658 100644
+--- a/configure.in
++++ b/configure.in
+@@ -3322,6 +3322,10 @@ if test "$EXEEXT" = .exe; then
+     AC_SUBST(EXECUTABLE_EXTS)
+ fi
+ 
++AC_ARG_ENABLE(gchacks,
++       AS_HELP_STRING([--enable-gchacks], [build garbage collector with railsexpress gc hacks enabled]),
++       [AC_DEFINE(RAILSEXPRESS_GC_HACKS,1)])
++
+ AC_ARG_ENABLE(dtrace,
+         AS_HELP_STRING([--enable-dtrace],
+         [enable DTrace for tracing inside ruby. enabled by default on systems having dtrace]),
+diff --git a/gc.c b/gc.c
+index 8691f27..c779839 100644
+--- a/gc.c
++++ b/gc.c
+@@ -174,6 +174,13 @@ static ruby_gc_params_t gc_params = {
+ #define GC_DEBUG 0
+ #endif
+ 
++#ifdef RAILSEXPRESS_GC_HACKS
++#undef RAILSEXPRESS_GC_HACKS
++#define RAILSEXPRESS_GC_HACKS 1
++#else
++#define RAILSEXPRESS_GC_HACKS 0
++#endif
++
+ #if USE_RGENGC
+ /* RGENGC_DEBUG:
+  * 1: basic information
+@@ -358,7 +365,7 @@ typedef struct RVALUE {
+ 	    VALUE v3;
+ 	} values;
+     } as;
+-#if GC_DEBUG
++#if GC_DEBUG || RAILSEXPRESS_GC_HACKS
+     const char *file;
+     VALUE line;
+ #endif
+@@ -1327,6 +1334,22 @@ gc_event_hook_body(rb_objspace_t *objspace, const rb_event_flag_t event, VALUE d
+     } \
+ } while (0)
+ 
++#if RAILSEXPRESS_GC_HACKS && 0
++_rb_sourcefile(void)
++{
++    rb_thread_t *th = GET_THREAD();
++    rb_control_frame_t *cfp = rb_vm_get_ruby_level_next_cfp(th, th->cfp);
++
++    if (cfp) {
++	return cfp->iseq->filename;
++    }
++    else {
++	return Qnil;
++    }
++}
++#endif
++
++
+ static VALUE
+ newobj_of(VALUE klass, VALUE flags, VALUE v1, VALUE v2, VALUE v3)
+ {
+@@ -1356,7 +1379,7 @@ newobj_of(VALUE klass, VALUE flags, VALUE v1, VALUE v2, VALUE v3)
+     RANY(obj)->as.values.v2 = v2;
+     RANY(obj)->as.values.v3 = v3;
+ 
+-#if GC_DEBUG
++#if GC_DEBUG || RAILSEXPRESS_GC_HACKS
+     RANY(obj)->file = rb_sourcefile();
+     RANY(obj)->line = rb_sourceline();
+     assert(!SPECIAL_CONST_P(obj)); /* check alignment */
+@@ -7735,6 +7758,120 @@ rb_gcdebug_sentinel(VALUE obj, const char *name)
+ }
+ #endif /* GC_DEBUG */
+ 
++#if RAILSEXPRESS_GC_HACKS
++
++static const char* obj_type(VALUE type)
++{
++    switch (type) {
++        case T_NIL     : return "NIL";
++        case T_OBJECT  : return "OBJECT";
++        case T_CLASS   : return "CLASS";
++        case T_ICLASS  : return "ICLASS";
++        case T_MODULE  : return "MODULE";
++        case T_FLOAT   : return "FLOAT";
++        case T_COMPLEX : return "COMPLEX";
++        case T_RATIONAL: return "RATIONAL";
++        case T_STRING  : return "STRING";
++        case T_REGEXP  : return "REGEXP";
++        case T_ARRAY   : return "ARRAY";
++        case T_FIXNUM  : return "FIXNUM";
++        case T_HASH    : return "HASH";
++        case T_STRUCT  : return "STRUCT";
++        case T_BIGNUM  : return "BIGNUM";
++        case T_FILE    : return "FILE";
++
++        case T_TRUE    : return "TRUE";
++        case T_FALSE   : return "FALSE";
++        case T_DATA    : return "DATA";
++        case T_MATCH   : return "MATCH";
++        case T_SYMBOL  : return "SYMBOL";
++        case T_ZOMBIE  : return "ZOMBIE";
++
++        case T_UNDEF   : return "UNDEF";
++        case T_NODE    : return "NODE";
++        default        : return "____";
++    }
++}
++
++/*
++ *  call-seq:
++ *     GC.dump_file_and_line_info(String, boolean)    => nil
++ *
++ *  dumps information on which currently allocated object was created by which file and on which line
++ *
++ *     GC.dump_file_and_line_info(String, boolean)    #=> nil
++ *
++ *  The second parameter specifies whether class names should be included in the dump.
++ *  Note that including class names will allocate additional string objects on the heap.
++ *
++ */
++
++VALUE
++rb_gc_dump_file_and_line_info(int argc, VALUE *argv)
++{
++    rb_objspace_t *objspace = &rb_objspace;
++    VALUE filename, str, include_classnames = Qnil;
++    char *fname = NULL;
++    FILE* f = NULL;
++
++    rb_scan_args(argc, argv, "11", &filename, &include_classnames);
++
++    str = StringValue(filename);
++    fname = RSTRING_PTR(str);
++    f = fopen(fname, "w");
++
++    for (size_t i = 0; i <  objspace->heap_pages.used; i++) {
++        RVALUE *p = objspace->heap_pages.sorted[i]->start;
++        RVALUE *pend = p + objspace->heap_pages.sorted[i]->limit;
++        for (; p < pend ; p++) {
++            if (p->as.basic.flags) {
++                const char *src_filename = p->file ? p->file : ""; // (p->file && p->file != Qnil )? RSTRING_PTR(p->file) : "";
++                fprintf(f, "%s:%s:%d", obj_type(p->as.basic.flags&T_MASK), src_filename, (int)p->line);
++                // rb_obj_classname will create objects on the heap, we need a better solution
++                if (include_classnames == Qtrue) {
++                    /* write the class */
++                    fprintf(f, ":");
++                    switch (BUILTIN_TYPE(p)) {
++                    case T_NONE:
++                        fprintf(f, "__none__");
++                        break;
++                    case T_UNDEF:
++                        fprintf(f, "__undef__");
++                        break;
++                    case T_NODE:
++                        fprintf(f, "__node__");
++                        break;
++                    default:
++                        if (!p->as.basic.klass) {
++                            fprintf(f, "__unknown__");
++                        } else {
++                            fprintf(f, "%s", rb_obj_classname((VALUE)p));
++                        }
++                    }
++                    /* print object size for some known object types */
++                    switch (BUILTIN_TYPE(p)) {
++                    case T_STRING:
++                        fprintf(f, ":%lu", RSTRING_LEN(p));
++                        break;
++                    case T_ARRAY:
++                        fprintf(f, ":%lu", RARRAY_LEN(p));
++                        break;
++                    case T_HASH:
++                        fprintf(f, ":%lu", (long unsigned int)RHASH_SIZE(p));
++                        break;
++                    }
++                }
++                fprintf(f, "\n");
++            }
++        }
++    }
++    fclose(f);
++    return Qnil;
++}
++#endif
++
++
++
+ /*
+  * Document-module: ObjectSpace
+  *
+@@ -7822,6 +7959,9 @@ Init_GC(void)
+     rb_define_singleton_method(rb_mGC, "latest_gc_info", gc_latest_gc_info, -1);
+     rb_define_singleton_method(rb_mGC, "heap_slots_live_after_last_gc", rb_gc_heap_slots_live_after_last_gc, 0);
+     rb_define_method(rb_mGC, "garbage_collect", gc_start_internal, -1);
++#if RAILSEXPRESS_GC_HACKS
++    rb_define_singleton_method(rb_mGC, "dump_file_and_line_info", rb_gc_dump_file_and_line_info, -1);
++#endif
+ 
+     gc_constants = rb_hash_new();
+     rb_hash_aset(gc_constants, ID2SYM(rb_intern("RVALUE_SIZE")), SIZET2NUM(sizeof(RVALUE)));
