@@ -820,6 +820,7 @@ module Moonshine
             run [
               'cd /tmp',
               "sudo rm -rf #{p}* || true",
+              'sudo rm /usr/bin/rake || true',
               'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
               'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
               'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
