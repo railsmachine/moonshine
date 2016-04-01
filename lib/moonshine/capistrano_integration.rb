@@ -509,6 +509,29 @@ module Moonshine
           set :nopuppetrollback, true
         end
 
+        namespace :libyaml do
+          desc "Install libyaml from source."
+          task :install do
+            remove_libyaml_from_apt
+            pv = "0.1.6"
+            p = "yaml-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              "wget -q http://assets.railsmachine.com/libs/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+          end
+
+          task :remove_libyaml_from_apt do
+            sudo 'apt-get remove -q -y ^.*libyaml.* || true'
+          end
+        end
+
         namespace :ruby do
 
           desc <<-DESC
@@ -614,6 +637,7 @@ module Moonshine
 
           task :src193 do
             remove_ruby_from_apt
+            libyaml.install
             pv = "1.9.3-p551"
             p = "ruby-#{pv}"
             run [
@@ -641,6 +665,7 @@ module Moonshine
               upload ruby_patches_path.to_s, "/tmp/moonshine/", :via => :scp, :recursive => true
             end
             remove_ruby_from_apt
+            libyaml.install
             pv = "1.9.3-p551"
             p = "ruby-#{pv}"
             run [
