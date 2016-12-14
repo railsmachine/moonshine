@@ -817,7 +817,7 @@ module Moonshine
 
           task :src22 do
             remove_ruby_from_apt
-            pv = "2.2.5"
+            pv = "2.2.6"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -834,13 +834,13 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.4')
-            set :bundler_version, fetch(:bundler_version, '1.12.5')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
+            set :bundler_version, fetch(:bundler_version, '1.13.6')
           end
 
           task :src23 do
             remove_ruby_from_apt
-            pv = "2.3.1"
+            pv = "2.3.3"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -858,8 +858,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.4')
-            set :bundler_version, fetch(:bundler_version, '1.12.5')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
+            set :bundler_version, fetch(:bundler_version, '1.13.6')
           end
 
           task :install_rubygems do
