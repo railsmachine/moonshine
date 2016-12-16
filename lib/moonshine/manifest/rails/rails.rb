@@ -109,7 +109,8 @@ module Moonshine::Manifest::Rails::Rails
                   else
                    Bundler.load
                   end
-        bundler_dependencies = bundler.dependencies_for(:default, rails_env.to_sym)
+        bundler_groups = [:default, rails_env.to_sym]
+        bundler_dependencies = bundler.dependencies.select {|d| (bundler_groups & d.groups).any? }
         bundler_dependencies.each do |dependency|
           system_dependencies = configuration[:apt_gems][dependency.name.to_s] || []
           system_dependencies.each do |system_dependency|
