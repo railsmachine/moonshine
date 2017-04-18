@@ -774,7 +774,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.4')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
             set :bundler_version, fetch(:bundler_version, '1.12.5')
           end
 
@@ -811,7 +811,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.2')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
             set :bundler_version, fetch(:bundler_version, '1.11.2')
           end
 
@@ -834,7 +834,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
             set :bundler_version, fetch(:bundler_version, '1.13.6')
           end
 
@@ -858,7 +858,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
             set :bundler_version, fetch(:bundler_version, '1.13.6')
           end
 
@@ -882,7 +882,7 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
             set :bundler_version, fetch(:bundler_version, '1.13.6')
           end
 
