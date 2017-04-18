@@ -817,7 +817,7 @@ module Moonshine
 
           task :src22 do
             remove_ruby_from_apt
-            pv = "2.2.6"
+            pv = "2.2.7"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -840,7 +840,7 @@ module Moonshine
 
           task :src23 do
             remove_ruby_from_apt
-            pv = "2.3.3"
+            pv = "2.3.4"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
