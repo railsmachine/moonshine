@@ -722,7 +722,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.4.8')
-            set :bundler_version, fetch(:bundler_version, '1.10.6')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src200railsexpress do
@@ -775,7 +775,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.12.5')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src21railsexpress do
@@ -812,7 +812,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.11.2')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src22 do
@@ -835,7 +835,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.13.6')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src23 do
@@ -859,7 +859,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.13.6')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src24 do
@@ -883,7 +883,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.13.6')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
          task :install_rubygems do
