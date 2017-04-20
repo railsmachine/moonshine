@@ -722,7 +722,7 @@ module Moonshine
               'sudo make install'
             ].join(' && ')
             set :rubygems_version, fetch(:rubygems_version, '2.4.8')
-            set :bundler_version, fetch(:bundler_version, '1.10.6')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src200railsexpress do
@@ -774,8 +774,8 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.4')
-            set :bundler_version, fetch(:bundler_version, '1.12.5')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src21railsexpress do
@@ -811,13 +811,13 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.2')
-            set :bundler_version, fetch(:bundler_version, '1.11.2')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src22 do
             remove_ruby_from_apt
-            pv = "2.2.6"
+            pv = "2.2.7"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -834,13 +834,13 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
-            set :bundler_version, fetch(:bundler_version, '1.13.6')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
           task :src23 do
             remove_ruby_from_apt
-            pv = "2.3.3"
+            pv = "2.3.4"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -858,11 +858,35 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.8')
-            set :bundler_version, fetch(:bundler_version, '1.13.6')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
           end
 
-          task :install_rubygems do
+          task :src24 do
+            remove_ruby_from_apt
+            pv = "2.4.1"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo rm /usr/bin/rake || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.2.0/gems || true',
+              "wget -q http://cache.ruby-lang.org/pub/ruby/2.4/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
+            set :bundler_version, fetch(:bundler_version, '1.14.6')
+          end
+
+         task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
               'cd /tmp',
