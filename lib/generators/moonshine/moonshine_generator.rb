@@ -102,7 +102,7 @@ protected
   end
 
   def ruby
-    options[:ruby] ||= "src23"
+    @ruby ||= (options[:ruby] || "src23")
   end
 
   def user
