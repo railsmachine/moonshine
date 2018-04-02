@@ -37,6 +37,10 @@ module MoonshineGeneratorHelpers
         'src22'
       when /^2.3/
         'src23'
+      when /^2.4/
+        'src24'
+      when /^2.5/
+        'src25'
       else
       end
     end
