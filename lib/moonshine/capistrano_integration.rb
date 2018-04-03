@@ -864,7 +864,7 @@ module Moonshine
 
           task :src24 do
             remove_ruby_from_apt
-            pv = "2.4.1"
+            pv = "2.4.4"
             p = "ruby-#{pv}"
             run [
               'cd /tmp',
@@ -874,7 +874,9 @@ module Moonshine
               'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
               'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
               'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/2.2.0/gems || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.2.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.3.0 || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.4.0/gems || true',
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.4/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
@@ -882,8 +884,35 @@ module Moonshine
               'make',
               'sudo make install'
             ].join(' && ')
-            set :rubygems_version, fetch(:rubygems_version, '2.6.11')
-            set :bundler_version, fetch(:bundler_version, '1.14.6')
+            set :rubygems_version, fetch(:rubygems_version, '2.7.6')
+            set :bundler_version, fetch(:bundler_version, '1.16.1')
+          end
+
+         task :src25 do
+            remove_ruby_from_apt
+            pv = "2.5.1"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo rm /usr/bin/rake || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.2.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.3.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.4.0 || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.5.0/gems || true',
+              "wget -q http://cache.ruby-lang.org/pub/ruby/2.5/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '2.7.6')
+            set :bundler_version, fetch(:bundler_version, '1.16.1')
           end
 
          task :install_rubygems do
