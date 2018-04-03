@@ -850,7 +850,7 @@ module Moonshine
               'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
               'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
               'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
-              'sudo mkdir -p /usr/lib/ruby/gems/2.3.0/gems || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.2.0/gems || true',
               "wget -q http://cache.ruby-lang.org/pub/ruby/2.3/#{p}.tar.gz",
               "tar xzf #{p}.tar.gz",
               "cd /tmp/#{p}",
