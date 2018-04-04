@@ -941,7 +941,7 @@ module Moonshine
             sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')
-              sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}'"
+              sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}' --force"
             end
           end
         end
