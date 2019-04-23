@@ -150,7 +150,7 @@ define the server 'stack', cron jobs, mail aliases, configuration files
       opt.on('--multistage',
               "setup multistage deployment environment") { options[:multistage] = true }
       opt.on("--ruby RUBY",
-             "Ruby version to install. Currently supports: src193, src200, src21, src22, src23, src24, src25, brightbox21, brightbox22") { |ruby| options[:ruby] = ruby }
+             "Ruby version to install. Currently supports: src193, src200, src21, src22, src23, src24, src25, src26, brightbox21, brightbox22") { |ruby| options[:ruby] = ruby }
 
     end
 

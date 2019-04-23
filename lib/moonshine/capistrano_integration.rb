@@ -915,6 +915,34 @@ module Moonshine
             set :bundler_version, fetch(:bundler_version, '1.16.1')
           end
 
+         task :src26 do
+            remove_ruby_from_apt
+            pv = "2.6.3"
+            p = "ruby-#{pv}"
+            run [
+              'cd /tmp',
+              "sudo rm -rf #{p}* || true",
+              'sudo rm /usr/bin/rake || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.8 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/1.9.1 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.0.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.1.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.2.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.3.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.4.0 || true',
+              'sudo rm -rf /usr/lib/ruby/gems/2.5.0 || true',
+              'sudo mkdir -p /usr/lib/ruby/gems/2.6.0/gems || true',
+              "wget -q http://cache.ruby-lang.org/pub/ruby/2.6/#{p}.tar.gz",
+              "tar xzf #{p}.tar.gz",
+              "cd /tmp/#{p}",
+              './configure --prefix=/usr',
+              'make',
+              'sudo make install'
+            ].join(' && ')
+            set :rubygems_version, fetch(:rubygems_version, '3.0.3')
+            set :bundler_version, fetch(:bundler_version, '1.17.3')
+          end
+
          task :install_rubygems do
             version = fetch(:rubygems_version, '1.8.21')
             run [
