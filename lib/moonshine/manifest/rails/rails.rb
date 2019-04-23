@@ -75,7 +75,7 @@ module Moonshine::Manifest::Rails::Rails
   def rails_gems
     gemrc = HashWithIndifferentAccess.new({
       :verbose => true,
-      :gem => '--no-ri --no-rdoc',
+      :gem => '--no-document',
       :update_sources => true,
       :sources => [
         'http://rubygems.org',

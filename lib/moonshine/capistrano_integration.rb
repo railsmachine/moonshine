@@ -962,14 +962,14 @@ module Moonshine
           end
 
           task :install_moonshine_deps do
-            sudo 'gem install rake --no-rdoc --no-ri' unless fetch(:ruby).start_with?('src2')
-            sudo 'gem install i18n --no-rdoc --no-ri' # workaround for missing activesupport-3.0.2 dep on i18n
+            sudo 'gem install rake --no-document' unless fetch(:ruby).start_with?('src2')
+            sudo 'gem install i18n --no-document' # workaround for missing activesupport-3.0.2 dep on i18n
 
             shadow_puppet_version = fetch(:shadow_puppet_version, '~> 0.10.3')
-            sudo "gem install shadow_puppet --no-rdoc --no-ri --version '#{shadow_puppet_version}'"
+            sudo "gem install shadow_puppet --no-document --version '#{shadow_puppet_version}'"
             if rails_root.join('Gemfile').exist?
               bundler_version = fetch(:bundler_version, '1.1.3')
-              sudo "gem install bundler --no-rdoc --no-ri --version='#{bundler_version}' --force"
+              sudo "gem install bundler --no-document --version='#{bundler_version}' --force"
             end
           end
         end
