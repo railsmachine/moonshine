@@ -178,13 +178,25 @@ from installing any gems, packages, or dependencies directly on the server.
 
     service 'fail2ban',
       :ensure => :running,
+      :enable => true,
       :require => [package('fail2ban')]
+
+    service 'rsyslog',
+      :ensure => :running,
+      :enable => true
 
     file "/etc/fail2ban/jail.conf",
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), "templates", "jail.conf.erb")),
       :owner => 'root',
       :notify => service('fail2ban'),
+      :require => package('fail2ban')
+
+    file "/etc/rsyslog.d/fail2ban.conf",
+      :ensure => :present,
+      :content => template(File.join(File.dirname(__FILE__), "templates", "fail2ban.rsyslog.conf.erb")),
+      :owner => 'root',
+      :notify => [service('fail2ban'), service('rsyslog')],
       :require => package('fail2ban')
 
   end
@@ -252,6 +264,22 @@ CONFIG
       exec 'apt-get update', :command => 'apt-get update', :require => file('/etc/apt/sources.list')
     else
       exec 'apt-get update', :command => 'apt-get update'
+    end
+  end
+
+  #### Python Software Properties
+
+  # The python-software-properties (and software-properties-common on Ubuntu 14.04
+  # provides utilities for working with third party PPAs and Apt repos.
+
+  def python_software_properties
+    if ubuntu_trusty?
+      package 'software-properties-common',
+        :alias => 'python-software-properties',
+        :ensure => :installed
+    else
+      package 'python-software-properties',
+        :ensure => :installed
     end
   end
 
@@ -344,7 +372,7 @@ private
     when 8.10 then 'Ubuntu intrepid-security'
     when 10.04 then 'Ubuntu lucid-security'
     when 12.04 then 'Ubuntu precise-security'
-    when 14.04 then 'Ubuntu trusty-security'
+    when 14.04 then '${distro_id}:${distro_codename}-security'
     end
   end
 

@@ -34,11 +34,24 @@ index 946be9b..12a99fe 100644
      a = []
      Etc.group {|s| a << s }
      b = []
+diff --git a/test/rinda/test_rinda.rb b/test/rinda/test_rinda.rb
+index d79653c..0c7488e 100644
+--- a/test/rinda/test_rinda.rb
++++ b/test/rinda/test_rinda.rb
+@@ -479,6 +479,8 @@ class TupleSpaceProxyTest < Test::Unit::TestCase
+   end
+ 
+   def test_take_bug_8215
++    skip "test_take_bug_8215 broken on my machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_DRB']=='1'
++
+     require_relative '../ruby/envutil'
+     service = DRb.start_service("druby://localhost:0", @ts_base)
+ 
 diff --git a/test/ruby/test_process.rb b/test/ruby/test_process.rb
-index a71a2d6..a06ba22 100644
+index 28e08ce..4fb6cae 100644
 --- a/test/ruby/test_process.rb
 +++ b/test/ruby/test_process.rb
-@@ -1595,6 +1595,7 @@ class TestProcess < Test::Unit::TestCase
+@@ -1620,6 +1620,7 @@ class TestProcess < Test::Unit::TestCase
  
    def test_execopts_gid
      skip "Process.groups not implemented on Windows platform" if windows?

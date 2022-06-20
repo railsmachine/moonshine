@@ -1,0 +1,36 @@
+diff --git a/test/etc/test_etc.rb b/test/etc/test_etc.rb
+index 5bc8db4..193c4d2 100644
+--- a/test/etc/test_etc.rb
++++ b/test/etc/test_etc.rb
+@@ -66,6 +66,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group
++    skip "broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP'] == '1'
+     Etc.group do |s|
+       assert_instance_of(String, s.name)
+       assert_instance_of(String, s.passwd) if s.respond_to?(:passwd)
+@@ -76,6 +77,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrgid
++    skip "broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP'] == '1'
+     groups = {}
+     Etc.group do |s|
+       groups[s.gid] ||= s
+@@ -87,6 +89,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_getgrnam
++    skip "broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP'] == '1'
+     groups = {}
+     Etc.group do |s|
+       groups[s.name] ||= s unless /\A\+/ =~ s.name
+@@ -97,6 +100,7 @@ class TestEtc < Test::Unit::TestCase
+   end
+ 
+   def test_group_with_low_level_api
++    skip "broken Etc.group on this machine" if ENV['RUBY_TEST_OPTIONS_BROKEN_GROUP'] == '1'
+     a = []
+     Etc.group {|s| a << s }
+     b = []

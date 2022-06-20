@@ -82,7 +82,7 @@ describe Moonshine::Manifest::Rails do
       @manifest.rails_gems
 
       @manifest.should have_file('/etc/gemrc').with_content(
-        /--no-rdoc/
+        /--no-document/
       )
     end
     

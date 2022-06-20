@@ -6,7 +6,7 @@ Unattended-Upgrade::Allowed-Origins {
 };
 
 // List of packages to not update
-<% package_blacklist = configuration[:unattended_upgrade][:package_blacklist] || ['redis-server', 'mysql-server', 'riak', 'mongodb-10gen'] %>
+<% package_blacklist = configuration[:unattended_upgrade][:package_blacklist] || ['redis-server', 'mysql-server', 'riak', 'mongodb-10gen', 'mariadb-server', 'mariadb-galera-server', 'mariadb-client', 'mariadb-client-5.5', 'mariadb-client-core-5.5', 'mariadb-common', 'mariadb-server-5.5', 'mariadb-galera-server-5.5'] %>
 
 
 Unattended-Upgrade::Package-Blacklist {
@@ -15,8 +15,17 @@ Unattended-Upgrade::Package-Blacklist {
 <% end %>
 };
 
+// Automatic removal of new unused dependencies after the upgrade
+// (equivalent to apt-get autoremove)
+Unattended-Upgrade::Remove-Unused-Dependencies "<%= configuration[:unattended_upgrade][:remove_unused_dependencies] || 'true' %>";
+
+
+<% unless configuration[:unattended_upgrade][:no_mail] %>
 // Send email to this address for problems or packages upgrades
 // If empty or unset then no email is sent, make sure that you
 // have a working mail setup on your system. The package 'mailx'
 // must be installed or anything that provides /usr/bin/mail.
 Unattended-Upgrade::Mail "<%= configuration[:user] %>@localhost";
+<% end %>
+
+<%= configuration[:unattended_upgrade][:extra] %>
